@@ -65,8 +65,25 @@ class ProductsService
     public function filter($data)
     {
         $products = [];
+        $price = 0;
 
         $noticeService = new SessionNoticeService();
+
+        $length = 1;
+        $total = count($data);
+
+        if($total > 6) {
+            $length = ceil($total/6);
+        }
+
+        foreach ($data as $item) {
+            if (!empty($item['data'])) {
+                $product = $item['data'];
+                $price += $product->get_price();
+            }        
+        }
+
+        $data = array_slice($data, 0, $length);    
 
         foreach ($data as $item) {
             if (empty($item['data'])) {
@@ -84,16 +101,17 @@ class ProductsService
                 }
 
                 $products[] = (object) [
-                    'id' =>  $product->get_id(),
-                    'name' =>  $product->get_name(),
-                    'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_width()),
-                    'height' =>  DimensionsHelper::convertUnitDimensionToCentimeter($product->get_height()),
-                    'length' => DimensionsHelper::convertUnitDimensionToCentimeter($product->get_length()),
-                    'weight' =>  DimensionsHelper::convertWeightUnit($product->get_weight()),
-                    'unitary_value' => $product->get_price(),
-                    'insurance_value' => $product->get_price(),
-                    'quantity' =>   $item['quantity']
+                    'id' =>  1,
+                    'name' =>  "Encomenda useUp!",
+                    'width' =>  DimensionsHelper::convertUnitDimensionToCentimeter(11),
+                    'height' => DimensionsHelper::convertUnitDimensionToCentimeter(4),
+                    'length' => DimensionsHelper::convertUnitDimensionToCentimeter(17),
+                    'weight' =>  DimensionsHelper::convertWeightUnit(0.1),
+                    'unitary_value' => $price,
+                    'insurance_value' => $price,
+                    'quantity' =>   1
                 ];
+
             }
         }
 

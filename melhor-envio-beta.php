@@ -5,7 +5,7 @@ use Helpers\NoticeHelper;
 require __DIR__ . '/vendor/autoload.php';
 
 /*
-Plugin Name: Melhor Envio v2
+Plugin Name: Melhor Envio v2 - useUp! (Modificado)
 Plugin URI: https://melhorenvio.com.br
 Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
 Version: 2.9.5
