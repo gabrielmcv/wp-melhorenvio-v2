@@ -116,7 +116,7 @@ class USEUP_ME_Admin {
 
 					<div class="useup-me-grid" style="margin-top: 16px;">
 						<div>
-							<label for="useup-me-free-shipping-threshold">Valor de referÃªncia para frete grÃ¡tis</label>
+							<label for="useup-me-free-shipping-threshold">Valor de referência para frete grátis</label>
 							<input
 								type="number"
 								min="0"
@@ -130,7 +130,7 @@ class USEUP_ME_Admin {
 						</div>
 
 						<div>
-							<label for="useup-me-free-shipping-message">Texto da mensagem de frete grÃ¡tis</label>
+							<label for="useup-me-free-shipping-message">Texto da mensagem de frete grátis</label>
 							<input
 								type="text"
 								id="useup-me-free-shipping-message"
@@ -138,7 +138,7 @@ class USEUP_ME_Admin {
 								value="<?php echo esc_attr( $settings['product_shipping_free_shipping_message'] ); ?>"
 								class="regular-text"
 							/>
-							<p class="description">Use `{amount}` para inserir o valor formatado automaticamente. Deixe vazio para nÃ£o exibir a mensagem.</p>
+							<p class="description">Use `{amount}` para inserir o valor formatado automaticamente. Deixe vazio para não exibir a mensagem.</p>
 						</div>
 					</div>
 				</div>
