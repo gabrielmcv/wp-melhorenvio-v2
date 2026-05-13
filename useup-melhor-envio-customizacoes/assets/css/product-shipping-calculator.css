@@ -1,0 +1,183 @@
+.useup-me-product-shipping {
+	margin-top: 12px;
+	margin-bottom: 14px;
+	padding: 14px 16px;
+	border: 1px solid #e8e8e8;
+	border-radius: 6px;
+	background: #fff;
+	color: #222;
+	font-size: 13px;
+	line-height: 1.45;
+}
+
+.useup-me-product-shipping__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-bottom: 6px;
+}
+
+.useup-me-product-shipping__title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 600;
+	font-size: 14px;
+	color: #111;
+}
+
+.useup-me-product-shipping__icon {
+	display: inline-flex;
+	width: 16px;
+	height: 16px;
+	color: #111;
+}
+
+.useup-me-product-shipping__icon svg {
+	display: block;
+	width: 16px;
+	height: 16px;
+}
+
+.useup-me-product-shipping__toggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border: 0;
+	padding: 0;
+	background: transparent;
+	color: #111;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.useup-me-product-shipping__toggle[aria-expanded="false"] span {
+	transform: rotate(180deg);
+}
+
+.useup-me-product-shipping__body[hidden] {
+	display: none;
+}
+
+.useup-me-product-shipping__description {
+	margin: 0 0 10px;
+	color: #666;
+	font-size: 12.5px;
+}
+
+.useup-me-product-shipping__form {
+	display: flex;
+	gap: 8px;
+	align-items: stretch;
+	margin-bottom: 10px;
+}
+
+.useup-me-product-shipping__input {
+	flex: 1;
+	min-height: 38px;
+	border: 1px solid #d9d9d9;
+	border-radius: 0;
+	padding: 0 10px;
+	font-size: 13px;
+	background: #fff;
+}
+
+.useup-me-product-shipping__button {
+	min-height: 38px;
+	padding: 0 18px;
+	border: 1px solid #000;
+	background: #000;
+	color: #fff;
+	font-weight: 600;
+	font-size: 13px;
+	cursor: pointer;
+	transition: opacity 0.2s ease;
+}
+
+.useup-me-product-shipping__button:hover {
+	opacity: 0.82;
+}
+
+.useup-me-product-shipping__current-cep {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 10px;
+	padding: 9px 0 10px;
+	border-bottom: 1px solid #eee;
+	margin-bottom: 10px;
+	color: #333;
+}
+
+.useup-me-product-shipping__change-cep {
+	border: 0;
+	background: transparent;
+	color: #111;
+	text-decoration: underline;
+	cursor: pointer;
+	font-size: 12.5px;
+	padding: 0;
+}
+
+.useup-me-product-shipping__results {
+	border-top: 1px solid #eee;
+	padding-top: 10px;
+	margin-top: 10px;
+}
+
+.useup-me-product-shipping__estimate {
+	margin-bottom: 7px;
+	color: #333;
+}
+
+.useup-me-product-shipping__estimate strong {
+	font-weight: 600;
+	color: #111;
+}
+
+.useup-me-product-shipping__rate {
+	display: flex;
+	justify-content: space-between;
+	gap: 10px;
+	margin: 4px 0;
+	color: #222;
+}
+
+.useup-me-product-shipping__free-shipping {
+	border-top: 1px solid #eee;
+	margin-top: 9px;
+	padding-top: 9px;
+	color: #666;
+	font-size: 12.5px;
+}
+
+.useup-me-product-shipping__error {
+	margin-top: 8px;
+	color: #8a1f1f;
+	font-size: 12.5px;
+}
+
+.useup-me-product-shipping__loading {
+	opacity: 0.65;
+	pointer-events: none;
+}
+
+@media (max-width: 768px) {
+	.useup-me-product-shipping {
+		margin-top: 10px;
+		padding: 13px;
+	}
+
+	.useup-me-product-shipping__current-cep,
+	.useup-me-product-shipping__form {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.useup-me-product-shipping__button {
+		width: 100%;
+	}
+}

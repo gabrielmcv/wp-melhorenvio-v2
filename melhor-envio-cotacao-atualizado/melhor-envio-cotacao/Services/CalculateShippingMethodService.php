@@ -98,12 +98,44 @@ class CalculateShippingMethodService {
 						: $percent;
 				}
 
-				$rate = array(
-					'id'        => $id,
-					'label'     => $title . TimeHelper::label(
+				$timeExtra = max(
+					0,
+					(int) apply_filters(
+						'useup_melhor_envio_time_extra',
+						$timeExtra,
+						$package,
+						$products,
+						$result,
+						$this
+					)
+				);
+
+				$deliveryLabel = TimeHelper::label(
+					$result->delivery_range,
+					$timeExtra
+				);
+
+				$deliveryLabel = apply_filters(
+					'useup_melhor_envio_delivery_deadline_label',
+					$deliveryLabel,
+					$result->delivery_range,
+					$timeExtra,
+					$package,
+					$products,
+					$result,
+					$this
+				);
+
+				if ( ! is_string( $deliveryLabel ) || '' === $deliveryLabel ) {
+					$deliveryLabel = TimeHelper::label(
 						$result->delivery_range,
 						$timeExtra
-					),
+					);
+				}
+
+				$rate = array(
+					'id'        => $id,
+					'label'     => $title . $deliveryLabel,
 					'cost'      => MoneyHelper::cost(
 						$result->price,
 						$taxExtra,
@@ -111,10 +143,7 @@ class CalculateShippingMethodService {
 					),
 					'calc_tax'  => 'per_item',
 					'meta_data' => array(
-						'delivery_time' => TimeHelper::label(
-							$result->delivery_range,
-							$timeExtra
-						),
+						'delivery_time' => $deliveryLabel,
 						'price'         => MoneyHelper::price(
 							$result->price,
 							$taxExtra,
