@@ -49,7 +49,7 @@
 <template>
   <div class="app-pedidos">
     <div class="boxBanner">
-      <img src="https://s3.amazonaws.com/wordpress-v2-assets/img/banner-admin.png" />
+      <img src="@images/banner-admin.jpeg" />
     </div>
     <template>
       <div>
@@ -71,19 +71,19 @@
         <td>
           <h4>
             <b>Usuário:</b>
-            {{name}}
+            {{ name }}
           </h4>
           <h4>
             <b>Ambiente:</b>
-            {{environment}}
+            {{ environment }}
           </h4>
           <h4>
             <b>Envios:</b>
-            {{limitEnabled}}/{{limit}}
+            {{ limitEnabled }}/{{ limit }}
           </h4>
           <h4>
             <b>Saldo:</b>
-            {{getBalance}}
+            {{ getBalance }}
           </h4>
         </td>
       </tr>
@@ -108,13 +108,19 @@
               v-for="(statusName, statusKey) in statusWooCommerce"
               :key="statusKey"
               v-bind:value="statusKey"
-            >{{ statusName }}</option>
+            >
+              {{ statusName }}
+            </option>
           </select>
         </td>
       </tr>
     </table>
 
-    <div class="table-box" v-if="orders.length > 0" :class="{'-inative': !orders.length }">
+    <div
+      class="table-box"
+      v-if="orders.length > 0"
+      :class="{ '-inative': !orders.length }"
+    >
       <div class="table -woocommerce">
         <ul class="head">
           <li>
@@ -138,7 +144,12 @@
         </ul>
 
         <ul class="body">
-          <li v-for="(item, index) in orders" :key="index" class="lineGray" style="padding:1%">
+          <li
+            v-for="(item, index) in orders"
+            :key="index"
+            class="lineGray"
+            style="padding: 1%"
+          >
             <ul class="body-list">
               <li>
                 <span></span>
@@ -154,11 +165,8 @@
                   <label>Produto</label>
                   <div class="scrollBox">
                     <p v-for="product in item.products">
-                      {{product.quantity}}x
-                      <a
-                        target="_blank"
-                        v-bind:href="'/wp-admin/post.php?post='+ product.id +'&action=edit'"
-                      >{{product.name}}</a>
+                      {{ product.quantity }}x
+                      <ProductLink :id="product.id" :name="product.name" />
                     </p>
                   </div>
                 </template>
@@ -170,7 +178,10 @@
                   </p>
                   <p v-if="item.tracking != null">
                     Rastreio:
-                    <a :href="item.link_tracking" target="_blank">{{item.tracking}}</a>
+                    <ProductLink
+                      :definedLink="item.link_tracking"
+                      :name="item.tracking"
+                    />
                   </p>
                 </template>
               </li>
@@ -183,7 +194,9 @@
             </ul>
             <template v-if="toggleInfo == item.id">
               <informacoes
-                :volume="item.quotation[item.quotation.choose_method].volumes[0]"
+                :volume="
+                  item.quotation[item.quotation.choose_method].volumes[0]
+                "
                 :products="item.products"
               ></informacoes>
             </template>
@@ -197,8 +210,10 @@
     <button
       v-show="show_more"
       class="btn-border -full-green"
-      @click="loadMore({status:status, wpstatus:wpstatus})"
-    >Carregar mais</button>
+      @click="loadMore({ status: status, wpstatus: wpstatus })"
+    >
+      Carregar mais
+    </button>
 
     <transition name="fade">
       <!-- show_modal -->
@@ -206,8 +221,8 @@
         <div>
           <p class="title">Atenção</p>
           <div class="content">
-            <p v-for="msg in msg_modal" class="txt">{{msg}}</p>
-            <p v-for="msg in msg_modal2" class="txt">{{msg}}</p>
+            <p v-for="msg in msg_modal" class="txt">{{ msg }}</p>
+            <p v-for="msg in msg_modal2" class="txt">{{ msg }}</p>
           </div>
           <div class="buttons -center">
             <button
@@ -215,7 +230,9 @@
               type="button"
               @click="close"
               class="btn-border -full-blue"
-            >Fechar</button>
+            >
+              Fechar
+            </button>
           </div>
         </div>
       </div>
@@ -224,7 +241,7 @@
     <!-- show_loader -->
     <div class="me-modal" v-show="show_loader">
       <svg
-        style="float:left; margin-top:10%; margin-left:50%;"
+        style="float: left; margin-top: 10%; margin-left: 50%"
         class="ico"
         width="88"
         height="88"
@@ -290,7 +307,9 @@ import Destino from "./Pedido/Destino.vue";
 import Cotacao from "./Pedido/Cotacao.vue";
 import Documentos from "./Pedido/Documentos.vue";
 import Acoes from "./Pedido/Acoes.vue";
+import ProductLink from "./ProductLink.vue";
 import Informacoes from "./Pedido/Informacoes.vue";
+import {verifyToken, getToken, isDateTokenExpired} from 'admin/utils/token-utils';
 
 export default {
   name: "Pedidos",
@@ -312,7 +331,6 @@ export default {
       show_modal2: false,
       msg_modal2: [],
       btnClose: true,
-      ordersToGetQuotations: []
     };
   },
   components: {
@@ -321,7 +339,8 @@ export default {
     Destino,
     Documentos,
     Acoes,
-    Informacoes
+    Informacoes,
+    ProductLink,
   },
   computed: {
     ...mapGetters("orders", {
@@ -330,21 +349,20 @@ export default {
       msg_modal: "setMsgModal",
       show_modal: "showModal",
       show_more: "showMore",
-      statusWooCommerce: "statusWooCommerce"
+      statusWooCommerce: "statusWooCommerce",
     }),
-    ...mapGetters("balance", ["getBalance"])
+    ...mapGetters("balance", ["getBalance"]),
   },
   methods: {
     ...mapActions("orders", [
       "retrieveMany",
-      "loadMore",
-      ,
+      "loadMore",      
       "closeModal",
       "getStatusWooCommerce",
       "printMultiples",
       "updateQuotation",
       "addCart",
-      "showErrorAlert"
+      "showErrorAlert",
     ]),
     ...mapActions("balance", ["setBalance"]),
     close() {
@@ -354,36 +372,40 @@ export default {
       this.toggleInfo = this.toggleInfo != id ? id : null;
     },
     getToken() {
-      this.$http.get(`${ajaxurl}?action=verify_token`).then(response => {
-        if (!response.data.exists_token) {
-          this.$router.push("Token");
-        }
+      this.$http
+        .get(
+          verifyToken()
+        )
+        .then((response) => {
+          if (!response.data.exists_token) {
+            this.$router.push("Token");
+          }
 
-        this.validateToken();
-      });
+          this.validateToken();
+        });
     },
-    selectAll: function() {
+    selectAll: function () {
       if (!this.$refs.selectAllBox.checked) {
         this.orderSelecteds = [];
-        this.orders.filter(order => {
+        this.orders.filter((order) => {
           this.$refs[order.id][0].checked = false;
         });
         return;
       }
       let selecteds = [];
-      this.orders.filter(order => {
+      this.orders.filter((order) => {
         selecteds.push(order);
         this.$refs[order.id][0].checked = true;
       });
       this.orderSelecteds = selecteds;
     },
-    beforePrintMultiples: function() {
+    beforePrintMultiples: function () {
       this.msg_modal2.length = 0;
       let selecteds = [];
       let not = [];
       let messagePrint = [];
 
-      this.orders.filter(order => {
+      this.orders.filter((order) => {
         if (
           this.$refs[order.id][0].checked &&
           (order.status == "posted" ||
@@ -413,19 +435,19 @@ export default {
       this.msg_modal2.length = 0;
       this.printMultiples({
         orderSelecteds: selecteds,
-        message: messagePrint[0]
+        message: messagePrint[0],
       });
     },
-    alertMessage: function(data) {
+    alertMessage: function (data) {
       let stringMessage;
-      data.filter(item => {
+      data.filter((item) => {
         this.msg_modal2.push(item);
       });
       this.show_modal2 = true;
     },
     getSelectedOrders() {
       const orders = [];
-      this.orders.filter(order => {
+      this.orders.filter((order) => {
         if (this.$refs[order.id][0].checked && order.status == null) {
           orders.push(order);
         }
@@ -448,9 +470,9 @@ export default {
       }
       this.btnClose = true;
     },
-    countOrdersEnabledToBuy: function() {
+    countOrdersEnabledToBuy: function () {
       let total = 0;
-      this.orders.filter(order => {
+      this.orders.filter((order) => {
         if (this.$refs[order.id][0].checked && order.status == null) {
           total++;
         }
@@ -458,30 +480,30 @@ export default {
       return total;
     },
 
-    dispatchCart: function(order) {
+    dispatchCart: function (order) {
       this.msg_modal2.push("Enviando pedido ID" + order.id + ". Aguarde ...");
 
       return new Promise((resolve, reject) => {
         let data = {
           id: order.id,
           choosen: order.quotation.choose_method,
-          non_commercial: order.non_commercial
+          non_commercial: order.non_commercial,
         };
 
         setTimeout(() => {
           this.addCart(data)
-            .then(response => {
+            .then((response) => {
               this.msg_modal2.push(
                 "Pedido ID" + order.id + " enviado com sucesso!"
               );
               resolve(response);
             })
-            .catch(error => {
+            .catch((error) => {
               this.msg_modal2.push(
                 "OPS!, ocorreu um erro ao enviar o pedido ID" + order.id
               );
               this.btnClose = true;
-              error.errors.filter(item => {
+              error.errors.filter((item) => {
                 this.msg_modal2.push("ID:" + order.id + ": " + item);
               });
               this.btnClose = true;
@@ -491,50 +513,16 @@ export default {
       });
     },
     getMe() {
-      this.$http.get(`${ajaxurl}?action=me`).then(response => {
-        if (response.data.id) {
-          this.name = response.data.firstname + " " + response.data.lastname;
-          this.environment = response.data.environment;
-          this.limit = response.data.limits.shipments;
-          this.limitEnabled = response.data.limits.shipments_available;
-        }
-      });
-    },
-    getOrdersWithoutQuotations() {
-      return new Promise(resolve => {
-        let ordersToGetQuotations = [];
-        this.orders.filter(order => {
-          if (order.status == null && order.quotation.length == 0) {
-            ordersToGetQuotations.push(order.id);
+      this.$http
+        .get(`${ajaxurl}?action=me&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_users}`)
+        .then((response) => {
+          if (response.data.id) {
+            this.name = response.data.firstname + " " + response.data.lastname;
+            this.environment = response.data.environment;
+            this.limit = response.data.limits.shipments;
+            this.limitEnabled = response.data.limits.shipments_available;
           }
         });
-        resolve(ordersToGetQuotations);
-      });
-    },
-    getQuotations() {
-      if (this.ordersToGetQuotations.length == 0) {
-        return;
-      }
-      this.getQuotation(this.ordersToGetQuotations[0]).then(response => {
-        this.updateQuotation({
-          order_id: this.ordersToGetQuotations[0],
-          quotations: response.data
-        });
-        this.ordersToGetQuotations.shift();
-      });
-    },
-    getQuotation(order_id) {
-      if (typeof order_id == "undefined") {
-        return;
-      }
-      return new Promise((resolve, reject) => {
-        this.$http
-          .get(`${ajaxurl}?action=get_quotation&id=${order_id}`)
-          .then(response => {
-            this.getQuotations();
-            resolve(response);
-          });
-      });
     },
     close() {
       this.show_modal2 = false;
@@ -542,37 +530,23 @@ export default {
       this.closeModal();
     },
     validateToken() {
-      this.$http.get(`${ajaxurl}?action=get_token`).then(response => {
-        if (response.data.token) {
-          var token = response.data.token;
-
-          // JWT Token Decode
-          var base64Url = token.split(".")[1];
-          var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-          var tokenDecoded = decodeURIComponent(
-            atob(base64)
-              .split("")
-              .map(function(c) {
-                return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-              })
-              .join("")
-          );
-
-          var tokenFinal = JSON.parse(tokenDecoded);
-          var dateExp = new Date(parseInt(tokenFinal.exp) * 1000);
-          var currentTime = new Date();
-
-          if (dateExp < currentTime) {
-            this.error_message =
-              "Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente";
+      this.$http
+        .get(
+          getToken()
+        )
+        .then((response) => {
+          if (response.data.token) {
+            if (isDateTokenExpired(response.data.token)) {
+              this.error_message =
+                "Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente";
+            } else {
+              this.error_message = "";
+            }
           } else {
-            this.error_message = "";
+            this.$router.push("Token");
           }
-        } else {
-          this.$router.push("Token");
-        }
-      });
-    }
+        });
+    },
   },
   watch: {
     status() {
@@ -581,12 +555,6 @@ export default {
     wpstatus() {
       this.retrieveMany({ status: this.status, wpstatus: this.wpstatus });
     },
-    orders() {
-      this.getOrdersWithoutQuotations().then(response => {
-        this.ordersToGetQuotations = response;
-        this.getQuotations();
-      });
-    }
   },
   mounted() {
     this.getToken();
@@ -596,7 +564,7 @@ export default {
     }
     this.setBalance();
     this.getStatusWooCommerce();
-  }
+  },
 };
 </script>
 

@@ -1,4 +1,4 @@
-<style>
+<style lang="css">
 .boxBanner {
   float: left;
   width: 100%;
@@ -73,7 +73,9 @@
 <template>
   <div>
     <div class="boxBanner">
-      <img src="https://s3.amazonaws.com/wordpress-v2-assets/img/banner-admin.png" />
+      <img
+        src="@images/banner-admin.jpeg"
+      />
     </div>
 
     <template>
@@ -91,157 +93,70 @@
       </div>
     </template>
 
-    <div class="wpme_config">
-      <h2>Endereço</h2>
-      <p>Escolha o endereço para cálculo de frete, esse endereço será utlizado para realizar as cotações.</p>
-      <div class="wpme_flex">
-        <ul class="wpme_address">
-          <li v-for="option in addresses" v-bind:value="option.id" :key="option.id">
-            <label :for="option.id">
-              <div class="wpme_address-top">
-                <input
-                  type="radio"
-                  :id="option.id"
-                  :value="option.id"
-                  v-model="address"
-                  @click="showJadlogAgencies({city: option.city, state: option.state})"
-                />
-                <h2>{{option.label}}</h2>
-              </div>
-              <div class="wpme_address-body">
-                <ul>
-                  <li>
-                    <b>Endereço:</b>
-                    {{ `${option.address}, ${option.number}` }}
-                  </li>
-                  <li>{{ `${option.district} - ${option.city}/${option.state}` }}</li>
-                  <li v-if="option.complement">{{ `${option.complement}` }}</li>
-                  <li>
-                    <b>CEP:</b>
-                    {{ `${option.postal_code}` }}
-                  </li>
-                </ul>
-              </div>
-            </label>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <hr />
-
-    <div class="wpme_config">
-      <h2>Jadlog</h2>
-      <p>Escolha a agência Jadlog de sua preferência para realizar o envio dos seus produtos.</p>
-      <div class="wpme_flex">
-        <ul class="wpme_address">
-          <li>
-            <div class="wpme_address-top" style="border-bottom: none;">
-              <input
-                type="checkbox"
-                class="show-all-agencies"
-                id="show-all-agencies"
-                v-model="show_all_agencies_jadlog"
-                @change="showJadlogAgenciesState()"
-              />
-              <label for="show-all-agencies">Desejo visualizar todas as agencias do meu estado</label>
-            </div>
-            <br />
-            <template>
-              <select name="agencies" id="agencies" v-model="agency">
-                <option value>Selecione...</option>
-                <option
-                  v-for="option in agencies"
-                  :value="option.id"
-                  :key="option.id"
-                  :selected="option.selected"
-                >
-                  <strong>{{option.name}}</strong>
-                </option>
-              </select>
-            </template>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <hr />
-
-    <div v-show="token_environment == 'production'" class="wpme_config">
-      <h2>Azul Cargo Express</h2>
-      <p>Escolha a agência Azul Cargo Express de sua preferência para realizar o envio dos seus produtos.</p>
-      <div class="wpme_flex">
-        <ul class="wpme_address">
-          <li>
-            <template>
-              <select name="agenciesAzul" id="agenciesAzul" v-model="agency_azul">
-                <option value>Selecione...</option>
-                <option
-                  v-for="option in agenciesAzul"
-                  :value="option.id"
-                  :key="option.id"
-                  :selected="option.selected"
-                >
-                  <strong>{{option.name}}</strong>
-                </option>
-              </select>
-            </template>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <hr />
-
-    <template v-if="stores.length > 0">
+    <template v-if="originData.length > 0">
       <div class="wpme_config">
-        <h2>Loja</h2>
-        <p>Escolha qual a sua loja padrão dentre as suas lojas cadastradas no Melhor Envio. A etiqueta será gerada com base nas informações da loja selecionada.</p>
-        <small>Esse endereço será exibido na etiqueta do Melhor Envio.</small> </br></br>
+        <h2>Seleciona a origem dos envios</h2>
         <div class="wpme_flex">
           <ul class="wpme_address">
             <li
-              v-for="option in stores"
+              v-for="option in originData"
               v-bind:value="option.id"
-              :key="option.id"
-              class="store-box"
-            >
+              :key="option.id">
               <label :for="option.id">
                 <div class="wpme_address-top">
-                  <input @click="showJadlogAgencies({
-                        city: option.address.city.city, 
-                        state: option.address.city.state.state_abbr
-                        })" 
-                    type="radio" :id="option.id" :value="option.id" v-model="store" />
-                  <h3>{{option.name}}</h3>
+                  <input
+                    type="radio"
+                    :id="option.id"
+                    name="input_address"
+                    :value="option.address.id"
+                    v-model="origin"
+                    data-cy="address-input"
+                    @click="
+                      refreshAgencies({
+                        city: option.address.city,
+                        state: option.address.state,
+                      }),
+                        setOrigin(option.id)
+                    "
+                  />
+                  <h2>{{ option.address.label }}</h2>
                 </div>
                 <div class="wpme_address-body">
                   <ul>
                     <li v-if="option.document">
-                      <b>CNPJ:</b>
+                      <b>CPF:</b>
                       {{ `${option.document}` }}
                     </li>
+                    <li v-if="option.company_document">
+                      <b>CNPJ:</b>
+                      {{ `${option.company_document}` }}
+                    </li>
                     <li v-if="option.state_register">
-                      <b>Inscrição estadual:</b>
+                      <b>Registro estadual:</b>
                       {{ `${option.state_register}` }}
                     </li>
-                    <li v-if="option.email">
-                      <b>E-mail:</b>
-                      {{ `${option.email} ` }}
+                    <li v-if="option.economic_activity_code">
+                      <b>CNAE:</b>
+                      {{ `${option.economic_activity_code}` }}
                     </li>
-                    <template v-if="option.address">
-                        <li v-if="option.address.label">
-                            <b>Identificação:</b>
-                            {{ `${option.address.label} ` }}
-                        </li>
-                        <li v-if="option.address.address && option.address.number">
-                            <b>Endereço:</b>
-                            {{ `${option.address.address}, ${option.address.number} ` }}
-                        </li>
-                        <li v-if="option.address.city && option.address.city.city && option.address.city.state.state_abbr">
-                            {{ `${option.address.city.city}/${option.address.city.state.state_abbr} ` }}
-                        </li>
-                        <li v-if="option.address.postal_code">
-                            {{ `CEP: ${option.address.postal_code}` }}
-                        </li>
-                    </template>
+                    <li>
+                      <b>Endereço:</b>
+                      {{
+                        `${option.address.address}, ${option.address.number}`
+                      }}
+                    </li>
+                    <li>
+                      {{
+                        `${option.address.district} - ${option.address.city}/${option.address.state}`
+                      }}
+                    </li>
+                    <li v-if="option.address.complement">
+                      {{ `${option.address.complement}` }}
+                    </li>
+                    <li>
+                      <b>CEP:</b>
+                      {{ `${option.address.postal_code}` }}
+                    </li>
                   </ul>
                 </div>
               </label>
@@ -252,22 +167,203 @@
       <hr />
     </template>
 
-    <div class="wpme_config">
-      <h2>Opções para cotação</h2>
-      <p>As opções abaixo são serviços adicionais oferecido junto com a entrega, taxas extras serão adicionados no calculo de entrega por cada opção selecionada.</p>
+    <template>
+      <div class="wpme_config" style="width: 50%">
+        <h2>Informações da etiqueta</h2>
+        <p>
+          As informações abaixo serão exibidas na etiqueta impressa do Melhor
+          Envio
+        </p>
+        <div class="wpme_flex">
+          <ul class="wpme_address">
+            <li>
+              <span>Nome</span></br>
+              <input v-model="label.name" data-cy="input-name" type="text" />
+              <br />
+              <br />
+
+              <span>E-mail</span></br>
+              <input v-model="label.email" data-cy="input-email" type="text" />
+              <br />
+              <br />
+
+              <span>Telefone</span></br>
+              <the-mask
+                v-model="label.phone"
+                :mask="['(##) ####-####', '(##) #####-####']"
+              />
+              <br />
+              <br />
+
+              <span>CPF</span></br>
+              <the-mask v-model="label.document" :mask="['###.###.###-##']" />
+              <br />
+              <br />
+
+              <span>CNPJ</span></br>
+              <the-mask
+                v-model="label.company_document"
+                :mask="['##.###.###/####-##']"
+              />
+              <br />
+              <br />
+
+              <span>Inscrição estadual</span></br>
+              <input
+                v-model="label.state_register"
+                data-cy="input-state_register"
+                type="text"
+              />
+              <br />
+              <br />
+
+              <span>CNAE</span></br>
+              <input
+                v-model="label.economic_activity_code"
+                data-cy="input-economic_activity_code"
+                type="text"
+              />
+              <br />
+              <br />
+
+              <input
+                v-if="label.address"
+                v-model="label.address"
+                type="hidden"
+              />
+             <input
+                v-if="label.complement"
+                v-model="label.complement"
+                type="hidden"
+              />
+              <input
+                v-if="label.complement"
+                v-model="label.complement"
+                type="hidden"
+              />
+              <input v-if="label.number" v-model="label.number" type="hidden" />
+              <input
+                v-if="label.district"
+                v-model="label.district"
+                type="hidden"
+              />
+              <input v-if="label.city" v-model="label.city" type="hidden" />
+              <input v-if="label.state" v-model="label.state" type="hidden" />
+              <input
+                v-if="label.country_id"
+                v-model="label.country_id"
+                type="hidden"
+              />
+              <input
+                v-if="label.postal_code"
+                v-model="label.postal_code"
+                type="hidden"
+              />
+            </li>
+          </ul>
+        </div>
+      </div>
+      <hr />
+    </template>
+
+    <div class="wpme_config" v-show="agencies.length > 0">
+      <h2>Jadlog</h2>
+      <p>
+        Escolha a agência Jadlog de sua preferência para realizar o envio dos
+        seus produtos.
+      </p>
       <div class="wpme_flex">
         <ul class="wpme_address">
           <li>
-            <input type="checkbox" value="Personalizar" data-cy="receipt" v-model="options_calculator && options_calculator.receipt" />
-            Aviso de recebimento
+            <template>
+              <select
+                name="agencies"
+                id="agencies"
+                v-model="agency"
+                data-cy="input-agency-jadlog"
+              >
+                <option value>Selecione...</option>
+                <option
+                  v-for="option in agencies"
+                  :value="option.id"
+                  :key="option.id"
+                  :selected="option.selected"
+                >
+                  <strong>{{ option.name }}</strong>
+                </option>
+              </select>
+            </template>
           </li>
+        </ul>
+      </div>
+    </div>
+    <hr />
+
+    <div
+      v-show="token_environment == 'production' && agenciesAzul.length > 0"
+      class="wpme_config"
+    >
+      <h2>Azul Cargo Express</h2>
+      <p>
+        Escolha a agência Azul Cargo Express de sua preferência para realizar o
+        envio dos seus produtos.
+      </p>
+      <div class="wpme_flex">
+        <ul class="wpme_address">
           <li>
-            <input type="checkbox" value="Personalizar" data-cy="own_hand" v-model="options_calculator && options_calculator.own_hand" />
-            Mão própria
+            <template>
+              <select
+                name="agenciesAzul"
+                id="agenciesAzul"
+                v-model="agency_azul"
+                data-cy="input-agency-azul"
+              >
+                <option value>Selecione...</option>
+                <option
+                  v-for="option in agenciesAzul"
+                  :value="option.id"
+                  :key="option.id"
+                  :selected="option.selected"
+                >
+                  <strong>{{ option.name }}</strong>
+                </option>
+              </select>
+            </template>
           </li>
+        </ul>
+      </div>
+    </div>
+    <hr />
+
+    <div
+      v-show="token_environment == 'production' && agenciesLatam.length > 0"
+      class="wpme_config"
+    >
+      <h2>LATAM Cargo</h2>
+      <p>
+        Escolha a unidade Latam Cargo de sua preferência para realizar o envio
+        dos seus produtos.
+      </p>
+      <div class="wpme_flex">
+        <ul class="wpme_address">
           <li>
-            <input type="checkbox" value="Personalizar" data-cy="insurance_value" v-model="options_calculator && options_calculator.insurance_value" />
-            Assegurar sempre 
+            <template>
+              <select
+                name="agenciesLatam"
+                id="agenciesLatam"
+                v-model="agency_latam"
+              >
+                <option value>Selecione...</option>
+                <option
+                  v-for="option in agenciesLatam"
+                  :value="option.id"
+                  :key="option.id"
+                  :selected="option.selected"
+                >
+                  <strong>{{ option.name }}</strong>
+                </option>
+              </select>
+            </template>
           </li>
         </ul>
       </div>
@@ -275,30 +371,104 @@
     <hr />
 
     <div class="wpme_config">
+      <h2>Opções para cotação</h2>
+      <p>
+        As opções abaixo são serviços adicionais oferecido junto com a entrega,
+        taxas extras serão adicionados no calculo de entrega por cada opção
+        selecionada.
+      </p>
+      <div class="wpme_flex">
+        <ul class="wpme_address">
+          <li>
+            <input
+              type="checkbox"
+              value="Personalizar"
+              data-cy="receipt"
+              v-model="options_calculator && options_calculator.receipt"
+            />
+            Aviso de recebimento
+          </li>
+          <li>
+            <input
+              type="checkbox"
+              value="Personalizar"
+              data-cy="own_hand"
+              v-model="options_calculator && options_calculator.own_hand"
+            />
+            Mão própria
+          </li>
+          <li>
+            <input
+              type="checkbox"
+              value="Personalizar"
+              data-cy="insurance_value"
+              v-model="options_calculator && options_calculator.insurance_value"
+            />
+            Assegurar sempre
+          </li>
+        </ul>
+      </div>
+    </div>
+    <hr />
+
+    <div class="wpme_config">
+      <h2>Embalagem padrão</h2>
+      <p>
+        Configure uma embalagem padrão para quando o seu produto não possuir alguma das dimensões ou peso.
+      </p>
+      <div class="wpme_flex">
+        <ul class="wpme_address">
+          <li>
+              <span>Largura</span></br>
+              <input v-model="dimension.width" data-cy="input-width-default" type="number" />
+              <br />
+              <br />
+
+              <span>Altura</span></br>
+              <input v-model="dimension.height" data-cy="input-heigt-default" type="number" />
+              <br />
+              <br />
+
+              <span>Comprimento</span></br>
+              <input v-model="dimension.length" data-cy="input-length-default" type="number" />
+              <br />
+              <br />
+
+              <span>Peso</span></br>
+              <input v-model="dimension.weight" data-cy="input-weight-default" type="number" />
+              <br />
+              <br />
+          </li>
+        </ul>
+      </div>
+      <hr />
+    </div>
+
+    <div class="wpme_config">
       <h2>Calculadora</h2>
-      <p>Ao habilitar essa opção, será exibida a calculadora de fretes com cotações do Melhor Envio na tela do produto.</p>
+      <p>
+        Ao habilitar essa opção, será exibida a calculadora de fretes com
+        cotações do Melhor Envio na tela do produto.
+      </p>
       <div class="wpme_flex">
         <ul class="wpme_address">
           <li>
             <label for="41352">
-              <div class="wpme_address-top" style="border-bottom: none;">
-                <input type="checkbox" value="exibir" v-model="show_calculator" />
+              <div class="wpme_address-top" style="border-bottom: none">
                 <label for="two">exibir a calculadora na tela do produto</label>
               </div>
-              <br />
-
               <select
-                v-show="show_calculator"
+                data-cy="input-where-calculator"
                 name="agencies"
                 id="agencies"
                 v-model="where_calculator"
               >
                 <option
-                  v-for="option in where_calculator_collect"
-                  :value="option.id"
-                  :key="option.id"
+                  v-for="option in keysWhereCalculatorCollect"
+                  :value="option"
+                  :key="option"
                 >
-                  <strong>{{option.name}}</strong>
+                  <strong>{{ where_calculator_collect[option] }}</strong>
                 </option>
               </select>
             </label>
@@ -311,23 +481,37 @@
       <p>
         <b>[calculadora_melhor_envio product_id="product_id"]</b>
       </p>
-      <p>É necessário informar o ID do produto para o shortcode funcionar de forma adequada</p>
+      <p>
+        É necessário informar o ID do produto para o shortcode funcionar de
+        forma adequada
+      </p>
     </div>
     <hr />
 
-    <div class="wpme_config" style="width:50%;">
+    <div class="wpme_config" style="width: 50%">
       <h2>Diretório dos plugins</h2>
-      <p>Em algumas instâncias do wordpress, o caminho do diretório de plugins pode ser direferente, ocorrendo falhas no plugin, sendo necessário definir o caminho manualmente no campo abaixo. Tome cuidado ao realizar essa ação.</p>
+      <p>
+        Em algumas instâncias do wordpress, o caminho do diretório de plugins
+        pode ser direferente, ocorrendo falhas no plugin, sendo necessário
+        definir o caminho manualmente no campo abaixo. Tome cuidado ao realizar
+        essa ação.
+      </p>
       <div class="wpme_flex">
         <ul class="wpme_address">
           <li>
-            <input type="checkbox" value="Personalizar" v-model="show_path" />
+            <input
+              type="checkbox"
+              value="Personalizar"
+              v-model="show_path"
+              data-cy="input-show-path"
+            />
             <span>Estou ciente dos riscos</span>
             <br />
             <br />
             <input
               v-show="show_path"
               v-model="path_plugins"
+              data-cy="input-path"
               type="text"
               placeholder="/home/htdocs/html/wp-content/plugins"
             />
@@ -349,7 +533,9 @@
             <p class="txt">dados atualizados com sucesso!</p>
           </div>
           <div class="buttons -center">
-            <button type="button" @click="close" class="btn-border -full-blue">Fechar</button>
+            <button type="button" @click="close" class="btn-border -full-blue">
+              Fechar
+            </button>
           </div>
         </div>
       </div>
@@ -357,7 +543,7 @@
 
     <div class="me-modal" v-show="show_load">
       <svg
-        style="float:left; margin-top:10%; margin-left:50%;"
+        style="float: left; margin-top: 10%; margin-left: 50%"
         class="ico"
         width="88"
         height="88"
@@ -419,17 +605,26 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { Money } from "v-money";
+import { TheMask } from "vue-the-mask";
+import { where_calculator_collect } from "admin/utils/where-calculator_collect";
+import {
+  verifyToken,
+  getToken,
+  isDateTokenExpired,
+} from "admin/utils/token-utils";
+import deleteSession from "admin/utils/delete-session";
+
 export default {
   name: "Configuracoes",
-  components: { Money },
+  components: { Money, TheMask },
   data() {
     return {
       error_message: null,
       canUpdate: true,
-      address: null,
-      store: null,
+      origin: null,
       agency: null,
       agency_azul: null,
+      agency_latam: null,
       show_modal: false,
       custom_calculator: false,
       show_calculator: false,
@@ -456,62 +651,20 @@ export default {
         masked: false,
       },
       where_calculator: "woocommerce_after_add_to_cart_form",
-      where_calculator_collect: [
-        {
-          id: "woocommerce_before_single_product",
-          name: "Antes do titulo do produto (Depende do tema do projeto)",
-        },
-        {
-          id: "woocommerce_after_single_product",
-          name: "Depois do titulo do produto",
-        },
-        {
-          id: "woocommerce_single_product_summary",
-          name: "Antes da descrição do produto",
-        },
-        {
-          id: "woocommerce_before_add_to_cart_form",
-          name: "Antes do fórmulario de comprar",
-        },
-        {
-          id: "woocommerce_before_variations_form",
-          name: "Antes das opçoes do produto",
-        },
-        {
-          id: "woocommerce_before_add_to_cart_button",
-          name: "Antes do botão de comprar",
-        },
-        {
-          id: "woocommerce_before_single_variation",
-          name: "Antes do campo de variações",
-        },
-        {
-          id: "woocommerce_single_variation",
-          name: "Antes das variações",
-        },
-        {
-          id: "woocommerce_after_add_to_cart_form",
-          name: "Depois do botão de comprar",
-        },
-        {
-          id: "woocommerce_product_meta_start",
-          name: "Antes das informações do produto",
-        },
-        {
-          id: "woocommerce_share",
-          name: "Depois dos botões de compartilhamento",
-        },
-      ],
+      where_calculator_collect,
     };
   },
   computed: {
     ...mapGetters("configuration", {
-      addresses: "getAddress",
-      stores: "getStores",
+      originData: "getOrigin",
+      label: "getLabel",
+      dimension: "getDimension",
       agencySelected_: "getAgencySelected",
       agencyAzulSelected_: "getAgencyAzulSelected",
+      agencyLatamSelected_: "getAgencyLatamSelected",
       agencies: "getAgencies",
       agenciesAzul: "getAgenciesAzul",
+      agenciesLatam: "getAgenciesLatam",
       allAgencies: "getAllAgencies",
       style_calculator: "getStyleCalculator",
       methods_shipments: "getMethodsShipments",
@@ -520,17 +673,20 @@ export default {
       where_calculator_: "getWhereCalculator",
       show_calculator_: "getShowCalculator",
       show_all_agencies_jadlog_: "getShowAllJadlogAgencies",
-      show_all_agencies_azul_: "getShowAllAzulAgencies",
       options_calculator_: "getOptionsCalculator",
       token_environment: "getEnvironment",
       configs: "getConfigs",
     }),
+    keysWhereCalculatorCollect() {
+      return Object.keys(this.where_calculator_collect);
+    },
   },
   methods: {
     ...mapActions("configuration", [
       "getConfigs",
       "setLoader",
       "setAgenciesAzul",
+      "setAgenciesLatam",
       "setAgencies",
       "saveAll",
       "getEnvironment",
@@ -548,16 +704,17 @@ export default {
     updateConfig() {
       this.setLoader(true);
       let data = new Array();
-      data["address"] = this.address;
-      data["store"] = this.store;
+      data["origin"] = this.origin;
+      data["label"] = this.label;
       data["agency"] = this.agency;
       data["agency_azul"] = this.agency_azul;
+      data["agency_latam"] = this.agency_latam;
       data["show_calculator"] = this.show_calculator;
       data["show_all_agencies_jadlog"] = this.show_all_agencies_jadlog;
-      data["show_all_agencies_azul"] = this.show_all_agencies_azul;
       data["where_calculator"] = this.where_calculator;
       data["path_plugins"] = this.path_plugins;
       data["options_calculator"] = this.options_calculator;
+      data["dimension_default"] = this.dimension;
 
       let respSave = this.saveAll(data);
 
@@ -571,23 +728,54 @@ export default {
           this.setLoader(false);
         });
     },
+    refreshAgencies(data) {
+      this.showJadlogAgencies(data);
+      this.showAzulAgencies(data);
+      this.showALatamAgencies(data);
+    },
+    setOrigin(id) {
+      if (this.originData.length > 0) {
+        this.originData.filter((item) => {
+          if (item.id == id) {
+            this.label.address = item.address.address;
+            this.label.complement = item.address.complement;
+            this.label.number = item.address.number;
+            this.label.district = item.address.district;
+            this.label.city = item.address.city;
+            this.label.state = item.address.state;
+            this.label.country_id = item.address.country_id;
+            this.label.postal_code = item.address.postal_code;
+            this.label.name = item.name;
+            this.label.email = item.email;
+            this.label.phone = item.phone;
+            this.label.document = item.document;
+            this.label.company_document = item.company_document;
+            this.label.state_register = item.state_register;
+            this.label.economic_activity_code = item.economic_activity_code;
+          }
+        });
+      }
+    },
+    createAjaxUrl(agencyId, data) {
+      const { city, state } = data;
+      return `${ajaxurl}?action=get_agencies&company=${agencyId}&city=${city}&state=${state}&_wpnonce=${wpApiSettingsMelhorEnvio.nonce_configs}`;
+    },
     showJadlogAgencies(data) {
       this.setLoader(true);
       this.agency = "";
       var responseAgencies = [];
-      var promiseAgencies = new Promise((resolve, reject) => {
+      var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
-          .post(
-            `${ajaxurl}?action=get_agency_jadlog&city=${data.city}&state=${data.state}`
-          )
+          .post(this.createAjaxUrl(2, data))
           .then(function (response) {
             if (response && response.status === 200) {
-              responseAgencies = response.data.agencies;
+              responseAgencies = response.data;
               resolve(true);
             }
           })
           .catch((error) => {
-            alert(error.response.data.message);
+            console.log(error);
+            responseAgencies = [];
           })
           .finally(() => {
             this.setLoader(false);
@@ -602,20 +790,18 @@ export default {
     showAzulAgencies(data) {
       this.setLoader(true);
       this.agency_azul = "";
-      var responseAgencies = [];
-      var promiseAgencies = new Promise((resolve, reject) => {
+      var responseAgenciesAzul = [];
+      var promiseAgencies = new Promise((resolve, _reject) => {
         this.$http
-          .post(
-            `${ajaxurl}?action=get_agency_azul&city=${data.city}&state=${data.state}`
-          )
+          .post(this.createAjaxUrl(9, data))
           .then(function (response) {
             if (response && response.status === 200) {
-              responseAgencies = response.data.agencies;
+              responseAgenciesAzul = response.data;
               resolve(true);
             }
           })
           .catch((error) => {
-            alert(error.response.data.message);
+            this.setAgenciesAzul([]);
           })
           .finally(() => {
             this.setLoader(false);
@@ -623,7 +809,33 @@ export default {
       });
 
       promiseAgencies.then((resolve) => {
-        this.setAgenciesAzul(responseAgencies);
+        this.setAgenciesAzul(responseAgenciesAzul);
+        this.setLoader(false);
+      });
+    },
+    showALatamAgencies(data) {
+      this.setLoader(true);
+      this.agency_latam = "";
+      var responseAgenciesLatam = [];
+      var promiseAgencies = new Promise((resolve, _reject) => {
+        this.$http
+          .post(this.createAjaxUrl(6, data))
+          .then(function (response) {
+            if (response && response.status === 200) {
+              responseAgenciesLatam = response.data;
+              resolve(true);
+            }
+          })
+          .catch((error) => {
+            this.setAgenciesLatam([]);
+          })
+          .finally(() => {
+            this.setLoader(false);
+          });
+      });
+
+      promiseAgencies.then((resolve) => {
+        this.setAgenciesLatam(responseAgenciesLatam);
         this.setLoader(false);
       });
     },
@@ -631,28 +843,18 @@ export default {
       this.show_modal = false;
     },
     clearSession() {
-      return new Promise((resolve, reject) => {
-        this.$http
-          .get(`${ajaxurl}?action=delete_melhor_envio_session`)
-          .then((response) => {
-            resolve(true);
-          });
+      return new Promise((resolve, _reject) => {
+        this.$http.get(deleteSession()).then((_response) => {
+          resolve(true);
+        });
       });
-    },
-    formatNumber(value) {
-      let val = (value / 1).toFixed(2).replace(".", ",");
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    },
-    formatPercent(value) {
-      let val = value / 1;
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
     showTimeWithDay(value) {
       let val = value == 1 ? value + " dia" : value + " dias";
       return val;
     },
     getToken() {
-      this.$http.get(`${ajaxurl}?action=verify_token`).then((response) => {
+      this.$http.get(verifyToken()).then((response) => {
         if (!response.data.exists_token) {
           this.$router.push("Token");
         }
@@ -661,27 +863,9 @@ export default {
       });
     },
     validateToken() {
-      this.$http.get(`${ajaxurl}?action=get_token`).then((response) => {
+      this.$http.get(getToken()).then((response) => {
         if (response.data.token) {
-          var token = response.data.token;
-
-          // JWT Token Decode
-          var base64Url = token.split(".")[1];
-          var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-          var tokenDecoded = decodeURIComponent(
-            atob(base64)
-              .split("")
-              .map(function (c) {
-                return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-              })
-              .join("")
-          );
-
-          var tokenFinal = JSON.parse(tokenDecoded);
-          var dateExp = new Date(parseInt(tokenFinal.exp) * 1000);
-          var currentTime = new Date();
-
-          if (dateExp < currentTime) {
+          if (isDateTokenExpired(response.data.token)) {
             this.error_message =
               "Seu Token Melhor Envio expirou, cadastre um novo token para o plugin voltar a funcionar perfeitamente";
           } else {
@@ -692,37 +876,13 @@ export default {
         }
       });
     },
-    showJadlogAgenciesState() {
-      this.setLoader(true);
-      this.agency = "";
-      this.$http
-        .post(`${ajaxurl}?action=get_agency_jadlog&my-state=true`)
-        .then((response) => {
-          this.setAgencies(response.data.agencies);
-        })
-        .catch((error) => {
-          alert(error.response.data.message);
-        })
-        .finally(() => {
-          this.setLoader(false);
-        });
-    },
   },
   watch: {
-    addresses() {
-      if (this.addresses.length > 0) {
-        this.addresses.filter((item) => {
+    originData() {
+      if (this.originData.length > 0) {
+        this.originData.filter((item) => {
           if (item.selected) {
-            this.address = item.id;
-          }
-        });
-      }
-    },
-    stores() {
-      if (this.stores.length > 0) {
-        this.stores.filter((item) => {
-          if (item.selected) {
-            this.store = item.id;
+            this.origin = item.id;
           }
         });
       }
@@ -749,11 +909,25 @@ export default {
       }
       this.setLoader(false);
     },
+    agenciesLatam() {
+      this.setLoader(true);
+      if (this.agenciesLatam.length > 0) {
+        this.agenciesLatam.filter((item) => {
+          if (item.selected) {
+            this.agency_latam = item.id;
+          }
+        });
+      }
+      this.setLoader(false);
+    },
     agencySelected_(e) {
       this.agency = e;
     },
     agencyAzulSelected_(e) {
       this.agency_azul = e;
+    },
+    agencyLatamSelected_(e) {
+      this.agency_latam = e;
     },
     show_calculator_(e) {
       this.show_calculator = e;

@@ -1,34 +1,30 @@
 <?php
 
-namespace Models;
+namespace MelhorEnvio\Models;
 
-class Agency
-{
-    const AGENCY_SELECTED = 'melhorenvio_agency_jadlog_v2';
+class Agency {
 
-    /**
-     * function to get the id of agency Jadlog selected.
-     *
-     * @return bool|int
-     */
-    public function getSelected()
-    {
-        $id = get_option(self::AGENCY_SELECTED, false);
+	const AGENCY_SELECTED = 'melhorenvio_option_agency';
 
-        return (empty($id)) ? false : intval($id);
-    }
+	/**
+	 * function to get the id of agency Jadlog selected.
+	 *
+	 * @return array
+	 */
+	public function get() {
+		return get_option( self::AGENCY_SELECTED, array() );
+	}
 
-    /**
-     * @param string $id
-     * @return bool
-     */
-    public function setAgency($id)
-    {
-        delete_option(self::AGENCY_SELECTED);
-        if (!add_option(self::AGENCY_SELECTED, $id)) {
-            return false;
-        }
+	/**
+	 * @param array $data
+	 * @return bool
+	 */
+	public function set( $data ) {
+		delete_option( self::AGENCY_SELECTED );
+		if ( ! add_option( self::AGENCY_SELECTED, $data ) ) {
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 }

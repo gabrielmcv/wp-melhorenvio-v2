@@ -1,12 +1,17 @@
 <template>
   <div class="container">
-    <a v-if="item.log" :href="item.log" class="action-button container__link"></a>
-
     <a
       class="action-button container__link"
       v-if="buttonCart(item)"
+      data-cy="input-add-cart"
       data-tip="Adicionar o pedido no carrinho de compras"
-      @click="sendCartSimple({id:item.id, service_id:item.quotation.choose_method, non_commercial: item.non_commercial})"
+      @click="
+        sendCartSimple({
+          id: item.id,
+          service_id: item.quotation.choose_method,
+          non_commercial: item.non_commercial,
+        })
+      "
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -26,8 +31,22 @@
           <stop offset="0" stop-color="#00efd1" />
           <stop offset="1" stop-color="#00acea" />
         </linearGradient>
-        <linearGradient id="b" x1="372.786" x2="372.786" xlink:href="#a" y1="30" y2="438.078" />
-        <linearGradient id="c" x1="256" x2="256" xlink:href="#a" y1="30" y2="438.078" />
+        <linearGradient
+          id="b"
+          x1="372.786"
+          x2="372.786"
+          xlink:href="#a"
+          y1="30"
+          y2="438.078"
+        />
+        <linearGradient
+          id="c"
+          x1="256"
+          x2="256"
+          xlink:href="#a"
+          y1="30"
+          y2="438.078"
+        />
         <path
           d="m174.667 380.772a46.5 46.5 0 1 0 46.5 46.5 46.549 46.549 0 0 0 -46.5-46.5zm0 72.992a26.5 26.5 0 1 1 26.5-26.5 26.526 26.526 0 0 1 -26.5 26.5z"
           fill="url(#a)"
@@ -42,11 +61,20 @@
         />
       </svg>
     </a>
+    </br>
+    <p v-if="needShowValidationDocument(item)" class="warning-document">O documento do remetente e/ou destinatário é obrigatório</p>
 
     <a
       v-if="buttonBuy(item)"
-      @click="beforeAddCart({id:item.id, service_id:item.service_id, non_commercial: item.non_commercial})"
+      @click="
+        beforeAddCart({
+          id: item.id,
+          service_id: item.service_id,
+          non_commercial: item.non_commercial,
+        })
+      "
       href="javascript:;"
+      data-cy="input-buy-button"
       class="action-button -adicionar container__link"
       data-tip="Comprar"
     >
@@ -74,9 +102,17 @@
     </a>
 
     <a
-      v-if="item.status && (item.status == 'released'  || item.status == 'posted' || item.status == 'paid' || item.status == 'generated' || item.status == 'printed')"
-      @click="printTicket({id:item.id, order_id:item.order_id})"
+      v-if="
+        item.status &&
+        (item.status == 'released' ||
+          item.status == 'posted' ||
+          item.status == 'paid' ||
+          item.status == 'generated' ||
+          item.status == 'printed')
+      "
+      @click="createTicket({ id: item.id, order_id: item.order_id })"
       class="action-button -adicionar container__link"
+      data-cy="input-print-button"
       data-tip="Imprimir etiqueta"
     >
       <svg
@@ -166,13 +202,18 @@
     </a>
 
     <a
-      @click="cancelOrder({post_id:item.id, order_id:item.order_id})"
+      @click="cancelOrder({ post_id: item.id, order_id: item.order_id })"
       v-if="item.status == 'released'"
       href="javascript:;"
       class="action-button -excluir container__link"
+      data-cy="input-cancel-button"
       data-tip="Cancelar pedido"
     >
-      <svg class="ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 383.2 500">
+      <svg
+        class="ico"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 383.2 500"
+      >
         <title>Cancelar</title>
         <g id="Camada_2" data-name="Camada 2">
           <g id="Camada_10" data-name="Camada 10">
@@ -199,12 +240,17 @@
 
     <a
       v-if="item.status && item.order_id && item.id && item.status == 'pending'"
-      @click="removeCart({id:item.id, order_id:item.order_id})"
+      @click="removeCart({ id: item.id, order_id: item.order_id })"
       href="javascript:;"
       class="action-button -excluir container__link"
+      data-cy="input-remove-button"
       data-tip="Remover do Carrinho de compras"
     >
-      <svg class="ico" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 383.2 500">
+      <svg
+        class="ico"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 383.2 500"
+      >
         <title>Cancelar</title>
         <g id="Camada_2" data-name="Camada 2">
           <g id="Camada_10" data-name="Camada 10">
@@ -232,18 +278,14 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions } from "vuex";
 import statusMelhorEnvio from "../../utils/status";
 export default {
-  data: () => {
-    return {};
-  },
   props: {
     item: {
-      type: Object
-    }
+      type: Object,
+    },
   },
-  mounted() {},
   methods: {
     ...mapActions("orders", [
       "addCart",
@@ -256,33 +298,33 @@ export default {
       "payTicket",
       "cancelTicket",
       "createTicket",
-      "printTicket"
+      "printTicket",
     ]),
-    sendCartSimple: function(data) {
+    sendCartSimple: function (data) {
       this.initLoader();
       this.addCartSimple(data)
-        .then(response => {
+        .then((response) => {
           const msg = [];
           msg.push(
             `Pedido #${data.id} enviado para o carrinho de compras do Melho Envio com o protocolo ${response.protocol}`
           );
           this.setMessageModal(msg);
         })
-        .catch(error => {
+        .catch((error) => {
           this.setMessageModal(error.response.data.errors);
         })
         .finally(() => {
           this.stopLoader();
         });
     },
-    cancelOrderSimple: function(data) {
+    cancelOrderSimple: function (data) {
       this.initLoader();
       this.cancelCart(data);
     },
-    beforeAddCart: function(data) {
+    beforeAddCart: function (data) {
       this.initLoader();
       this.addCart(data)
-        .then(response => {
+        .then((response) => {
           if (response.success) {
             const msgErr = [];
             msgErr.push("Etiqueta #" + data.id + " comprada com sucesso.");
@@ -290,7 +332,7 @@ export default {
             return;
           }
         })
-        .catch(error => {
+        .catch((error) => {
           this.setMessageModal(error.response.data.errors);
         })
         .finally(() => {
@@ -298,39 +340,28 @@ export default {
         });
     },
     buttonCart(item) {
+      if (this.needShowValidationDocument(item)) {
+        return false;
+      }
+
       if (typeof item.quotation.choose_method === "undefined") {
         return false;
       }
       if (
         item.status == statusMelhorEnvio.STATUS_PENDING ||
-        item.status == statusMelhorEnvio.STATUS_RELEASED
+        item.status == statusMelhorEnvio.STATUS_RELEASED ||
+        item.status == statusMelhorEnvio.STATUS_DELIVERED
       ) {
         return false;
       }
-      if (
-        item.quotation.choose_method == 1 ||
-        item.quotation.choose_method == 2 ||
-        (item.quotation.choose_method == 17 &&
-          (item.status == null ||
-            item.status == statusMelhorEnvio.STATUS_CANCELED))
-      ) {
-        return true;
-      }
-      if (
-        item.quotation.choose_method >= 3 &&
-        (item.status == null ||
-          item.status == statusMelhorEnvio.STATUS_CANCELED)
-      ) {
-        if (item.non_commercial) {
-          return true;
-        }
-        if (item.invoice.number != null && item.invoice.key != null) {
-          return true;
-        }
-      }
+      return true;
     },
     buttonBuy(item) {
       if (!item.service_id) {
+        return false;
+      }
+
+      if (!item.status) {
         return false;
       }
 
@@ -338,7 +369,8 @@ export default {
         !(
           item.status == statusMelhorEnvio.STATUS_POSTED ||
           item.status == statusMelhorEnvio.STATUS_RELEASED ||
-          item.status == statusMelhorEnvio.STATUS_CANCELED
+          item.status == statusMelhorEnvio.STATUS_CANCELED ||
+          item.status == statusMelhorEnvio.STATUS_DELIVERED
         )
       ) {
         return true;
@@ -355,7 +387,10 @@ export default {
         return true;
       }
       return false;
-    }
-  }
+    },
+    needShowValidationDocument(item) {
+      return !item.to.document && !item.to.company_document;
+    },
+  },
 };
 </script>

@@ -1,8 +1,9 @@
 {
-    "name": "melhorenvio-cotation",
+    "name": "melhorenvio/melhorenvio-cotation",
     "description": "Plugin de cotações do Melhor Envio para WooCommerce",
     "homepage": "https://www.melhorenvio.com.br",
     "license": "GPLv3",
+    "minimum-stability": "stable",
     "authors": [
         {
             "name": "Vinícius Schlee Tessmann",
@@ -11,17 +12,14 @@
             "role": "Developer"
         }
     ],
-    "require": {
-
-    },
     "autoload": {
         "psr-4": {
-            "Controllers\\": "Controllers/",
-            "Models\\": "Models/",
-            "Interfaces\\": "core/interfaces/",
-            "Services\\": "Services/",
-            "Bases\\": "core/bases/",
-            "Helpers\\": "Helpers/"
+            "MelhorEnvio\\Controllers\\": "Controllers/",
+            "MelhorEnvio\\Models\\": "Models/",
+            "MelhorEnvio\\Interfaces\\": "core/interfaces/",
+            "MelhorEnvio\\Services\\": "Services/",
+            "MelhorEnvio\\Bases\\": "core/bases/",
+            "MelhorEnvio\\Helpers\\": "Helpers/"
         }
     }
 }

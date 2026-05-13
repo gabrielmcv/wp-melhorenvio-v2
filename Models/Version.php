@@ -1,8 +1,8 @@
 <?php
 
-namespace Models;
+namespace MelhorEnvio\Models;
 
-class Version
-{
-    const VERSION = '2.9.5';
+class Version {
+
+	const VERSION = '2.11.32';
 }

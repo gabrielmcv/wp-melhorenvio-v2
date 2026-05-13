@@ -31,17 +31,57 @@ function getDimension() {
     return dimensions;
 }
 
-function mascara(t, mask) {
-    let postal_code = t.value.substr(t.value.length - 1);
-    if (!isNaN(postal_code)) {
-        let i = t.value.length;
-        let saida = mask.substring(1, 0);
-        let texto = mask.substring(i);
-        if (texto.substring(0, 1) != saida) {
-            t.value += texto.substring(0, 1);
-        }
-    } else {
-        t.value = t.value.slice(0, -1);
+/**
+ *  mask to replace non number 
+ * @param {string} content - number to format
+ * @returns {string}
+ * @example
+ * const valueToFormat = '12345678'
+ * numberMask(valueToFormat);
+ */
+function numberMask(content) {
+    return content.replace(/[^0-9-]+/g, "");
+}
+
+/**
+ *  mask to format postal code 
+ * @param {string} content - postal code number
+ * @returns {string}
+ * @example
+ * const valueToFormat = '12345678'
+ * postalCodeMask(valueToFormat);
+ */
+ function postalCodeMask(content, input) {
+    let value = content;
+    let formatedValue = '';
+
+    if(isNaN(content)) {
+        input.value = numberMask(content);
+        
+        return;
+    }
+    
+    //regex to add " - " in position 5 of cep: EX:123456-78
+    formatedValue = value.replace(/(\d{5})(\d{1,2})$/, "$1-$2"); 
+    input.value = formatedValue;
+}
+
+/**
+ *  this function is used to apply the postal code mask in the input to calculate the quotation
+ */
+function usePostalCodeMask(evt='') { 
+    const inputDefault = evt ? evt.target : evt;
+    const inputShortcode = document.querySelector('.iptCepShortcode');
+    
+
+    if(inputDefault) {
+        const content = inputDefault.value;
+        postalCodeMask(content, inputDefault);
+    }
+
+    if(inputShortcode) {
+        const content = inputShortcode.value;
+        postalCodeMask(content, inputShortcode);
     }
 }
 
