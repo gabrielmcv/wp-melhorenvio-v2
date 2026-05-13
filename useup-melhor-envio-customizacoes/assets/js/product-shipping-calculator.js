@@ -58,7 +58,7 @@
 
     this.bindEvents();
 
-    if (this.state.currentPostcode) {
+    if (this.input && this.state.currentPostcode) {
       this.input.value = formatPostcode(this.state.currentPostcode);
     }
 
@@ -94,6 +94,10 @@
       $(this.variationForm).on('show_variation', this.handleVariationChange.bind(this));
       $(this.variationForm).on('hide_variation reset_data', this.handleVariationReset.bind(this));
     }
+
+    this.element.addEventListener('click', this.handleLocalClick.bind(this));
+    document.addEventListener('click', this.handleDocumentClick.bind(this));
+    document.addEventListener('keyup', this.handleDocumentKeyup.bind(this));
   };
 
   ProductShippingCalculator.prototype.handleInput = function (event) {
@@ -125,6 +129,32 @@
   ProductShippingCalculator.prototype.handleVariationReset = function () {
     this.clearError();
     this.clearResults();
+  };
+
+  ProductShippingCalculator.prototype.handleLocalClick = function (event) {
+    var fastestTrigger = event.target.closest('.useup-me-product-shipping__fastest-badge');
+
+    if (!fastestTrigger) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    this.toggleFastestTooltip(fastestTrigger);
+  };
+
+  ProductShippingCalculator.prototype.handleDocumentClick = function (event) {
+    if (event.target.closest('.useup-me-product-shipping__fastest-badge')) {
+      return;
+    }
+
+    this.closeFastestTooltips();
+  };
+
+  ProductShippingCalculator.prototype.handleDocumentKeyup = function (event) {
+    if (event.key === 'Escape') {
+      this.closeFastestTooltips();
+    }
   };
 
   ProductShippingCalculator.prototype.recalculate = function () {
@@ -273,6 +303,7 @@
     }
 
     this.clearError();
+    this.closeFastestTooltips();
     this.setLoading(true);
 
     var requestBody = new window.URLSearchParams();
@@ -327,11 +358,12 @@
       this.results.appendChild(this.buildEstimateNode(data.estimate_label));
     }
 
-    if (Array.isArray(data.rates)) {
-      data.rates.forEach(function (rate) {
-        this.results.appendChild(this.buildRateNode(rate));
-      }.bind(this));
-    }
+    var rates = Array.isArray(data.rates) ? data.rates.slice() : [];
+    var fastestIndex = this.findFastestRateIndex(rates);
+
+    rates.forEach(function (rate, index) {
+      this.results.appendChild(this.buildRateNode(rate, index === fastestIndex));
+    }.bind(this));
 
     if (data.free_shipping_note) {
       var notice = document.createElement('div');
@@ -345,28 +377,33 @@
 
   ProductShippingCalculator.prototype.buildEstimateNode = function (text) {
     var node = document.createElement('div');
-    node.className = 'useup-me-product-shipping__estimate';
-
+    var icon = document.createElement('span');
+    var content = document.createElement('span');
     var betweenMatch = text.match(/^Receba entre (.+) e (.+)\.$/);
     var untilMatch = text.match(/^Chega até (.+)\.$/);
 
+    node.className = 'useup-me-product-shipping__estimate';
+    icon.className = 'useup-me-product-shipping__estimate-icon';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.innerHTML = this.getCalendarIconSvg();
+    content.className = 'useup-me-product-shipping__estimate-text';
+
     if (betweenMatch) {
-      node.appendChild(document.createTextNode('Receba entre '));
-      node.appendChild(this.buildStrongNode(betweenMatch[1]));
-      node.appendChild(document.createTextNode(' e '));
-      node.appendChild(this.buildStrongNode(betweenMatch[2]));
-      node.appendChild(document.createTextNode('.'));
-      return node;
+      content.appendChild(document.createTextNode('Receba entre '));
+      content.appendChild(this.buildStrongNode(betweenMatch[1]));
+      content.appendChild(document.createTextNode(' e '));
+      content.appendChild(this.buildStrongNode(betweenMatch[2]));
+      content.appendChild(document.createTextNode('.'));
+    } else if (untilMatch) {
+      content.appendChild(document.createTextNode('Chega até '));
+      content.appendChild(this.buildStrongNode(untilMatch[1]));
+      content.appendChild(document.createTextNode('.'));
+    } else {
+      content.textContent = text;
     }
 
-    if (untilMatch) {
-      node.appendChild(document.createTextNode('Chega até '));
-      node.appendChild(this.buildStrongNode(untilMatch[1]));
-      node.appendChild(document.createTextNode('.'));
-      return node;
-    }
-
-    node.textContent = text;
+    node.appendChild(icon);
+    node.appendChild(content);
 
     return node;
   };
@@ -377,19 +414,173 @@
     return strong;
   };
 
-  ProductShippingCalculator.prototype.buildRateNode = function (rate) {
+  ProductShippingCalculator.prototype.buildRateNode = function (rate, isFastest) {
     var node = document.createElement('div');
-    var label = document.createElement('span');
+    var main = document.createElement('span');
+    var methodWrap = document.createElement('span');
+    var methodIcon = document.createElement('span');
+    var methodLabel = document.createElement('span');
     var cost = document.createElement('strong');
 
     node.className = 'useup-me-product-shipping__rate';
-    label.textContent = rate && rate.label ? rate.label : 'Entrega';
+    main.className = 'useup-me-product-shipping__rate-main';
+    methodWrap.className = 'useup-me-product-shipping__rate-label';
+
+    if (isFastest) {
+      methodWrap.appendChild(this.buildFastestBadge());
+    } else {
+      methodIcon.className = 'useup-me-product-shipping__method-icon';
+      methodIcon.setAttribute('aria-hidden', 'true');
+      methodIcon.innerHTML = this.getMethodTruckIconSvg();
+      methodWrap.appendChild(methodIcon);
+    }
+
+    methodLabel.textContent = rate && rate.label ? rate.label : 'Entrega';
     cost.textContent = rate && rate.cost ? rate.cost : '';
 
-    node.appendChild(label);
+    methodWrap.appendChild(methodLabel);
+    main.appendChild(methodWrap);
+    node.appendChild(main);
     node.appendChild(cost);
 
     return node;
+  };
+
+  ProductShippingCalculator.prototype.buildFastestBadge = function () {
+    var badge = document.createElement('button');
+    var icon = document.createElement('span');
+    var tooltip = document.createElement('span');
+
+    badge.type = 'button';
+    badge.className = 'useup-me-product-shipping__fastest-badge';
+    badge.setAttribute('aria-expanded', 'false');
+    badge.setAttribute('aria-label', 'Entrega mais rápida');
+
+    icon.className = 'useup-me-product-shipping__fastest-icon';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.innerHTML = this.getFastTruckIconSvg();
+
+    tooltip.className = 'useup-me-tooltip useup-me-tooltip--fastest';
+    tooltip.hidden = true;
+    tooltip.textContent = 'Entrega mais rápida';
+
+    badge.appendChild(icon);
+    badge.appendChild(tooltip);
+
+    return badge;
+  };
+
+  ProductShippingCalculator.prototype.toggleFastestTooltip = function (trigger) {
+    var isExpanded = trigger.getAttribute('aria-expanded') === 'true';
+
+    this.closeFastestTooltips(trigger);
+
+    if (isExpanded) {
+      return;
+    }
+
+    trigger.setAttribute('aria-expanded', 'true');
+    trigger.classList.add('is-open');
+    this.getFastestTooltip(trigger).hidden = false;
+  };
+
+  ProductShippingCalculator.prototype.closeFastestTooltips = function (except) {
+    var triggers = this.element.querySelectorAll('.useup-me-product-shipping__fastest-badge');
+
+    Array.prototype.forEach.call(triggers, function (trigger) {
+      if (except && trigger === except) {
+        return;
+      }
+
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.classList.remove('is-open');
+      this.getFastestTooltip(trigger).hidden = true;
+    }.bind(this));
+  };
+
+  ProductShippingCalculator.prototype.getFastestTooltip = function (trigger) {
+    return trigger.querySelector('.useup-me-tooltip--fastest');
+  };
+
+  ProductShippingCalculator.prototype.findFastestRateIndex = function (rates) {
+    var bestIndex = -1;
+    var bestDate = null;
+    var bestDays = null;
+
+    rates.forEach(function (rate, index) {
+      var text = rate && rate.delivery_time ? String(rate.delivery_time) : '';
+      var nearestDate = this.extractNearestDate(text);
+      var days = this.extractBusinessDays(text);
+
+      if (nearestDate) {
+        if (!bestDate || nearestDate < bestDate) {
+          bestDate = nearestDate;
+          bestIndex = index;
+        }
+        return;
+      }
+
+      if (bestDate) {
+        return;
+      }
+
+      if (days !== null && (bestDays === null || days < bestDays)) {
+        bestDays = days;
+        bestIndex = index;
+      }
+    }.bind(this));
+
+    return bestIndex;
+  };
+
+  ProductShippingCalculator.prototype.extractNearestDate = function (text) {
+    var matches = String(text || '').match(/(\d{2})\/(\d{2})/g);
+    var now = new Date();
+    var nearest = null;
+
+    if (!matches || !matches.length) {
+      return null;
+    }
+
+    matches.forEach(function (match) {
+      var parts = match.split('/');
+      var day = parseInt(parts[0], 10);
+      var month = parseInt(parts[1], 10) - 1;
+      var year = now.getFullYear();
+      var candidate = new Date(year, month, day, 12, 0, 0, 0);
+
+      if (candidate < new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 0, 0, 0, 0)) {
+        candidate.setFullYear(year + 1);
+      }
+
+      if (!nearest || candidate < nearest) {
+        nearest = candidate;
+      }
+    });
+
+    return nearest;
+  };
+
+  ProductShippingCalculator.prototype.extractBusinessDays = function (text) {
+    var match = String(text || '').match(/(\d+)\s*dias?/i);
+
+    if (!match) {
+      return null;
+    }
+
+    return parseInt(match[1], 10);
+  };
+
+  ProductShippingCalculator.prototype.getCalendarIconSvg = function () {
+    return '<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><rect x="4" y="5.5" width="16" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"></rect><path d="M8 3.75v3.5M16 3.75v3.5M4 9.25h16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>';
+  };
+
+  ProductShippingCalculator.prototype.getMethodTruckIconSvg = function () {
+    return '<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M3.5 8h10v6.25H12a2.25 2.25 0 0 0-4.5 0H6A2.25 2.25 0 0 0 1.5 14V10a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M13.5 10h3.2l2.3 2.5v1.75h-1.1a2.25 2.25 0 0 0-4.4 0h-.1V10Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8.75" cy="16.5" r="1.25" fill="none" stroke="currentColor" stroke-width="1.5"></circle><circle cx="16.25" cy="16.5" r="1.25" fill="none" stroke="currentColor" stroke-width="1.5"></circle></svg>';
+  };
+
+  ProductShippingCalculator.prototype.getFastTruckIconSvg = function () {
+    return '<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M2.5 10h2.75M1.5 13h3.75M4 7h2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M6.5 8h8.5v6H14a2.25 2.25 0 0 0-4.5 0H9A2.25 2.25 0 0 0 4.5 14v-4A2 2 0 0 1 6.5 8Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M15 10h2.8l2.2 2.35V14h-1.1a2.25 2.25 0 0 0-4.4 0H15v-4Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="10.75" cy="16.25" r="1.25" fill="none" stroke="currentColor" stroke-width="1.5"></circle><circle cx="17.25" cy="16.25" r="1.25" fill="none" stroke="currentColor" stroke-width="1.5"></circle></svg>';
   };
 
   document.addEventListener('DOMContentLoaded', function () {

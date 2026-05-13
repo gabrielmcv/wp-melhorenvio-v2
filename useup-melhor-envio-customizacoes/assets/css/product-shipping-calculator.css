@@ -27,14 +27,16 @@
 	color: #111;
 }
 
-.useup-me-product-shipping__icon {
+.useup-me-product-shipping__icon,
+.useup-me-product-shipping__title-icon {
 	display: inline-flex;
 	width: 16px;
 	height: 16px;
 	color: #111;
 }
 
-.useup-me-product-shipping__icon svg {
+.useup-me-product-shipping__icon svg,
+.useup-me-product-shipping__title-icon svg {
 	display: block;
 	width: 16px;
 	height: 16px;
@@ -129,8 +131,15 @@
 }
 
 .useup-me-product-shipping__estimate {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
 	margin-bottom: 7px;
 	color: #333;
+}
+
+.useup-me-product-shipping__estimate-text {
+	min-width: 0;
 }
 
 .useup-me-product-shipping__estimate strong {
@@ -138,12 +147,76 @@
 	color: #111;
 }
 
+.useup-me-product-shipping__estimate-icon,
+.useup-me-product-shipping__method-icon,
+.useup-me-product-shipping__fastest-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 15px;
+	height: 15px;
+	flex: 0 0 15px;
+	color: #444;
+}
+
+.useup-me-product-shipping__estimate-icon svg,
+.useup-me-product-shipping__method-icon svg,
+.useup-me-product-shipping__fastest-icon svg {
+	display: block;
+	width: 15px;
+	height: 15px;
+}
+
 .useup-me-product-shipping__rate {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
 	gap: 10px;
 	margin: 4px 0;
 	color: #222;
+}
+
+.useup-me-product-shipping__rate-main,
+.useup-me-product-shipping__rate-label {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	min-width: 0;
+}
+
+.useup-me-product-shipping__fastest-badge {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: #111;
+	cursor: pointer;
+}
+
+.useup-me-product-shipping__fastest-badge .useup-me-product-shipping__fastest-icon {
+	color: #111;
+}
+
+.useup-me-tooltip {
+	position: absolute;
+	top: calc(100% + 8px);
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 8;
+	padding: 6px 8px;
+	border: 1px solid #e7e7e7;
+	border-radius: 6px;
+	background: #fff;
+	box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+	color: #333;
+	font-size: 11.5px;
+	line-height: 1.35;
+	white-space: nowrap;
 }
 
 .useup-me-product-shipping__free-shipping {
@@ -179,5 +252,10 @@
 
 	.useup-me-product-shipping__button {
 		width: 100%;
+	}
+
+	.useup-me-tooltip {
+		left: 0;
+		transform: none;
 	}
 }

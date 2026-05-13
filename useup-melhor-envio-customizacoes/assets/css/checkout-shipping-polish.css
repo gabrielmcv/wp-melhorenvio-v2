@@ -1,14 +1,14 @@
-.useup-checkout-shipping-polished .woocommerce-checkout-review-order {
+.useup-checkout-polish .woocommerce-checkout-review-order {
 	color: #222;
 }
 
-.useup-checkout-shipping-polished .woocommerce-checkout-review-order-table {
+.useup-checkout-polish .woocommerce-checkout-review-order-table {
 	border-collapse: separate;
 	border-spacing: 0;
 }
 
-.useup-checkout-shipping-polished .woocommerce-shipping-totals,
-.useup-checkout-shipping-polished tr.woocommerce-shipping-totals.shipping {
+.useup-checkout-polish .woocommerce-shipping-totals,
+.useup-checkout-polish tr.woocommerce-shipping-totals.shipping {
 	position: relative;
 	display: block;
 	margin: 18px 0;
@@ -18,8 +18,8 @@
 	background: #fff;
 }
 
-.useup-checkout-shipping-polished .woocommerce-shipping-totals::before,
-.useup-checkout-shipping-polished tr.woocommerce-shipping-totals.shipping::before {
+.useup-checkout-polish .woocommerce-shipping-totals::before,
+.useup-checkout-polish tr.woocommerce-shipping-totals.shipping::before {
 	content: "";
 	display: block;
 	width: 40px;
@@ -34,8 +34,8 @@
 	background-size: 18px 18px;
 }
 
-.useup-checkout-shipping-polished .woocommerce-shipping-totals th,
-.useup-checkout-shipping-polished tr.woocommerce-shipping-totals.shipping th {
+.useup-checkout-polish .woocommerce-shipping-totals th,
+.useup-checkout-polish tr.woocommerce-shipping-totals.shipping th {
 	display: block;
 	width: 100%;
 	padding: 0;
@@ -45,8 +45,8 @@
 	line-height: 0;
 }
 
-.useup-checkout-shipping-polished .woocommerce-shipping-totals th::before,
-.useup-checkout-shipping-polished tr.woocommerce-shipping-totals.shipping th::before {
+.useup-checkout-polish .woocommerce-shipping-totals th::before,
+.useup-checkout-polish tr.woocommerce-shipping-totals.shipping th::before {
 	content: "Entrega e prazo";
 	display: block;
 	font-size: 20px;
@@ -56,8 +56,8 @@
 	margin-bottom: 4px;
 }
 
-.useup-checkout-shipping-polished .woocommerce-shipping-totals th::after,
-.useup-checkout-shipping-polished tr.woocommerce-shipping-totals.shipping th::after {
+.useup-checkout-polish .woocommerce-shipping-totals th::after,
+.useup-checkout-polish tr.woocommerce-shipping-totals.shipping th::after {
 	content: "Escolha como deseja receber sua joia.";
 	display: block;
 	font-size: 14px;
@@ -67,30 +67,30 @@
 	margin-bottom: 18px;
 }
 
-.useup-checkout-shipping-polished .woocommerce-shipping-totals td,
-.useup-checkout-shipping-polished tr.woocommerce-shipping-totals.shipping td {
+.useup-checkout-polish .woocommerce-shipping-totals td,
+.useup-checkout-polish tr.woocommerce-shipping-totals.shipping td {
 	display: block;
 	width: 100%;
 	padding: 0;
 	border: 0;
 }
 
-.useup-checkout-shipping-polished ul#shipping_method,
-.useup-checkout-shipping-polished .woocommerce-shipping-methods {
+.useup-checkout-polish ul#shipping_method,
+.useup-checkout-polish .woocommerce-shipping-methods {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
-.useup-checkout-shipping-polished ul#shipping_method li,
-.useup-checkout-shipping-polished .woocommerce-shipping-methods li {
+.useup-checkout-polish ul#shipping_method li,
+.useup-checkout-polish .woocommerce-shipping-methods li {
 	position: relative;
 	display: flex;
 	align-items: center;
 	gap: 12px;
-	min-height: 58px;
+	min-height: 64px;
 	margin: 0 0 8px;
-	padding: 14px 16px;
+	padding: 16px 16px;
 	border: 1px solid #e8e8e8;
 	border-radius: 6px;
 	background: #fff;
@@ -98,19 +98,19 @@
 	transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
-.useup-checkout-shipping-polished ul#shipping_method li:hover,
-.useup-checkout-shipping-polished .woocommerce-shipping-methods li:hover {
+.useup-checkout-polish ul#shipping_method li:hover,
+.useup-checkout-polish .woocommerce-shipping-methods li:hover {
 	border-color: #bdbdbd;
 }
 
-.useup-checkout-shipping-polished ul#shipping_method li.is-selected,
-.useup-checkout-shipping-polished .woocommerce-shipping-methods li.is-selected {
+.useup-checkout-polish ul#shipping_method li.is-selected,
+.useup-checkout-polish .woocommerce-shipping-methods li.is-selected {
 	border-color: #111;
 	background: #fafafa;
 }
 
-.useup-checkout-shipping-polished ul#shipping_method input[type="radio"],
-.useup-checkout-shipping-polished .woocommerce-shipping-methods input[type="radio"] {
+.useup-checkout-polish ul#shipping_method input[type="radio"],
+.useup-checkout-polish .woocommerce-shipping-methods input[type="radio"] {
 	width: 18px;
 	height: 18px;
 	margin: 0;
@@ -118,8 +118,8 @@
 	flex: 0 0 auto;
 }
 
-.useup-checkout-shipping-polished ul#shipping_method label,
-.useup-checkout-shipping-polished .woocommerce-shipping-methods label {
+.useup-checkout-polish ul#shipping_method label,
+.useup-checkout-polish .woocommerce-shipping-methods label {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -132,44 +132,44 @@
 	line-height: 1.35;
 }
 
-.useup-checkout-shipping-polished .useup-shipping-label-main {
+.useup-checkout-polish .useup-shipping-label-main {
 	display: inline-flex;
 	flex-wrap: wrap;
 	align-items: baseline;
 	gap: 4px;
 }
 
-.useup-checkout-shipping-polished .useup-shipping-method-name {
+.useup-checkout-polish .useup-shipping-method-name {
 	font-weight: 600;
 	color: #111;
 }
 
-.useup-checkout-shipping-polished .useup-shipping-estimate {
+.useup-checkout-polish .useup-shipping-estimate {
 	font-weight: 400;
 	color: #666;
 }
 
-.useup-checkout-shipping-polished .useup-shipping-price {
+.useup-checkout-polish .useup-shipping-price {
 	margin-left: auto;
 	white-space: nowrap;
 	font-weight: 600;
 	color: #111;
 }
 
-.useup-checkout-shipping-polished .woocommerce-shipping-methods p,
-.useup-checkout-shipping-polished .woocommerce-shipping-methods small,
-.useup-checkout-shipping-polished .woocommerce-shipping-methods div,
-.useup-checkout-shipping-polished ul#shipping_method p,
-.useup-checkout-shipping-polished ul#shipping_method small,
-.useup-checkout-shipping-polished ul#shipping_method div {
+.useup-checkout-polish .woocommerce-shipping-methods p,
+.useup-checkout-polish .woocommerce-shipping-methods small,
+.useup-checkout-polish .woocommerce-shipping-methods div,
+.useup-checkout-polish ul#shipping_method p,
+.useup-checkout-polish ul#shipping_method small,
+.useup-checkout-polish ul#shipping_method div {
 	max-width: 100%;
 }
 
-.useup-checkout-shipping-polished .useup-shipping-tip-hidden {
+.useup-checkout-polish .useup-shipping-tip-hidden {
 	display: none !important;
 }
 
-.useup-checkout-shipping-polished .order-total {
+.useup-checkout-polish .order-total {
 	display: block;
 	margin-top: 18px;
 	padding: 18px 20px;
@@ -178,29 +178,31 @@
 	background: #fff;
 }
 
-.useup-checkout-shipping-polished .order-total th,
-.useup-checkout-shipping-polished .order-total td {
+.useup-checkout-polish .order-total th,
+.useup-checkout-polish .order-total td {
 	border: 0 !important;
 }
 
-.useup-checkout-shipping-polished .order-total th {
-	font-size: 18px;
+.useup-checkout-polish .order-total th {
+	font-size: 16px;
 	font-weight: 500;
 	color: #111;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
 }
 
-.useup-checkout-shipping-polished .order-total td {
+.useup-checkout-polish .order-total td {
 	text-align: right;
 }
 
-.useup-checkout-shipping-polished .order-total .amount {
-	font-size: 22px;
+.useup-checkout-polish .order-total .amount {
+	font-size: 28px;
 	font-weight: 700;
 	color: #111;
 }
 
-.useup-checkout-shipping-polished .order-total small,
-.useup-checkout-shipping-polished .order-total .includes_tax {
+.useup-checkout-polish .order-total small,
+.useup-checkout-polish .order-total .includes_tax {
 	display: block;
 	margin-top: 4px;
 	font-size: 12px;
@@ -208,16 +210,16 @@
 	font-weight: 400;
 }
 
-.useup-checkout-shipping-polished .useup-me-tags-option {
+.useup-checkout-polish .useup-me-tags-option {
 	display: block;
 	margin-top: 18px;
-	padding: 16px 18px;
+	padding: 14px 16px;
 	border: 1px solid #e8e8e8;
 	border-radius: 8px;
 	background: #fff;
 }
 
-.useup-checkout-shipping-polished .useup-me-tags-option__label {
+.useup-checkout-polish .useup-me-tags-option__label {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -227,7 +229,7 @@
 	line-height: 1.4;
 }
 
-.useup-checkout-shipping-polished .useup-me-tags-option__label::before {
+.useup-checkout-polish .useup-me-tags-option__label::before {
 	content: "";
 	display: inline-flex;
 	width: 18px;
@@ -239,31 +241,157 @@
 	background-size: 18px 18px;
 }
 
-.useup-checkout-shipping-polished .useup-me-tags-option__input {
+.useup-checkout-polish .useup-me-tags-option__input {
 	width: 18px;
 	height: 18px;
 	margin: 0;
 	accent-color: #000;
 }
 
+.useup-checkout-polish .useup-me-tags-option__optional {
+	margin-left: auto;
+	color: #777;
+	font-size: 11px;
+	line-height: 1;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+.useup-checkout-polish #payment {
+	margin-top: 18px;
+	background: transparent;
+}
+
+.useup-checkout-polish #payment ul.payment_methods {
+	padding: 16px;
+	border: 1px solid #e8e8e8;
+	border-radius: 8px;
+	background: #fff;
+}
+
+.useup-checkout-polish #payment ul.payment_methods::before,
+.useup-checkout-polish #payment ul.payment_methods::after {
+	display: none;
+}
+
+.useup-checkout-polish #payment ul.payment_methods > li {
+	margin: 0 0 8px;
+	padding: 14px 16px;
+	border: 1px solid #e8e8e8;
+	border-radius: 6px;
+	background: #fff;
+	transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.useup-checkout-polish #payment ul.payment_methods > li:last-child {
+	margin-bottom: 0;
+}
+
+.useup-checkout-polish #payment ul.payment_methods > li.is-selected {
+	border-color: #111;
+	background: #fafafa;
+}
+
+.useup-checkout-polish #payment ul.payment_methods > li:hover {
+	border-color: #bdbdbd;
+}
+
+.useup-checkout-polish #payment ul.payment_methods input[type="radio"] {
+	accent-color: #000;
+}
+
+.useup-checkout-polish #payment ul.payment_methods > li > label {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	margin: 0;
+	color: #111;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.4;
+	cursor: pointer;
+}
+
+.useup-checkout-polish #payment ul.payment_methods > li > label img {
+	max-height: 22px;
+	width: auto;
+}
+
+.useup-checkout-polish .useup-payment-badge {
+	margin-left: auto;
+	padding: 4px 8px;
+	border: 1px solid #dfdfdf;
+	border-radius: 999px;
+	background: #fbfbfb;
+	color: #555;
+	font-size: 10px;
+	font-weight: 600;
+	line-height: 1;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.useup-checkout-polish .useup-payment-note {
+	margin: 10px 0 0 26px;
+	color: #777;
+	font-size: 12px;
+	line-height: 1.45;
+}
+
+.useup-checkout-polish #payment div.payment_box {
+	margin-top: 10px;
+	background: transparent;
+	color: #666;
+	font-size: 12px;
+	line-height: 1.45;
+}
+
+.useup-checkout-polish #payment div.payment_box::before {
+	display: none;
+}
+
+.useup-checkout-polish #place_order {
+	width: 100%;
+	min-height: 52px;
+	border: 1px solid #000;
+	border-radius: 6px;
+	background: #000;
+	color: #fff;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.2;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+}
+
+.useup-checkout-polish #place_order:hover {
+	opacity: 0.88;
+}
+
 @media (max-width: 768px) {
-	.useup-checkout-shipping-polished .woocommerce-shipping-totals,
-	.useup-checkout-shipping-polished tr.woocommerce-shipping-totals.shipping {
+	.useup-checkout-polish .woocommerce-shipping-totals,
+	.useup-checkout-polish tr.woocommerce-shipping-totals.shipping {
 		padding: 18px 16px;
 	}
 
-	.useup-checkout-shipping-polished ul#shipping_method label,
-	.useup-checkout-shipping-polished .woocommerce-shipping-methods label {
+	.useup-checkout-polish ul#shipping_method label,
+	.useup-checkout-polish .woocommerce-shipping-methods label {
 		align-items: flex-start;
 	}
 
-	.useup-checkout-shipping-polished .useup-shipping-label-main {
+	.useup-checkout-polish .useup-shipping-label-main {
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
 	}
 
-	.useup-checkout-shipping-polished .useup-shipping-price {
+	.useup-checkout-polish .useup-shipping-price {
 		padding-left: 8px;
+	}
+
+	.useup-checkout-polish #payment ul.payment_methods > li > label {
+		flex-wrap: wrap;
 	}
 }

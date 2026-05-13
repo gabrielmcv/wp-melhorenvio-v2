@@ -93,7 +93,7 @@ class USEUP_ME_Product_Shipping_Calculator {
 		>
 			<div class="useup-me-product-shipping__header">
 				<div class="useup-me-product-shipping__title">
-					<span class="useup-me-product-shipping__icon" aria-hidden="true">
+					<span class="useup-me-product-shipping__icon useup-me-product-shipping__title-icon" aria-hidden="true">
 						<?php echo wp_kses( $this->get_icon_svg(), $this->get_allowed_svg_tags() ); ?>
 					</span>
 					<span>Entrega e prazo</span>
@@ -695,7 +695,7 @@ class USEUP_ME_Product_Shipping_Calculator {
 	}
 
 	private function get_icon_svg() {
-		return '<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M3.5 7.75h11.25v7.5H13a2.75 2.75 0 0 0-5.5 0H6.25a2.75 2.75 0 0 0-5.5 0H.5V9.75a2 2 0 0 1 2-2Zm12.75 2.25h2.73c.36 0 .7.19.88.5l1.89 3.02v1.73h-.95a2.75 2.75 0 0 0-5.5 0h-.05V10Zm-11 8.5a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Zm10.5 0a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5Z" fill="currentColor"/></svg>';
+		return '<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M3 7.5h11v7H3z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 10h3l3 3v1.5h-6z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="17.5" r="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="17.5" r="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
 	}
 
 	private function get_allowed_svg_tags() {
@@ -706,8 +706,20 @@ class USEUP_ME_Product_Shipping_Calculator {
 				'aria-hidden' => true,
 			),
 			'path' => array(
-				'd'    => true,
-				'fill' => true,
+				'd'               => true,
+				'fill'            => true,
+				'stroke'          => true,
+				'stroke-width'    => true,
+				'stroke-linecap'  => true,
+				'stroke-linejoin' => true,
+			),
+			'circle' => array(
+				'cx'           => true,
+				'cy'           => true,
+				'r'            => true,
+				'fill'         => true,
+				'stroke'       => true,
+				'stroke-width' => true,
 			),
 		);
 	}

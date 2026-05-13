@@ -24,7 +24,6 @@ require_once USEUP_ME_PATH . 'includes/class-useup-me-loader.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-settings.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-admin.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-checkout-polish.php';
-require_once USEUP_ME_PATH . 'includes/class-useup-me-checkout-redesign.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-product-page-polish.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-melhor-envio-hooks.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-rules.php';

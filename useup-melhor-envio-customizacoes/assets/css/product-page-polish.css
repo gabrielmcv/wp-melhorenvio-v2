@@ -34,6 +34,8 @@
 	background: transparent;
 	color: #222;
 	cursor: pointer;
+	white-space: nowrap;
+	flex-wrap: nowrap;
 }
 
 .useup-product-polish .useup-price-block__mode {
@@ -49,16 +51,17 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 16px;
-	height: 16px;
+	flex: 0 0 14px;
+	width: 14px;
+	height: 14px;
 	color: #555;
 	transition: color 0.2s ease, opacity 0.2s ease;
 }
 
 .useup-product-polish .useup-wholesale-info-icon svg {
 	display: block;
-	width: 100%;
-	height: 100%;
+	width: 14px;
+	height: 14px;
 }
 
 .useup-product-polish .useup-price-block__info-trigger:hover .useup-wholesale-info-icon,

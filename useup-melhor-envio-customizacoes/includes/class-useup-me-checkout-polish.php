@@ -40,13 +40,16 @@ class USEUP_ME_Checkout_Polish {
 				'tagsText'    => 'Enviar tags lisas com o pedido',
 				'tipPrefix'   => 'Dica:',
 				'tipContains' => 'Adicione pelo menos 5 dias úteis',
+				'pixBadge'    => '5% no PIX',
+				'cardBadge'   => 'até 12x',
+				'cardHelper'  => 'Você será redirecionado para concluir o pagamento com segurança.',
 			)
 		);
 	}
 
 	public function add_body_class( $classes ) {
 		if ( $this->is_enabled() && $this->is_checkout_context() ) {
-			$classes[] = 'useup-checkout-shipping-polished';
+			$classes[] = 'useup-checkout-polish';
 		}
 
 		return $classes;

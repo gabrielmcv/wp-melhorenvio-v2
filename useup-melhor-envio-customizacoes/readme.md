@@ -19,7 +19,7 @@ Plugin separado para concentrar as customizações da USEUP! sobre o Melhor Envi
 - oferece uma opção para exibir `Entrega e prazo` direto na página do produto, com cálculo por AJAX sem adicionar o item ao carrinho real;
 - permite configurar no admin o valor e o texto da mensagem de frete grátis na página do produto, com suporte ao placeholder `{amount}`;
 - aplica um polish opcional na página de produto com preço atacado/varejo, badges discretas, tooltip em `no atacado` e short description expansível;
-- oferece a opção `Aplicar visual premium no checkout`, que reorganiza visualmente o checkout real da USEUP! com formulário agrupado, sidebar premium, entrega em cards selecionáveis, pagamento refinado e resumo mobile recolhível sem alterar os cálculos;
+- oferece a opção `Aplicar visual premium no checkout`, que melhora de forma pontual a apresentação de frete, total, tags lisas, pagamento e botão final sem alterar a estrutura real do checkout;
 - reaproveita o CEP informado pelo cliente para preencher WooCommerce session, `WC()->customer`, checkout e metadados do usuário quando aplicável.
 
 ## Dependencias
@@ -78,7 +78,7 @@ Se a reinclusão automática não for possível com segurança, a tela `WooComme
 - o CEP salvo pode ser reaproveitado no checkout pela mesma sessão ou pelo cadastro do usuário;
 - regras sem nenhuma condição salva não são aplicadas;
 - o plugin não altera preço do frete, pagamento, pedidos, produtos ou dados de clientes;
-- o visual premium do checkout atua só na apresentação, preserva o fluxo nativo do WooCommerce e continua compatível com o refresh AJAX do checkout;
+- o visual premium do checkout atua só na apresentação, preserva a estrutura real do WooCommerce e continua compatível com o refresh AJAX do checkout;
 - feriados nacionais foram considerados na conta de dias úteis;
 - feriados locais podem ser ajustados via filtro `useup_me_business_holidays`;
 - o valor da mensagem de frete grátis pode ser ajustado pelo filtro `useup_me_free_shipping_threshold`;
