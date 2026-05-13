@@ -40,8 +40,8 @@ class USEUP_ME_Checkout_Polish {
 				'tagsText'    => 'Enviar tags lisas com o pedido',
 				'tipPrefix'   => 'Dica:',
 				'tipContains' => 'Adicione pelo menos 5 dias úteis',
-				'pixBadge'    => '5% no PIX',
-				'cardBadge'   => 'até 12x',
+				'pixBadge'    => '5% NO PIX',
+				'cardBadge'   => 'ATÉ 12X',
 				'cardHelper'  => 'Você será redirecionado para concluir o pagamento com segurança.',
 			)
 		);

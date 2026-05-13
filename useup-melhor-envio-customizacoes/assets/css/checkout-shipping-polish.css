@@ -1,16 +1,222 @@
 .useup-checkout-polish .woocommerce-checkout-review-order {
 	color: #222;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
 }
 
 .useup-checkout-polish .woocommerce-checkout-review-order-table {
 	border-collapse: separate;
 	border-spacing: 0;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+.useup-checkout-polish .woocommerce-checkout-review-order-table thead,
+.useup-checkout-polish .useup-checkout-visual-source {
+	display: none !important;
+}
+
+.useup-checkout-polish .useup-checkout-product-card,
+.useup-checkout-polish .useup-checkout-total-card,
+.useup-checkout-polish .useup-checkout-pix-discount-card {
+	width: 100%;
+	max-width: 100%;
+	border: 1px solid #e8e8e8;
+	border-radius: 8px;
+	background: #fff;
+	padding: 18px 20px;
+	box-sizing: border-box;
+}
+
+.useup-checkout-polish .useup-checkout-product-card {
+	margin-bottom: 18px;
+}
+
+.useup-checkout-polish .useup-checkout-product-row {
+	display: grid;
+	grid-template-columns: 64px minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 14px;
+}
+
+.useup-checkout-polish .useup-checkout-product-row--with-divider {
+	padding-bottom: 14px;
+	margin-bottom: 14px;
+	border-bottom: 1px solid #ededed;
+}
+
+.useup-checkout-polish .useup-checkout-product-thumb {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 64px;
+	height: 64px;
+	border: 1px solid #e8e8e8;
+	border-radius: 6px;
+	background-color: #fff;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	overflow: hidden;
+}
+
+.useup-checkout-polish .useup-checkout-product-thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.useup-checkout-polish .useup-checkout-product-thumb-fallback {
+	font-size: 11px;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: #777;
+}
+
+.useup-checkout-polish .useup-checkout-product-qty-badge {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 20px;
+	height: 20px;
+	padding: 0 6px;
+	border-radius: 999px;
+	background: #111;
+	color: #fff;
+	font-size: 10px;
+	font-weight: 600;
+	line-height: 1;
+}
+
+.useup-checkout-polish .useup-checkout-product-info {
+	min-width: 0;
+}
+
+.useup-checkout-polish .useup-checkout-product-name,
+.useup-checkout-polish .useup-checkout-product-name a {
+	color: #111;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.45;
+	text-decoration: none;
+}
+
+.useup-checkout-polish .useup-checkout-product-price {
+	text-align: right;
+	white-space: nowrap;
+	color: #111;
+	font-size: 15px;
+	font-weight: 500;
+	line-height: 1.2;
+}
+
+.useup-checkout-polish .useup-checkout-subtotal-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 18px;
+	padding-top: 18px;
+	border-top: 1px solid #ededed;
+}
+
+.useup-checkout-polish .useup-checkout-subtotal-label,
+.useup-checkout-polish .useup-checkout-total-label {
+	font-size: 12px;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: #666;
+}
+
+.useup-checkout-polish .useup-checkout-subtotal-value {
+	text-align: right;
+	white-space: nowrap;
+	color: #111;
+	font-size: 15px;
+	font-weight: 500;
+}
+
+.useup-checkout-polish .useup-checkout-pix-discount-card {
+	margin-top: 18px;
+	background: #fafafa;
+}
+
+.useup-checkout-polish .useup-checkout-pix-discount-row,
+.useup-checkout-polish .useup-checkout-total-row {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.useup-checkout-polish .useup-checkout-pix-discount-label {
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.4;
+	color: #222;
+}
+
+.useup-checkout-polish .useup-checkout-pix-discount-value {
+	text-align: right;
+	white-space: nowrap;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.2;
+	color: #111;
+}
+
+.useup-checkout-polish .useup-checkout-pix-discount-note {
+	margin-top: 6px;
+	font-size: 11px;
+	line-height: 1.4;
+	color: #777;
+}
+
+.useup-checkout-polish .useup-checkout-total-card {
+	margin-top: 18px;
+}
+
+.useup-checkout-polish .useup-checkout-total-summary {
+	margin-left: auto;
+	text-align: right;
+}
+
+.useup-checkout-polish .useup-checkout-total-amount {
+	font-size: 22px;
+	line-height: 1.1;
+	font-weight: 600;
+	color: #111;
+}
+
+.useup-checkout-polish .useup-checkout-total-amount .amount {
+	font-size: inherit;
+	font-weight: inherit;
+	color: inherit;
+}
+
+.useup-checkout-polish .useup-checkout-total-tax {
+	margin-top: 6px;
+	font-size: 12px;
+	line-height: 1.35;
+	color: #777;
+	text-align: right;
 }
 
 .useup-checkout-polish .woocommerce-shipping-totals,
 .useup-checkout-polish tr.woocommerce-shipping-totals.shipping {
 	position: relative;
 	display: block;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
 	margin: 18px 0;
 	padding: 22px 24px;
 	border: 1px solid #e8e8e8;
@@ -20,18 +226,7 @@
 
 .useup-checkout-polish .woocommerce-shipping-totals::before,
 .useup-checkout-polish tr.woocommerce-shipping-totals.shipping::before {
-	content: "";
-	display: block;
-	width: 40px;
-	height: 40px;
-	margin-bottom: 14px;
-	border: 1px solid #e8e8e8;
-	border-radius: 999px;
-	background-color: #fff;
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7h11v8H3z'/%3E%3Cpath d='M14 10h3l3 3v2h-6z'/%3E%3Ccircle cx='7.5' cy='17.5' r='1.5'/%3E%3Ccircle cx='17.5' cy='17.5' r='1.5'/%3E%3C/svg%3E");
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: 18px 18px;
+	content: none;
 }
 
 .useup-checkout-polish .woocommerce-shipping-totals th,
@@ -47,24 +242,12 @@
 
 .useup-checkout-polish .woocommerce-shipping-totals th::before,
 .useup-checkout-polish tr.woocommerce-shipping-totals.shipping th::before {
-	content: "Entrega e prazo";
-	display: block;
-	font-size: 20px;
-	line-height: 1.2;
-	font-weight: 600;
-	color: #111;
-	margin-bottom: 4px;
+	content: none;
 }
 
 .useup-checkout-polish .woocommerce-shipping-totals th::after,
 .useup-checkout-polish tr.woocommerce-shipping-totals.shipping th::after {
-	content: "Escolha como deseja receber sua joia.";
-	display: block;
-	font-size: 14px;
-	line-height: 1.4;
-	font-weight: 400;
-	color: #777;
-	margin-bottom: 18px;
+	content: none;
 }
 
 .useup-checkout-polish .woocommerce-shipping-totals td,
@@ -73,6 +256,46 @@
 	width: 100%;
 	padding: 0;
 	border: 0;
+}
+
+.useup-checkout-polish .useup-shipping-heading {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	margin-bottom: 4px;
+}
+
+.useup-checkout-polish .useup-shipping-heading__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	color: #111;
+	flex: 0 0 18px;
+}
+
+.useup-checkout-polish .useup-shipping-heading__icon svg {
+	display: block;
+	width: 18px;
+	height: 18px;
+}
+
+.useup-checkout-polish .useup-shipping-heading__title {
+	font-size: 20px;
+	line-height: 1.2;
+	font-weight: 600;
+	color: #111;
+	white-space: nowrap;
+}
+
+.useup-checkout-polish .useup-shipping-heading__description {
+	margin: 0 0 18px;
+	font-size: 14px;
+	line-height: 1.4;
+	font-weight: 400;
+	color: #777;
 }
 
 .useup-checkout-polish ul#shipping_method,
@@ -171,6 +394,9 @@
 
 .useup-checkout-polish .order-total {
 	display: block;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
 	margin-top: 18px;
 	padding: 18px 20px;
 	border: 1px solid #e8e8e8;
@@ -195,19 +421,32 @@
 	text-align: right;
 }
 
-.useup-checkout-polish .order-total .amount {
-	font-size: 28px;
+.useup-checkout-polish .order-total .amount,
+.useup-checkout-polish .useup-checkout-total-card .amount {
+	font-size: 22px;
 	font-weight: 700;
 	color: #111;
 }
 
 .useup-checkout-polish .order-total small,
-.useup-checkout-polish .order-total .includes_tax {
+.useup-checkout-polish .order-total .includes_tax,
+.useup-checkout-polish .useup-checkout-total-card small,
+.useup-checkout-polish .useup-checkout-total-card .includes_tax {
 	display: block;
 	margin-top: 4px;
-	font-size: 12px;
+	font-size: 11px !important;
+	line-height: 1.3;
+	font-weight: 400 !important;
 	color: #777;
-	font-weight: 400;
+}
+
+.useup-checkout-polish .order-total small .amount,
+.useup-checkout-polish .order-total .includes_tax .amount,
+.useup-checkout-polish .useup-checkout-total-card small .amount,
+.useup-checkout-polish .useup-checkout-total-card .includes_tax .amount {
+	font-size: 11px !important;
+	font-weight: 400 !important;
+	color: #777 !important;
 }
 
 .useup-checkout-polish .useup-me-tags-option {
@@ -220,9 +459,10 @@
 }
 
 .useup-checkout-polish .useup-me-tags-option__label {
-	display: flex;
+	display: flex !important;
 	align-items: center;
 	gap: 10px;
+	width: 100%;
 	cursor: pointer;
 	color: #222;
 	font-size: 14px;
@@ -242,24 +482,40 @@
 }
 
 .useup-checkout-polish .useup-me-tags-option__input {
+	flex: 0 0 auto;
 	width: 18px;
 	height: 18px;
 	margin: 0;
 	accent-color: #000;
 }
 
-.useup-checkout-polish .useup-me-tags-option__optional {
+.useup-checkout-polish .tgpc-enable-checkout-gift-wrapper--label_text {
+	flex: 1 1 auto;
+	min-width: 0;
+	font-size: 13px;
+	color: #333;
+}
+
+.useup-checkout-polish .useup-me-tags-option__optional,
+.useup-checkout-polish .useup-me-tags-option__label .optional {
 	margin-left: auto;
-	color: #777;
-	font-size: 11px;
+	flex: 0 0 auto;
+	color: #676163;
+	font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	font-size: 10px;
 	line-height: 1;
+	font-weight: 500;
 	text-transform: uppercase;
-	letter-spacing: 0.06em;
+	letter-spacing: 0.02em;
+	white-space: nowrap;
 }
 
 .useup-checkout-polish #payment {
 	margin-top: 18px;
 	background: transparent;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
 }
 
 .useup-checkout-polish #payment ul.payment_methods {
@@ -267,6 +523,9 @@
 	border: 1px solid #e8e8e8;
 	border-radius: 8px;
 	background: #fff;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
 }
 
 .useup-checkout-polish #payment ul.payment_methods::before,
@@ -275,6 +534,12 @@
 }
 
 .useup-checkout-polish #payment ul.payment_methods > li {
+	display: flex;
+	align-items: flex-start;
+	flex-wrap: wrap;
+	gap: 10px;
+	width: 100%;
+	box-sizing: border-box;
 	margin: 0 0 8px;
 	padding: 14px 16px;
 	border: 1px solid #e8e8e8;
@@ -297,59 +562,102 @@
 }
 
 .useup-checkout-polish #payment ul.payment_methods input[type="radio"] {
+	flex: 0 0 auto;
+	width: 18px;
+	height: 18px;
+	margin: 0;
 	accent-color: #000;
 }
 
 .useup-checkout-polish #payment ul.payment_methods > li > label {
-	display: flex;
+	display: flex !important;
 	align-items: center;
 	gap: 10px;
+	flex: 1 1 0;
+	min-width: 0;
 	width: 100%;
 	margin: 0;
 	color: #111;
-	font-size: 14px;
+	font-size: 14px !important;
 	font-weight: 500;
 	line-height: 1.4;
 	cursor: pointer;
 }
 
-.useup-checkout-polish #payment ul.payment_methods > li > label img {
-	max-height: 22px;
+.useup-checkout-polish .wc_payment_methods li,
+.useup-checkout-polish .woocommerce-checkout-payment .wc_payment_method,
+.useup-checkout-polish .woocommerce-checkout-payment,
+.useup-checkout-polish .useup-checkout-total-card {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+.useup-checkout-polish .useup-payment-label-text {
+	flex: 0 1 auto;
+	min-width: 0;
+	font-size: 14px !important;
+	line-height: 1.4;
+}
+
+.useup-checkout-polish #payment ul.payment_methods > li > label img,
+.useup-checkout-polish .wc_payment_method img,
+.useup-checkout-polish .payment_method_useup_infinitepay img,
+.useup-checkout-polish .useup-payment-method-icon {
+	flex: 0 0 auto;
+	margin-left: 10px !important;
+	margin-right: 0 !important;
+	max-height: 20px;
 	width: auto;
 }
 
-.useup-checkout-polish .useup-payment-badge {
-	margin-left: auto;
-	padding: 4px 8px;
-	border: 1px solid #dfdfdf;
+.useup-checkout-polish .useup-payment-badge,
+.useup-checkout-polish .useup-checkout-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-left: auto !important;
+	flex: 0 0 auto;
+	min-height: 22px;
+	padding: 3px 9px;
+	border: 1px solid #dedede;
 	border-radius: 999px;
-	background: #fbfbfb;
-	color: #555;
+	background: #fff;
+	color: #676163;
+	font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 	font-size: 10px;
-	font-weight: 600;
+	font-weight: 500;
 	line-height: 1;
-	letter-spacing: 0.06em;
+	letter-spacing: 0.02em;
 	text-transform: uppercase;
 	white-space: nowrap;
 }
 
-.useup-checkout-polish .useup-payment-note {
-	margin: 10px 0 0 26px;
-	color: #777;
-	font-size: 12px;
-	line-height: 1.45;
+.useup-checkout-polish #payment div.payment_box {
+	display: none !important;
+}
+
+.useup-checkout-polish .woocommerce-checkout-payment .payment_box,
+.useup-checkout-polish .wc_payment_methods .payment_box {
+	display: none !important;
 }
 
 .useup-checkout-polish #payment div.payment_box {
-	margin-top: 10px;
+	width: calc(100% - 28px);
+	margin: 4px 0 0 28px;
+	padding: 0;
 	background: transparent;
-	color: #666;
-	font-size: 12px;
-	line-height: 1.45;
+	color: #777;
+	font-size: 11px;
+	line-height: 1.4;
 }
 
 .useup-checkout-polish #payment div.payment_box::before {
 	display: none;
+}
+
+.useup-checkout-polish .pix-por-piggly--featured {
+	display: none !important;
 }
 
 .useup-checkout-polish #place_order {
@@ -370,7 +678,52 @@
 	opacity: 0.88;
 }
 
+.useup-checkout-polish .useup-checkout-security-note {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	width: 100%;
+	margin-top: 10px;
+	font-size: 12px;
+	line-height: 1.4;
+	color: #777;
+	text-align: center;
+}
+
+.useup-checkout-polish .useup-checkout-security-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 14px;
+	height: 14px;
+	flex: 0 0 14px;
+	color: #777;
+}
+
+.useup-checkout-polish .useup-checkout-security-icon svg {
+	display: block;
+	width: 14px;
+	height: 14px;
+}
+
 @media (max-width: 768px) {
+	.useup-checkout-polish .useup-checkout-product-card,
+	.useup-checkout-polish .useup-checkout-total-card,
+	.useup-checkout-polish .useup-checkout-pix-discount-card {
+		padding: 16px;
+	}
+
+	.useup-checkout-polish .useup-checkout-product-row {
+		grid-template-columns: 56px minmax(0, 1fr) auto;
+		gap: 12px;
+	}
+
+	.useup-checkout-polish .useup-checkout-product-thumb {
+		width: 56px;
+		height: 56px;
+	}
+
 	.useup-checkout-polish .woocommerce-shipping-totals,
 	.useup-checkout-polish tr.woocommerce-shipping-totals.shipping {
 		padding: 18px 16px;
@@ -391,7 +744,16 @@
 		padding-left: 8px;
 	}
 
+	.useup-checkout-polish #payment ul.payment_methods > li {
+		padding: 14px;
+	}
+
 	.useup-checkout-polish #payment ul.payment_methods > li > label {
-		flex-wrap: wrap;
+		font-size: 14px !important;
+	}
+
+	.useup-checkout-polish .useup-checkout-pix-discount-row,
+	.useup-checkout-polish .useup-checkout-total-row {
+		align-items: center;
 	}
 }

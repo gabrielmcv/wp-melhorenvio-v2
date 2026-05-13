@@ -32,6 +32,20 @@
     };
   }
 
+  function fixMojibakeText(text) {
+    var value = String(text || '');
+
+    if (!/[\u00c3\u00e2]/.test(value)) {
+      return value;
+    }
+
+    try {
+      return decodeURIComponent(escape(value));
+    } catch (error) {
+      return value;
+    }
+  }
+
   function ProductShippingCalculator(element) {
     this.element = element;
     this.body = element.querySelector('.useup-me-product-shipping__body');
@@ -47,7 +61,8 @@
     this.form = element.closest('form.cart');
     this.variationForm = this.form && this.form.classList.contains('variations_form') ? this.form : null;
     this.quantityInput = this.form ? this.form.querySelector('input.qty') : null;
-    this.initialButtonText = this.button ? this.button.textContent : (strings.seeOptions || 'Ver opções');
+    this.normalizeVisibleCopy();
+    this.initialButtonText = this.button ? this.button.textContent : (strings.seeOptions || 'Ver op\u00e7\u00f5es');
     this.state = {
       hasSavedPostcode: element.getAttribute('data-has-postcode') === '1',
       currentPostcode: sanitizePostcode(element.getAttribute('data-postcode')),
@@ -157,6 +172,30 @@
     }
   };
 
+  ProductShippingCalculator.prototype.normalizeVisibleCopy = function () {
+    var savedMessage = this.element.querySelector('.useup-me-product-shipping__current-cep > span');
+    var description = this.element.querySelector('.useup-me-product-shipping__description');
+
+    if (savedMessage) {
+      savedMessage.innerHTML = 'Sua entrega ser\u00e1 calculada para o CEP <strong class="useup-me-product-shipping__postcode-value">' +
+        fixMojibakeText(this.postcodeValue ? this.postcodeValue.textContent : '') +
+        '</strong>.';
+      this.postcodeValue = savedMessage.querySelector('.useup-me-product-shipping__postcode-value');
+    }
+
+    if (this.changeButton) {
+      this.changeButton.textContent = 'Trocar CEP';
+    }
+
+    if (description) {
+      description.textContent = 'Informe seu CEP para ver quando sua joia chega at\u00e9 voc\u00ea.';
+    }
+
+    if (this.button) {
+      this.button.textContent = 'Ver op\u00e7\u00f5es';
+    }
+  };
+
   ProductShippingCalculator.prototype.recalculate = function () {
     if (!this.state.currentPostcode || !this.state.hasCalculated) {
       return;
@@ -201,7 +240,7 @@
     }
 
     if (this.postcodeValue) {
-      this.postcodeValue.textContent = formattedPostcode;
+      this.postcodeValue.textContent = fixMojibakeText(formattedPostcode);
     }
   };
 
@@ -258,7 +297,7 @@
       return;
     }
 
-    this.error.textContent = message;
+    this.error.textContent = fixMojibakeText(message);
     this.error.hidden = false;
   };
 
@@ -290,14 +329,14 @@
 
     if (normalizedPostcode.length !== 8) {
       if (!isAutomatic) {
-        this.showError(strings.invalidPostcode || 'Informe um CEP válido com 8 números.');
+        this.showError(strings.invalidPostcode || 'Informe um CEP v\u00e1lido com 8 n\u00fameros.');
       }
       return;
     }
 
     if (this.requiresVariation() && this.getVariationId() === 0) {
       if (!isAutomatic) {
-        this.showError(strings.selectVariation || 'Selecione uma variação para calcular a entrega.');
+        this.showError(strings.selectVariation || 'Selecione uma varia\u00e7\u00e3o para calcular a entrega.');
       }
       return;
     }
@@ -327,7 +366,7 @@
       })
       .then(function (payload) {
         if (!payload || !payload.success || !payload.data) {
-          throw new Error(payload && payload.data && payload.data.message ? payload.data.message : (strings.genericError || 'Não foi possível calcular o frete agora. Tente novamente em instantes.'));
+          throw new Error(payload && payload.data && payload.data.message ? payload.data.message : (strings.genericError || 'N\u00e3o foi poss\u00edvel calcular o frete agora. Tente novamente em instantes.'));
         }
 
         this.state.currentPostcode = sanitizePostcode(payload.data.raw_postcode || normalizedPostcode);
@@ -340,7 +379,7 @@
       }.bind(this))
       .catch(function (error) {
         this.clearResults();
-        this.showError(error && error.message ? error.message : (strings.genericError || 'Não foi possível calcular o frete agora. Tente novamente em instantes.'));
+        this.showError(error && error.message ? error.message : (strings.genericError || 'N\u00e3o foi poss\u00edvel calcular o frete agora. Tente novamente em instantes.'));
       }.bind(this))
       .finally(function () {
         this.setLoading(false);
@@ -354,21 +393,36 @@
 
     this.results.innerHTML = '';
 
-    if (data.estimate_label) {
-      this.results.appendChild(this.buildEstimateNode(data.estimate_label));
+    var safeData = data || {};
+    var rates = Array.isArray(safeData.rates) ? safeData.rates.slice() : [];
+
+    safeData.estimate_label = fixMojibakeText(safeData.estimate_label);
+    safeData.free_shipping_note = fixMojibakeText(safeData.free_shipping_note);
+
+    rates = rates.map(function (rate) {
+      return {
+        label: fixMojibakeText(rate && rate.label),
+        cost: fixMojibakeText(rate && rate.cost),
+        delivery_time: fixMojibakeText(rate && rate.delivery_time),
+        raw_cost: rate && rate.raw_cost,
+        id: rate && rate.id
+      };
+    });
+
+    if (safeData.estimate_label) {
+      this.results.appendChild(this.buildEstimateNode(safeData.estimate_label));
     }
 
-    var rates = Array.isArray(data.rates) ? data.rates.slice() : [];
     var fastestIndex = this.findFastestRateIndex(rates);
 
     rates.forEach(function (rate, index) {
       this.results.appendChild(this.buildRateNode(rate, index === fastestIndex));
     }.bind(this));
 
-    if (data.free_shipping_note) {
+    if (safeData.free_shipping_note) {
       var notice = document.createElement('div');
       notice.className = 'useup-me-product-shipping__free-shipping';
-      notice.textContent = data.free_shipping_note;
+      notice.textContent = safeData.free_shipping_note;
       this.results.appendChild(notice);
     }
 
@@ -379,8 +433,9 @@
     var node = document.createElement('div');
     var icon = document.createElement('span');
     var content = document.createElement('span');
-    var betweenMatch = text.match(/^Receba entre (.+) e (.+)\.$/);
-    var untilMatch = text.match(/^Chega até (.+)\.$/);
+    var safeText = fixMojibakeText(text);
+    var betweenMatch = safeText.match(/^Receba entre (.+) e (.+)\.$/);
+    var untilMatch = safeText.match(/^Chega at\u00e9 (.+)\.$/);
 
     node.className = 'useup-me-product-shipping__estimate';
     icon.className = 'useup-me-product-shipping__estimate-icon';
@@ -395,11 +450,11 @@
       content.appendChild(this.buildStrongNode(betweenMatch[2]));
       content.appendChild(document.createTextNode('.'));
     } else if (untilMatch) {
-      content.appendChild(document.createTextNode('Chega até '));
+      content.appendChild(document.createTextNode('Chega at\u00e9 '));
       content.appendChild(this.buildStrongNode(untilMatch[1]));
       content.appendChild(document.createTextNode('.'));
     } else {
-      content.textContent = text;
+      content.textContent = safeText;
     }
 
     node.appendChild(icon);
@@ -414,11 +469,14 @@
     return strong;
   };
 
+  ProductShippingCalculator.prototype.formatRateCost = function (value) {
+    return fixMojibakeText(value).replace(/R\$\s*(?=\d)/g, 'R$ ');
+  };
+
   ProductShippingCalculator.prototype.buildRateNode = function (rate, isFastest) {
     var node = document.createElement('div');
     var main = document.createElement('span');
     var methodWrap = document.createElement('span');
-    var methodIcon = document.createElement('span');
     var methodLabel = document.createElement('span');
     var cost = document.createElement('strong');
 
@@ -428,15 +486,10 @@
 
     if (isFastest) {
       methodWrap.appendChild(this.buildFastestBadge());
-    } else {
-      methodIcon.className = 'useup-me-product-shipping__method-icon';
-      methodIcon.setAttribute('aria-hidden', 'true');
-      methodIcon.innerHTML = this.getMethodTruckIconSvg();
-      methodWrap.appendChild(methodIcon);
     }
 
-    methodLabel.textContent = rate && rate.label ? rate.label : 'Entrega';
-    cost.textContent = rate && rate.cost ? rate.cost : '';
+    methodLabel.textContent = rate && rate.label ? fixMojibakeText(rate.label) : 'Entrega';
+    cost.textContent = this.formatRateCost(rate && rate.cost ? rate.cost : '');
 
     methodWrap.appendChild(methodLabel);
     main.appendChild(methodWrap);
@@ -454,15 +507,15 @@
     badge.type = 'button';
     badge.className = 'useup-me-product-shipping__fastest-badge';
     badge.setAttribute('aria-expanded', 'false');
-    badge.setAttribute('aria-label', 'Entrega mais rápida');
+    badge.setAttribute('aria-label', 'Entrega mais r\u00e1pida');
 
     icon.className = 'useup-me-product-shipping__fastest-icon';
     icon.setAttribute('aria-hidden', 'true');
     icon.innerHTML = this.getFastTruckIconSvg();
 
-    tooltip.className = 'useup-me-tooltip useup-me-tooltip--fastest';
+    tooltip.className = 'useup-me-product-shipping__fastest-tooltip useup-me-tooltip useup-me-tooltip--fastest';
     tooltip.hidden = true;
-    tooltip.textContent = 'Entrega mais rápida';
+    tooltip.textContent = 'Entrega mais r\u00e1pida';
 
     badge.appendChild(icon);
     badge.appendChild(tooltip);
@@ -508,7 +561,7 @@
     var bestDays = null;
 
     rates.forEach(function (rate, index) {
-      var text = rate && rate.delivery_time ? String(rate.delivery_time) : '';
+      var text = rate && rate.delivery_time ? fixMojibakeText(rate.delivery_time) : '';
       var nearestDate = this.extractNearestDate(text);
       var days = this.extractBusinessDays(text);
 
@@ -573,10 +626,6 @@
 
   ProductShippingCalculator.prototype.getCalendarIconSvg = function () {
     return '<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><rect x="4" y="5.5" width="16" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"></rect><path d="M8 3.75v3.5M16 3.75v3.5M4 9.25h16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>';
-  };
-
-  ProductShippingCalculator.prototype.getMethodTruckIconSvg = function () {
-    return '<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M3.5 8h10v6.25H12a2.25 2.25 0 0 0-4.5 0H6A2.25 2.25 0 0 0 1.5 14V10a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M13.5 10h3.2l2.3 2.5v1.75h-1.1a2.25 2.25 0 0 0-4.4 0h-.1V10Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="8.75" cy="16.5" r="1.25" fill="none" stroke="currentColor" stroke-width="1.5"></circle><circle cx="16.25" cy="16.5" r="1.25" fill="none" stroke="currentColor" stroke-width="1.5"></circle></svg>';
   };
 
   ProductShippingCalculator.prototype.getFastTruckIconSvg = function () {
