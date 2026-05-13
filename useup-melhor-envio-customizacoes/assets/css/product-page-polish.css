@@ -1,47 +1,13 @@
-.useup-product-polish .single-product div.product .summary,
-.useup-product-polish div.product .summary.entry-summary {
-	color: #1d1d1d;
-}
-
-.useup-product-polish .woocommerce-breadcrumb {
-	margin-bottom: 14px;
-	color: #7a7a7a;
-	font-size: 12px;
-	line-height: 1.4;
-}
-
-.useup-product-polish .woocommerce-breadcrumb a {
-	color: inherit;
-	text-decoration: none;
-}
-
-.useup-product-polish div.product .product_title,
-.useup-product-polish .summary .product_title {
-	margin-bottom: 10px;
-	color: #111;
-	font-size: clamp(30px, 4vw, 48px);
-	line-height: 1.08;
-	letter-spacing: -0.02em;
-}
-
-.useup-product-polish .useup-product-tagline {
-	margin: 0 0 18px;
-	color: #555;
-	font-size: 15px;
-	line-height: 1.5;
-	letter-spacing: 0.01em;
-}
-
 .useup-product-polish .useup-price-block {
-	margin: 0 0 22px;
+	margin: 0 0 14px;
 }
 
 .useup-product-polish .useup-price-block__main {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: baseline;
-	gap: 10px;
-	margin-bottom: 10px;
+	gap: 8px;
+	margin-bottom: 6px;
 }
 
 .useup-product-polish .useup-price-block__amount {
@@ -56,33 +22,51 @@
 	position: relative;
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
 }
 
+.useup-product-polish .useup-price-block__info-trigger,
 .useup-product-polish .useup-wholesale-info-trigger {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
 	padding: 0;
 	border: 0;
 	background: transparent;
 	color: #222;
-	font-size: 16px;
+	cursor: pointer;
+}
+
+.useup-product-polish .useup-price-block__mode {
+	color: #222;
+	font-size: 15px;
 	line-height: 1.2;
 	text-decoration: underline;
 	text-decoration-thickness: 1px;
 	text-underline-offset: 3px;
-	cursor: pointer;
 }
 
-.useup-product-polish .useup-wholesale-info__icon {
+.useup-product-polish .useup-wholesale-info-icon {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 18px;
-	height: 18px;
-	border: 1px solid #bfbfbf;
-	border-radius: 50%;
+	width: 16px;
+	height: 16px;
 	color: #555;
-	font-size: 11px;
-	line-height: 1;
+	transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.useup-product-polish .useup-wholesale-info-icon svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.useup-product-polish .useup-price-block__info-trigger:hover .useup-wholesale-info-icon,
+.useup-product-polish .useup-wholesale-info-trigger:hover .useup-wholesale-info-icon,
+.useup-product-polish .useup-price-block__info-trigger:hover .useup-price-block__mode,
+.useup-product-polish .useup-wholesale-info-trigger:hover .useup-price-block__mode {
+	color: #111;
+	opacity: 0.88;
 }
 
 .useup-product-polish .useup-wholesale-popover {
@@ -103,19 +87,9 @@
 	line-height: 1.55;
 }
 
-.useup-product-polish .useup-price-block__row {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px 16px;
-}
-
+.useup-product-polish .useup-price-block__retail,
 .useup-product-polish .useup-price-block__secondary {
-	display: inline-flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	gap: 4px;
+	margin: 0 0 10px;
 	color: #444;
 	font-size: 17px;
 	line-height: 1.4;
@@ -126,101 +100,36 @@
 }
 
 .useup-product-polish .useup-price-block__badges {
-	display: inline-flex;
+	display: flex;
 	flex-wrap: wrap;
-	justify-content: flex-end;
 	gap: 8px;
 }
 
 .useup-product-polish .useup-price-badge {
 	display: inline-flex;
 	align-items: center;
-	min-height: 34px;
-	padding: 0 12px;
+	min-height: 30px;
+	padding: 0 10px;
 	border: 1px solid #dedede;
 	border-radius: 4px;
 	background: #fbfbfb;
 	color: #222;
-	font-size: 13px;
+	font-size: 12.5px;
 	line-height: 1;
 	white-space: nowrap;
 }
 
-.useup-product-polish div.product form.cart:not(.variations_form),
-.useup-product-polish .summary form.cart:not(.variations_form) {
-	display: flex;
-	flex-wrap: nowrap;
-	align-items: stretch;
-	gap: 14px;
-	margin: 0 0 16px;
-}
-
-.useup-product-polish .summary form.cart:not(.variations_form) .quantity {
-	flex: 0 0 auto;
-	min-width: 96px;
-}
-
-.useup-product-polish .summary form.cart:not(.variations_form) .quantity .qty {
-	min-height: 52px;
-	border: 1px solid #dfdfdf;
-	border-radius: 4px;
-	padding: 0 12px;
-	color: #111;
-}
-
-.useup-product-polish .summary form.cart:not(.variations_form) .single_add_to_cart_button {
-	flex: 1 1 auto;
-	min-height: 52px;
-	border: 1px solid #111;
-	border-radius: 4px;
-	background: #111;
-	color: #fff;
-	font-size: 15px;
-	font-weight: 600;
-	letter-spacing: 0.01em;
-}
-
-.useup-product-polish .useup-product-trust {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 10px 16px;
-	margin: 0 0 18px;
-	padding-bottom: 4px;
-	color: #4d4d4d;
-	font-size: 12.5px;
-	line-height: 1.4;
-}
-
-.useup-product-polish .useup-product-trust__item {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-}
-
-.useup-product-polish .useup-product-trust__item:not(:last-child)::after {
-	content: "";
-	width: 1px;
-	height: 14px;
-	margin-left: 8px;
-	background: #e4e4e4;
-}
-
-.useup-product-polish .useup-product-trust__icon {
-	display: inline-flex;
-	width: 16px;
-	height: 16px;
-	color: #1d1d1d;
-}
-
-.useup-product-polish .useup-product-trust__icon svg {
-	display: block;
-	width: 16px;
-	height: 16px;
-}
-
 .useup-product-polish .useup-short-description {
+	position: relative;
 	margin-top: 18px;
+}
+
+.useup-product-polish .useup-short-description__tagline {
+	margin: 0 0 10px;
+	color: #555;
+	font-size: 15px;
+	line-height: 1.5;
+	letter-spacing: 0.01em;
 }
 
 .useup-product-polish .useup-short-description__content {
@@ -228,8 +137,8 @@
 	overflow: hidden;
 	color: #333;
 	font-size: 14px;
-	line-height: 1.75;
-	transition: max-height 0.35s ease;
+	line-height: 1.7;
+	transition: max-height 0.3s ease;
 }
 
 .useup-product-polish .useup-short-description__content p:first-child {
@@ -237,7 +146,7 @@
 }
 
 .useup-product-polish .useup-short-description--collapsed .useup-short-description__content {
-	max-height: 5.4em;
+	max-height: 5.1em;
 }
 
 .useup-product-polish .useup-short-description--collapsed .useup-short-description__content::after {
@@ -246,18 +155,9 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	height: 3.2em;
-	background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.9) 55%, rgba(255, 255, 255, 1) 100%);
-	box-shadow: inset 0 -10px 20px rgba(255, 255, 255, 0.8);
+	height: 2.4em;
+	background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.92) 65%, #fff 100%);
 	pointer-events: none;
-}
-
-.useup-product-polish .useup-short-description--expanded .useup-short-description__content {
-	max-height: var(--useup-short-description-expanded-height, 1000px);
-}
-
-.useup-product-polish .useup-short-description--expanded .useup-short-description__content::after {
-	display: none;
 }
 
 .useup-product-polish .useup-short-description__toggle {
@@ -278,59 +178,22 @@
 	display: none;
 }
 
-.useup-product-polish .summary .product_meta {
-	margin-top: 18px;
-	padding-top: 18px;
-	border-top: 1px solid #ececec;
+.useup-product-polish .useup-short-description--expanded .useup-short-description__content {
+	max-height: var(--useup-short-description-expanded-height, 1000px);
 }
 
-.useup-product-polish .summary .useup-me-product-shipping {
-	margin-top: 18px;
+.useup-product-polish .useup-short-description--expanded .useup-short-description__content::after {
+	display: none;
 }
 
 @media (max-width: 767px) {
-	.useup-product-polish .woocommerce-breadcrumb {
-		margin-bottom: 12px;
-		font-size: 11px;
-	}
-
-	.useup-product-polish .useup-product-tagline {
-		margin-bottom: 16px;
-		font-size: 14px;
-	}
-
-	.useup-product-polish .useup-price-block__row {
-		align-items: flex-start;
-	}
-
+	.useup-product-polish .useup-price-block__retail,
 	.useup-product-polish .useup-price-block__secondary {
 		font-size: 16px;
 	}
 
-	.useup-product-polish .useup-price-block__badges {
-		justify-content: flex-start;
-	}
-
-	.useup-product-polish div.product form.cart:not(.variations_form),
-	.useup-product-polish .summary form.cart:not(.variations_form) {
-		gap: 10px;
-	}
-
-	.useup-product-polish .summary form.cart:not(.variations_form) .quantity {
-		min-width: 88px;
-	}
-
-	.useup-product-polish .summary form.cart:not(.variations_form) .single_add_to_cart_button,
-	.useup-product-polish .summary form.cart:not(.variations_form) .quantity .qty {
-		min-height: 48px;
-	}
-
-	.useup-product-polish .useup-product-trust {
-		gap: 8px 12px;
-	}
-
-	.useup-product-polish .useup-product-trust__item:not(:last-child)::after {
-		display: none;
+	.useup-product-polish .useup-short-description__tagline {
+		font-size: 14px;
 	}
 
 	.useup-product-polish .useup-wholesale-popover {

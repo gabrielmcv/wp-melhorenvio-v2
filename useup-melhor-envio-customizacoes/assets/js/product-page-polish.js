@@ -19,29 +19,6 @@
       .replace('%2$s', formatted);
   }
 
-  function relocateShippingCalculator() {
-    $('.useup-product-polish .summary, .useup-product-polish .summary.entry-summary').each(function () {
-      var $summary = $(this);
-      var $shipping = $summary.find('.useup-me-product-shipping').first();
-      var $target = $summary.find('.useup-short-description').last();
-
-      if (!$shipping.length) {
-        return;
-      }
-
-      if ($target.length) {
-        $target.after($shipping);
-        return;
-      }
-
-      var $trust = $summary.find('.useup-product-trust').last();
-
-      if ($trust.length) {
-        $trust.after($shipping);
-      }
-    });
-  }
-
   function setupShortDescriptions() {
     $('.useup-short-description').each(function () {
       var $wrapper = $(this);
@@ -54,8 +31,8 @@
         return;
       }
 
-      lineHeight = parseFloat(window.getComputedStyle($content[0]).lineHeight || '28');
-      collapsedHeight = lineHeight * 3.1;
+      lineHeight = parseFloat(window.getComputedStyle($content[0]).lineHeight || '24');
+      collapsedHeight = lineHeight * 3;
 
       $content.css('--useup-short-description-expanded-height', $content[0].scrollHeight + 'px');
 
@@ -63,6 +40,10 @@
         $toggle.attr('hidden', true);
         $wrapper.removeClass('useup-short-description--collapsed useup-short-description--expanded');
         return;
+      }
+
+      if (!$wrapper.hasClass('useup-short-description--expanded')) {
+        $wrapper.addClass('useup-short-description--collapsed');
       }
 
       $toggle.removeAttr('hidden');
@@ -116,26 +97,40 @@
     $popover.attr('hidden', isExpanded);
   }
 
-  function updatePriceBlock($scope, currentValue, regularValue) {
+  function updatePriceBlock($scope, wholesaleValue, retailValue) {
     var $block = $scope.find('.useup-price-block').first();
+    var wholesale = Number(wholesaleValue || 0);
+    var retail = Number(retailValue || 0);
+    var $main = $block.find('.useup-price-block__amount').first();
+    var $secondary = $block.find('.useup-price-block__retail, .useup-price-block__secondary').first();
+    var $secondaryAmount = $secondary.find('.useup-price-block__secondary-amount').first();
 
-    if (!$block.length) {
+    if (!$block.length || !$main.length) {
       return;
     }
 
-    var current = Number(currentValue || 0);
-    var regular = Number(regularValue || 0);
-    var $secondary = $block.find('.useup-price-block__secondary').first();
+    $main.text(formatMoney(wholesale));
 
-    $block.find('.useup-price-block__amount').text(formatMoney(current));
-
-    if (regular > current) {
-      $secondary.removeAttr('hidden');
-      $secondary.find('.useup-price-block__secondary-amount').text(formatMoney(regular));
+    if (retail > 0) {
+      $secondaryAmount.text(formatMoney(retail));
+      $secondary.show();
       return;
     }
 
-    $secondary.attr('hidden', true);
+    $secondary.hide();
+  }
+
+  function normalizePriceValues(displayPrice) {
+    var retail = Number(displayPrice || 0);
+
+    if (retail <= 0) {
+      return { wholesale: 0, retail: 0 };
+    }
+
+    return {
+      wholesale: Number((retail * 0.60).toFixed(2)),
+      retail: retail
+    };
   }
 
   function setupVariationPriceSync() {
@@ -149,25 +144,27 @@
       }
 
       $form.on('show_variation', function (event, variation) {
+        var values;
+
         if (!variation) {
           return;
         }
 
-        updatePriceBlock($summary, variation.display_price, variation.display_regular_price);
+        values = normalizePriceValues(variation.display_price);
+        updatePriceBlock($summary, values.wholesale, values.retail);
       });
 
       $form.on('hide_variation reset_data', function () {
         updatePriceBlock(
           $summary,
-          $block.data('baseCurrent'),
-          $block.data('baseRegular')
+          $block.data('baseWholesale'),
+          $block.data('baseRetail')
         );
       });
     });
   }
 
   function init() {
-    relocateShippingCalculator();
     setupShortDescriptions();
     setupVariationPriceSync();
   }
