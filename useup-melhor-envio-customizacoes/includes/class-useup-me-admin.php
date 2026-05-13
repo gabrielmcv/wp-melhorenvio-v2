@@ -144,6 +144,20 @@ class USEUP_ME_Admin {
 				</div>
 
 				<div class="useup-me-card">
+					<h2>Visual premium no checkout</h2>
+					<p>Redesenha visualmente a área de entrega e total do checkout para manter a experiência premium da USEUP!.</p>
+					<label class="useup-me-checkbox">
+						<input
+							type="checkbox"
+							name="useup_me_settings[enable_checkout_polish]"
+							value="1"
+							<?php checked( ! empty( $settings['enable_checkout_polish'] ), true ); ?>
+						/>
+						Aplicar visual premium no checkout
+					</label>
+				</div>
+
+				<div class="useup-me-card">
 					<h2>Combinacao global das regras</h2>
 					<p>Defina como o plugin deve consolidar os dias extras quando mais de uma regra corresponder ao mesmo pacote.</p>
 					<select name="useup_me_settings[combine_mode]">

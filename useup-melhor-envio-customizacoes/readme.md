@@ -1,14 +1,14 @@
 # USEUP! Melhor Envio Customizacoes
 
-Plugin separado para concentrar as customizacoes da USEUP! sobre o Melhor Envio e o WooCommerce, preservando a maior parte da logica fora do plugin original.
+Plugin separado para concentrar as customizações da USEUP! sobre o Melhor Envio e o WooCommerce, preservando a maior parte da lógica fora do plugin original.
 
 ## O que ele faz
 
 - adiciona uma tela em `WooCommerce > USEUP! Entrega`;
 - permite cadastrar regras de dias extras com base em categorias, tags, classes de entrega, IDs de produto e SKUs;
 - aplica as regras ao pacote usando `AND` ou `OR`, com modo `qualquer item` ou `todos os itens`;
-- consolida regras pelo maior acrescimo ou pela soma;
-- substitui o texto padrao de prazo por uma label amigavel:
+- consolida regras pelo maior acréscimo ou pela soma;
+- substitui o texto padrão de prazo por uma label amigável:
   - ` (Chega até amanhã)`
   - ` (Chega até Segunda-feira)`
   - ` (Chega até Terça-feira)`
@@ -16,19 +16,20 @@ Plugin separado para concentrar as customizacoes da USEUP! sobre o Melhor Envio 
   - ` (Chega até Quinta-feira)`
   - ` (Chega até Sexta-feira)`
   - ` (Chega até dd/mm)`
-- oferece uma opcao para exibir `Entrega e prazo` direto na pagina do produto, com calculo por AJAX sem adicionar o item ao carrinho real;
-- permite configurar no admin o valor e o texto da mensagem de frete gratis na pagina do produto, com suporte ao placeholder `{amount}`;
-- reaproveita o CEP informado pelo cliente para preencher WooCommerce session, `WC()->customer`, checkout e metadados do usuario quando aplicavel.
+- oferece uma opção para exibir `Entrega e prazo` direto na página do produto, com cálculo por AJAX sem adicionar o item ao carrinho real;
+- permite configurar no admin o valor e o texto da mensagem de frete grátis na página do produto, com suporte ao placeholder `{amount}`;
+- oferece a opção `Aplicar visual premium no checkout`, que redesenha a apresentação da entrega, do total e do checkbox de tags lisas sem alterar os cálculos;
+- reaproveita o CEP informado pelo cliente para preencher WooCommerce session, `WC()->customer`, checkout e metadados do usuário quando aplicável.
 
 ## Dependencias
 
 - WooCommerce ativo;
-- Melhor Envio ativo para os recursos especificos de prazo customizado e dias extras nas cotacoes do Melhor Envio;
-- versao final do Melhor Envio com os hooks abaixo aplicados para as customizacoes de prazo e `$timeExtra`.
+- Melhor Envio ativo para os recursos específicos de prazo customizado e dias extras nas cotações do Melhor Envio;
+- versão final do Melhor Envio com os hooks abaixo aplicados para as customizações de prazo e `$timeExtra`.
 
 ## Hooks necessarios no Melhor Envio
 
-Foi necessario alterar o arquivo abaixo na versao final do plugin Melhor Envio:
+Foi necessário alterar o arquivo abaixo na versão final do plugin Melhor Envio:
 
 - `Services/CalculateShippingMethodService.php`
 
@@ -37,43 +38,45 @@ Hooks adicionados:
 - `useup_melhor_envio_time_extra`
 - `useup_melhor_envio_delivery_deadline_label`
 
-O plugin integrador agora verifica esse arquivo automaticamente e tenta reincluir esses hooks quando detectar que eles sumiram apos uma atualizacao do Melhor Envio.
-Se a reinclusao automatica nao for possivel com seguranca, a tela `WooCommerce > USEUP! Entrega` passa a mostrar o status da integracao e o passo a passo para reinclusao manual.
+O plugin integrador agora verifica esse arquivo automaticamente e tenta reincluir esses hooks quando detectar que eles sumiram após uma atualização do Melhor Envio.
+Se a reinclusão automática não for possível com segurança, a tela `WooCommerce > USEUP! Entrega` passa a mostrar o status da integração e o passo a passo para reinclusão manual.
 
 ## Como ativar
 
 1. Garanta que o WooCommerce esteja ativo.
 2. Garanta que o Melhor Envio esteja ativo e com os hooks acima no arquivo `Services/CalculateShippingMethodService.php`.
 3. Ative o plugin `USEUP! Melhor Envio Customizacoes`.
-4. Apos futuras atualizacoes do Melhor Envio, abra `WooCommerce > USEUP! Entrega` para conferir o painel de integracao caso queira validar o status manualmente.
+4. Após futuras atualizações do Melhor Envio, abra `WooCommerce > USEUP! Entrega` para conferir o painel de integração caso queira validar o status manualmente.
 
 ## Como configurar
 
 1. Acesse `WooCommerce > USEUP! Entrega`.
-2. Ative ou mantenha desativada a opcao `Cálculo de frete na página do produto`.
-3. Defina, se quiser, o valor de referencia e o texto da mensagem de frete gratis exibida nesse bloco.
-4. Escolha o modo global:
-   - usar apenas o maior acrescimo;
-   - ou somar os acrescimos.
-5. Cadastre uma ou mais regras.
-6. Para cada regra, defina:
+2. Ative ou mantenha desativada a opção `Cálculo de frete na página do produto`.
+3. Defina, se quiser, o valor de referência e o texto da mensagem de frete grátis exibida nesse bloco.
+4. Ative ou desative a opção `Aplicar visual premium no checkout`.
+5. Escolha o modo global:
+   - usar apenas o maior acréscimo;
+   - ou somar os acréscimos.
+6. Cadastre uma ou mais regras.
+7. Para cada regra, defina:
    - nome;
    - status;
    - dias extras;
    - operador `AND` ou `OR`;
-   - aplicacao para `qualquer item` ou `todos os itens`;
-   - condicoes por categoria, tag, classe de entrega, ID e/ou SKU.
-7. Salve as configuracoes.
+   - aplicação para `qualquer item` ou `todos os itens`;
+   - condições por categoria, tag, classe de entrega, ID e/ou SKU.
+8. Salve as configurações.
 
 ## Observacoes
 
-- o bloco da pagina do produto usa os metodos disponiveis do WooCommerce e deixa o Melhor Envio responder normalmente quando ele estiver ativo;
-- o calculo da pagina do produto nao adiciona o produto ao carrinho real;
-- o CEP salvo pode ser reaproveitado no checkout pela mesma sessao ou pelo cadastro do usuario;
-- regras sem nenhuma condicao salva nao sao aplicadas;
-- o plugin nao altera preco do frete, pagamento, pedidos, produtos ou dados de clientes;
-- feriados nacionais foram considerados na conta de dias uteis;
+- o bloco da página do produto usa os métodos disponíveis do WooCommerce e deixa o Melhor Envio responder normalmente quando ele estiver ativo;
+- o cálculo da página do produto não adiciona o produto ao carrinho real;
+- o CEP salvo pode ser reaproveitado no checkout pela mesma sessão ou pelo cadastro do usuário;
+- regras sem nenhuma condição salva não são aplicadas;
+- o plugin não altera preço do frete, pagamento, pedidos, produtos ou dados de clientes;
+- o visual premium do checkout atua só na apresentação e continua compatível com o refresh AJAX do WooCommerce;
+- feriados nacionais foram considerados na conta de dias úteis;
 - feriados locais podem ser ajustados via filtro `useup_me_business_holidays`;
-- o valor da mensagem de frete gratis pode ser ajustado pelo filtro `useup_me_free_shipping_threshold`;
-- o texto da mensagem de frete gratis pode ser ajustado pelo filtro `useup_me_free_shipping_message`.
-- o plugin monitora o arquivo `CalculateShippingMethodService.php` do Melhor Envio, cria um backup antes da primeira reaplicacao automatica e registra o status dessa verificacao no painel administrativo.
+- o valor da mensagem de frete grátis pode ser ajustado pelo filtro `useup_me_free_shipping_threshold`;
+- o texto da mensagem de frete grátis pode ser ajustado pelo filtro `useup_me_free_shipping_message`;
+- o plugin monitora o arquivo `CalculateShippingMethodService.php` do Melhor Envio, cria um backup antes da primeira reaplicação automática e registra o status dessa verificação no painel administrativo.

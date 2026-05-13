@@ -1,0 +1,269 @@
+.useup-checkout-shipping-polished .woocommerce-checkout-review-order {
+	color: #222;
+}
+
+.useup-checkout-shipping-polished .woocommerce-checkout-review-order-table {
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+.useup-checkout-shipping-polished .woocommerce-shipping-totals,
+.useup-checkout-shipping-polished tr.woocommerce-shipping-totals.shipping {
+	position: relative;
+	display: block;
+	margin: 18px 0;
+	padding: 22px 24px;
+	border: 1px solid #e8e8e8;
+	border-radius: 8px;
+	background: #fff;
+}
+
+.useup-checkout-shipping-polished .woocommerce-shipping-totals::before,
+.useup-checkout-shipping-polished tr.woocommerce-shipping-totals.shipping::before {
+	content: "";
+	display: block;
+	width: 40px;
+	height: 40px;
+	margin-bottom: 14px;
+	border: 1px solid #e8e8e8;
+	border-radius: 999px;
+	background-color: #fff;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7h11v8H3z'/%3E%3Cpath d='M14 10h3l3 3v2h-6z'/%3E%3Ccircle cx='7.5' cy='17.5' r='1.5'/%3E%3Ccircle cx='17.5' cy='17.5' r='1.5'/%3E%3C/svg%3E");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 18px 18px;
+}
+
+.useup-checkout-shipping-polished .woocommerce-shipping-totals th,
+.useup-checkout-shipping-polished tr.woocommerce-shipping-totals.shipping th {
+	display: block;
+	width: 100%;
+	padding: 0;
+	border: 0;
+	text-align: left;
+	font-size: 0;
+	line-height: 0;
+}
+
+.useup-checkout-shipping-polished .woocommerce-shipping-totals th::before,
+.useup-checkout-shipping-polished tr.woocommerce-shipping-totals.shipping th::before {
+	content: "Entrega e prazo";
+	display: block;
+	font-size: 20px;
+	line-height: 1.2;
+	font-weight: 600;
+	color: #111;
+	margin-bottom: 4px;
+}
+
+.useup-checkout-shipping-polished .woocommerce-shipping-totals th::after,
+.useup-checkout-shipping-polished tr.woocommerce-shipping-totals.shipping th::after {
+	content: "Escolha como deseja receber sua joia.";
+	display: block;
+	font-size: 14px;
+	line-height: 1.4;
+	font-weight: 400;
+	color: #777;
+	margin-bottom: 18px;
+}
+
+.useup-checkout-shipping-polished .woocommerce-shipping-totals td,
+.useup-checkout-shipping-polished tr.woocommerce-shipping-totals.shipping td {
+	display: block;
+	width: 100%;
+	padding: 0;
+	border: 0;
+}
+
+.useup-checkout-shipping-polished ul#shipping_method,
+.useup-checkout-shipping-polished .woocommerce-shipping-methods {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.useup-checkout-shipping-polished ul#shipping_method li,
+.useup-checkout-shipping-polished .woocommerce-shipping-methods li {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-height: 58px;
+	margin: 0 0 8px;
+	padding: 14px 16px;
+	border: 1px solid #e8e8e8;
+	border-radius: 6px;
+	background: #fff;
+	color: #222;
+	transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.useup-checkout-shipping-polished ul#shipping_method li:hover,
+.useup-checkout-shipping-polished .woocommerce-shipping-methods li:hover {
+	border-color: #bdbdbd;
+}
+
+.useup-checkout-shipping-polished ul#shipping_method li.is-selected,
+.useup-checkout-shipping-polished .woocommerce-shipping-methods li.is-selected {
+	border-color: #111;
+	background: #fafafa;
+}
+
+.useup-checkout-shipping-polished ul#shipping_method input[type="radio"],
+.useup-checkout-shipping-polished .woocommerce-shipping-methods input[type="radio"] {
+	width: 18px;
+	height: 18px;
+	margin: 0;
+	accent-color: #000;
+	flex: 0 0 auto;
+}
+
+.useup-checkout-shipping-polished ul#shipping_method label,
+.useup-checkout-shipping-polished .woocommerce-shipping-methods label {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 14px;
+	width: 100%;
+	margin: 0;
+	color: #222;
+	cursor: pointer;
+	font-size: 14px;
+	line-height: 1.35;
+}
+
+.useup-checkout-shipping-polished .useup-shipping-label-main {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 4px;
+}
+
+.useup-checkout-shipping-polished .useup-shipping-method-name {
+	font-weight: 600;
+	color: #111;
+}
+
+.useup-checkout-shipping-polished .useup-shipping-estimate {
+	font-weight: 400;
+	color: #666;
+}
+
+.useup-checkout-shipping-polished .useup-shipping-price {
+	margin-left: auto;
+	white-space: nowrap;
+	font-weight: 600;
+	color: #111;
+}
+
+.useup-checkout-shipping-polished .woocommerce-shipping-methods p,
+.useup-checkout-shipping-polished .woocommerce-shipping-methods small,
+.useup-checkout-shipping-polished .woocommerce-shipping-methods div,
+.useup-checkout-shipping-polished ul#shipping_method p,
+.useup-checkout-shipping-polished ul#shipping_method small,
+.useup-checkout-shipping-polished ul#shipping_method div {
+	max-width: 100%;
+}
+
+.useup-checkout-shipping-polished .useup-shipping-tip-hidden {
+	display: none !important;
+}
+
+.useup-checkout-shipping-polished .order-total {
+	display: block;
+	margin-top: 18px;
+	padding: 18px 20px;
+	border: 1px solid #e8e8e8;
+	border-radius: 8px;
+	background: #fff;
+}
+
+.useup-checkout-shipping-polished .order-total th,
+.useup-checkout-shipping-polished .order-total td {
+	border: 0 !important;
+}
+
+.useup-checkout-shipping-polished .order-total th {
+	font-size: 18px;
+	font-weight: 500;
+	color: #111;
+}
+
+.useup-checkout-shipping-polished .order-total td {
+	text-align: right;
+}
+
+.useup-checkout-shipping-polished .order-total .amount {
+	font-size: 22px;
+	font-weight: 700;
+	color: #111;
+}
+
+.useup-checkout-shipping-polished .order-total small,
+.useup-checkout-shipping-polished .order-total .includes_tax {
+	display: block;
+	margin-top: 4px;
+	font-size: 12px;
+	color: #777;
+	font-weight: 400;
+}
+
+.useup-checkout-shipping-polished .useup-me-tags-option {
+	display: block;
+	margin-top: 18px;
+	padding: 16px 18px;
+	border: 1px solid #e8e8e8;
+	border-radius: 8px;
+	background: #fff;
+}
+
+.useup-checkout-shipping-polished .useup-me-tags-option__label {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	cursor: pointer;
+	color: #222;
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+.useup-checkout-shipping-polished .useup-me-tags-option__label::before {
+	content: "";
+	display: inline-flex;
+	width: 18px;
+	height: 18px;
+	flex: 0 0 auto;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20.59 13.41 11 23 1 13V3h10z'/%3E%3Cpath d='M7 7h.01'/%3E%3Cpath d='M13 7h8'/%3E%3Cpath d='M17 3v8'/%3E%3C/svg%3E");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 18px 18px;
+}
+
+.useup-checkout-shipping-polished .useup-me-tags-option__input {
+	width: 18px;
+	height: 18px;
+	margin: 0;
+	accent-color: #000;
+}
+
+@media (max-width: 768px) {
+	.useup-checkout-shipping-polished .woocommerce-shipping-totals,
+	.useup-checkout-shipping-polished tr.woocommerce-shipping-totals.shipping {
+		padding: 18px 16px;
+	}
+
+	.useup-checkout-shipping-polished ul#shipping_method label,
+	.useup-checkout-shipping-polished .woocommerce-shipping-methods label {
+		align-items: flex-start;
+	}
+
+	.useup-checkout-shipping-polished .useup-shipping-label-main {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.useup-checkout-shipping-polished .useup-shipping-price {
+		padding-left: 8px;
+	}
+}

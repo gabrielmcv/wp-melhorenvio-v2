@@ -26,10 +26,11 @@ class USEUP_ME_Settings {
 
 	public static function get_defaults() {
 		return array(
-			'combine_mode'                          => 'max',
-			'show_product_shipping_calculator'     => false,
+			'combine_mode'                           => 'max',
+			'show_product_shipping_calculator'      => false,
 			'product_shipping_free_shipping_threshold' => 199.0,
 			'product_shipping_free_shipping_message'   => 'Frete grátis acima de {amount}.',
+			'enable_checkout_polish'                => true,
 			'rules'                                 => array(),
 		);
 	}
@@ -51,17 +52,19 @@ class USEUP_ME_Settings {
 	}
 
 	public static function sanitize( $settings ) {
+		$defaults = self::get_defaults();
 		$settings = is_array( $settings ) ? $settings : array();
 
 		return array(
-			'combine_mode'                          => ( isset( $settings['combine_mode'] ) && 'sum' === $settings['combine_mode'] ) ? 'sum' : 'max',
-			'show_product_shipping_calculator'     => ! empty( $settings['show_product_shipping_calculator'] ),
+			'combine_mode'                           => ( isset( $settings['combine_mode'] ) && 'sum' === $settings['combine_mode'] ) ? 'sum' : 'max',
+			'show_product_shipping_calculator'      => ! empty( $settings['show_product_shipping_calculator'] ),
 			'product_shipping_free_shipping_threshold' => self::sanitize_free_shipping_threshold(
-				isset( $settings['product_shipping_free_shipping_threshold'] ) ? $settings['product_shipping_free_shipping_threshold'] : self::get_defaults()['product_shipping_free_shipping_threshold']
+				isset( $settings['product_shipping_free_shipping_threshold'] ) ? $settings['product_shipping_free_shipping_threshold'] : $defaults['product_shipping_free_shipping_threshold']
 			),
 			'product_shipping_free_shipping_message'   => sanitize_text_field(
-				isset( $settings['product_shipping_free_shipping_message'] ) ? $settings['product_shipping_free_shipping_message'] : self::get_defaults()['product_shipping_free_shipping_message']
+				isset( $settings['product_shipping_free_shipping_message'] ) ? $settings['product_shipping_free_shipping_message'] : $defaults['product_shipping_free_shipping_message']
 			),
+			'enable_checkout_polish'                => ! isset( $settings['enable_checkout_polish'] ) || ! empty( $settings['enable_checkout_polish'] ),
 			'rules'                                 => USEUP_ME_Rules::sanitize_rules(
 				isset( $settings['rules'] ) ? $settings['rules'] : array()
 			),
@@ -72,6 +75,12 @@ class USEUP_ME_Settings {
 		$enabled = (bool) self::get( 'show_product_shipping_calculator', false );
 
 		return (bool) apply_filters( 'useup_me_product_shipping_enabled', $enabled, $product );
+	}
+
+	public static function is_checkout_polish_enabled() {
+		$enabled = (bool) self::get( 'enable_checkout_polish', true );
+
+		return (bool) apply_filters( 'useup_me_enable_checkout_polish', $enabled );
 	}
 
 	private static function sanitize_free_shipping_threshold( $value ) {
