@@ -158,6 +158,62 @@ class USEUP_ME_Admin {
 				</div>
 
 				<div class="useup-me-card">
+					<h2>Página do produto</h2>
+					<p>Ajusta a hierarquia visual da página de produto, aproxima o CTA do preço e adiciona badges discretas com descrição curta expansível.</p>
+					<label class="useup-me-checkbox">
+						<input
+							type="checkbox"
+							name="useup_me_settings[enable_product_page_polish]"
+							value="1"
+							<?php checked( ! empty( $settings['enable_product_page_polish'] ), true ); ?>
+						/>
+						Aplicar visual premium na página de produto
+					</label>
+
+					<div class="useup-me-grid" style="margin-top: 16px;">
+						<div>
+							<label class="useup-me-checkbox" for="useup-me-enable-installment-badge">
+								<input
+									type="checkbox"
+									id="useup-me-enable-installment-badge"
+									name="useup_me_settings[enable_product_installment_badge]"
+									value="1"
+									<?php checked( ! empty( $settings['enable_product_installment_badge'] ), true ); ?>
+								/>
+								Ativar badge de parcelamento
+							</label>
+							<input
+								type="text"
+								name="useup_me_settings[product_installment_badge_text]"
+								value="<?php echo esc_attr( $settings['product_installment_badge_text'] ); ?>"
+								class="regular-text"
+								placeholder="Até 12x"
+							/>
+						</div>
+
+						<div>
+							<label class="useup-me-checkbox" for="useup-me-enable-pix-badge">
+								<input
+									type="checkbox"
+									id="useup-me-enable-pix-badge"
+									name="useup_me_settings[enable_product_pix_badge]"
+									value="1"
+									<?php checked( ! empty( $settings['enable_product_pix_badge'] ), true ); ?>
+								/>
+								Ativar badge de PIX
+							</label>
+							<input
+								type="text"
+								name="useup_me_settings[product_pix_badge_text]"
+								value="<?php echo esc_attr( $settings['product_pix_badge_text'] ); ?>"
+								class="regular-text"
+								placeholder="5% no PIX"
+							/>
+						</div>
+					</div>
+				</div>
+
+				<div class="useup-me-card">
 					<h2>Combinacao global das regras</h2>
 					<p>Defina como o plugin deve consolidar os dias extras quando mais de uma regra corresponder ao mesmo pacote.</p>
 					<select name="useup_me_settings[combine_mode]">

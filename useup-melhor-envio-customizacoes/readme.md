@@ -18,6 +18,7 @@ Plugin separado para concentrar as customizações da USEUP! sobre o Melhor Envi
   - ` (Chega até dd/mm)`
 - oferece uma opção para exibir `Entrega e prazo` direto na página do produto, com cálculo por AJAX sem adicionar o item ao carrinho real;
 - permite configurar no admin o valor e o texto da mensagem de frete grátis na página do produto, com suporte ao placeholder `{amount}`;
+- aplica um polish opcional na página de produto com preço atacado/varejo, badges discretas, tooltip em `no atacado`, linha de confiança e short description expansível;
 - oferece a opção `Aplicar visual premium no checkout`, que redesenha a apresentação da entrega, do total e do checkbox de tags lisas sem alterar os cálculos;
 - reaproveita o CEP informado pelo cliente para preencher WooCommerce session, `WC()->customer`, checkout e metadados do usuário quando aplicável.
 
@@ -54,22 +55,25 @@ Se a reinclusão automática não for possível com segurança, a tela `WooComme
 2. Ative ou mantenha desativada a opção `Cálculo de frete na página do produto`.
 3. Defina, se quiser, o valor de referência e o texto da mensagem de frete grátis exibida nesse bloco.
 4. Ative ou desative a opção `Aplicar visual premium no checkout`.
-5. Escolha o modo global:
+5. Ative ou desative a opção `Aplicar visual premium na página de produto`.
+6. Ajuste, se quiser, os textos das badges `Até 12x` e `5% no PIX`.
+7. Escolha o modo global:
    - usar apenas o maior acréscimo;
    - ou somar os acréscimos.
-6. Cadastre uma ou mais regras.
-7. Para cada regra, defina:
+8. Cadastre uma ou mais regras.
+9. Para cada regra, defina:
    - nome;
    - status;
    - dias extras;
    - operador `AND` ou `OR`;
    - aplicação para `qualquer item` ou `todos os itens`;
    - condições por categoria, tag, classe de entrega, ID e/ou SKU.
-8. Salve as configurações.
+10. Salve as configurações.
 
 ## Observacoes
 
 - o bloco da página do produto usa os métodos disponíveis do WooCommerce e deixa o Melhor Envio responder normalmente quando ele estiver ativo;
+- o polish da página de produto usa apenas hooks do WooCommerce e assets do plugin, sem alterar tema ou templates do Melhor Envio;
 - o cálculo da página do produto não adiciona o produto ao carrinho real;
 - o CEP salvo pode ser reaproveitado no checkout pela mesma sessão ou pelo cadastro do usuário;
 - regras sem nenhuma condição salva não são aplicadas;

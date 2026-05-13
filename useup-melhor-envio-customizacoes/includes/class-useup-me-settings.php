@@ -30,6 +30,11 @@ class USEUP_ME_Settings {
 			'show_product_shipping_calculator'      => false,
 			'product_shipping_free_shipping_threshold' => 199.0,
 			'product_shipping_free_shipping_message'   => 'Frete grátis acima de {amount}.',
+			'enable_product_page_polish'            => true,
+			'enable_product_installment_badge'      => true,
+			'product_installment_badge_text'        => 'Até 12x',
+			'enable_product_pix_badge'              => true,
+			'product_pix_badge_text'                => '5% no PIX',
 			'enable_checkout_polish'                => true,
 			'rules'                                 => array(),
 		);
@@ -64,6 +69,15 @@ class USEUP_ME_Settings {
 			'product_shipping_free_shipping_message'   => sanitize_text_field(
 				isset( $settings['product_shipping_free_shipping_message'] ) ? $settings['product_shipping_free_shipping_message'] : $defaults['product_shipping_free_shipping_message']
 			),
+			'enable_product_page_polish'            => ! isset( $settings['enable_product_page_polish'] ) || ! empty( $settings['enable_product_page_polish'] ),
+			'enable_product_installment_badge'      => ! isset( $settings['enable_product_installment_badge'] ) || ! empty( $settings['enable_product_installment_badge'] ),
+			'product_installment_badge_text'        => sanitize_text_field(
+				isset( $settings['product_installment_badge_text'] ) ? $settings['product_installment_badge_text'] : $defaults['product_installment_badge_text']
+			),
+			'enable_product_pix_badge'              => ! isset( $settings['enable_product_pix_badge'] ) || ! empty( $settings['enable_product_pix_badge'] ),
+			'product_pix_badge_text'                => sanitize_text_field(
+				isset( $settings['product_pix_badge_text'] ) ? $settings['product_pix_badge_text'] : $defaults['product_pix_badge_text']
+			),
 			'enable_checkout_polish'                => ! isset( $settings['enable_checkout_polish'] ) || ! empty( $settings['enable_checkout_polish'] ),
 			'rules'                                 => USEUP_ME_Rules::sanitize_rules(
 				isset( $settings['rules'] ) ? $settings['rules'] : array()
@@ -75,6 +89,12 @@ class USEUP_ME_Settings {
 		$enabled = (bool) self::get( 'show_product_shipping_calculator', false );
 
 		return (bool) apply_filters( 'useup_me_product_shipping_enabled', $enabled, $product );
+	}
+
+	public static function is_product_page_polish_enabled() {
+		$enabled = (bool) self::get( 'enable_product_page_polish', true );
+
+		return (bool) apply_filters( 'useup_me_product_page_polish_enabled', $enabled );
 	}
 
 	public static function is_checkout_polish_enabled() {
