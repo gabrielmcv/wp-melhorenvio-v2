@@ -113,6 +113,34 @@ class USEUP_ME_Admin {
 						/>
 						Ativar cálculo de frete na página do produto
 					</label>
+
+					<div class="useup-me-grid" style="margin-top: 16px;">
+						<div>
+							<label for="useup-me-free-shipping-threshold">Valor de referÃªncia para frete grÃ¡tis</label>
+							<input
+								type="number"
+								min="0"
+								step="0.01"
+								id="useup-me-free-shipping-threshold"
+								name="useup_me_settings[product_shipping_free_shipping_threshold]"
+								value="<?php echo esc_attr( $settings['product_shipping_free_shipping_threshold'] ); ?>"
+								class="regular-text"
+							/>
+							<p class="description">Use `0` para ocultar a linha automaticamente quando a mensagem depender de valor.</p>
+						</div>
+
+						<div>
+							<label for="useup-me-free-shipping-message">Texto da mensagem de frete grÃ¡tis</label>
+							<input
+								type="text"
+								id="useup-me-free-shipping-message"
+								name="useup_me_settings[product_shipping_free_shipping_message]"
+								value="<?php echo esc_attr( $settings['product_shipping_free_shipping_message'] ); ?>"
+								class="regular-text"
+							/>
+							<p class="description">Use `{amount}` para inserir o valor formatado automaticamente. Deixe vazio para nÃ£o exibir a mensagem.</p>
+						</div>
+					</div>
 				</div>
 
 				<div class="useup-me-card">

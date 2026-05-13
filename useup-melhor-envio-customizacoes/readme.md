@@ -17,6 +17,7 @@ Plugin separado para concentrar as customizacoes da USEUP! sobre o Melhor Envio 
   - ` (Chega até Sexta-feira)`
   - ` (Chega até dd/mm)`
 - oferece uma opcao para exibir `Entrega e prazo` direto na pagina do produto, com calculo por AJAX sem adicionar o item ao carrinho real;
+- permite configurar no admin o valor e o texto da mensagem de frete gratis na pagina do produto, com suporte ao placeholder `{amount}`;
 - reaproveita o CEP informado pelo cliente para preencher WooCommerce session, `WC()->customer`, checkout e metadados do usuario quando aplicavel.
 
 ## Dependencias
@@ -50,18 +51,19 @@ Se a reinclusao automatica nao for possivel com seguranca, a tela `WooCommerce >
 
 1. Acesse `WooCommerce > USEUP! Entrega`.
 2. Ative ou mantenha desativada a opcao `Cálculo de frete na página do produto`.
-3. Escolha o modo global:
+3. Defina, se quiser, o valor de referencia e o texto da mensagem de frete gratis exibida nesse bloco.
+4. Escolha o modo global:
    - usar apenas o maior acrescimo;
    - ou somar os acrescimos.
-4. Cadastre uma ou mais regras.
-5. Para cada regra, defina:
+5. Cadastre uma ou mais regras.
+6. Para cada regra, defina:
    - nome;
    - status;
    - dias extras;
    - operador `AND` ou `OR`;
    - aplicacao para `qualquer item` ou `todos os itens`;
    - condicoes por categoria, tag, classe de entrega, ID e/ou SKU.
-6. Salve as configuracoes.
+7. Salve as configuracoes.
 
 ## Observacoes
 
@@ -72,5 +74,6 @@ Se a reinclusao automatica nao for possivel com seguranca, a tela `WooCommerce >
 - o plugin nao altera preco do frete, pagamento, pedidos, produtos ou dados de clientes;
 - feriados nacionais foram considerados na conta de dias uteis;
 - feriados locais podem ser ajustados via filtro `useup_me_business_holidays`;
-- o valor da mensagem de frete gratis pode ser ajustado pelo filtro `useup_me_free_shipping_threshold`.
+- o valor da mensagem de frete gratis pode ser ajustado pelo filtro `useup_me_free_shipping_threshold`;
+- o texto da mensagem de frete gratis pode ser ajustado pelo filtro `useup_me_free_shipping_message`.
 - o plugin monitora o arquivo `CalculateShippingMethodService.php` do Melhor Envio, cria um backup antes da primeira reaplicacao automatica e registra o status dessa verificacao no painel administrativo.

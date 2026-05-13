@@ -668,16 +668,30 @@ class USEUP_ME_Product_Shipping_Calculator {
 	}
 
 	private function get_free_shipping_notice( WC_Product $product ) {
-		$threshold = apply_filters( 'useup_me_free_shipping_threshold', 199.00, $product );
+		$template = USEUP_ME_Settings::get( 'product_shipping_free_shipping_message', 'Frete grátis acima de {amount}.' );
+		$template = apply_filters( 'useup_me_free_shipping_message', $template, $product );
 
-		if ( ! is_numeric( $threshold ) || (float) $threshold <= 0 ) {
+		if ( '' === trim( (string) $template ) ) {
 			return '';
 		}
 
-		return sprintf(
-			'Frete grátis acima de %s.',
-			wp_strip_all_tags( wc_price( (float) $threshold ) )
-		);
+		$threshold = USEUP_ME_Settings::get( 'product_shipping_free_shipping_threshold', 199.00 );
+		$threshold = apply_filters( 'useup_me_free_shipping_threshold', (float) $threshold, $product );
+
+		if ( false !== strpos( $template, '{amount}' ) && ( ! is_numeric( $threshold ) || (float) $threshold <= 0 ) ) {
+			return '';
+		}
+
+		return str_replace( '{amount}', $this->format_price_text( (float) $threshold ), $template );
+	}
+
+	private function format_price_text( $amount ) {
+		$formatted = wc_price( (float) $amount );
+		$formatted = wp_strip_all_tags( $formatted );
+		$formatted = html_entity_decode( $formatted, ENT_QUOTES, 'UTF-8' );
+		$formatted = str_replace( "\xc2\xa0", ' ', $formatted );
+
+		return trim( $formatted );
 	}
 
 	private function get_icon_svg() {
