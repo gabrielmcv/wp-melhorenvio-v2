@@ -270,10 +270,6 @@
     return variationId > 0 ? variationId : 0;
   };
 
-  ProductShippingCalculator.prototype.requiresVariation = function () {
-    return !!this.variationForm;
-  };
-
   ProductShippingCalculator.prototype.setLoading = function (isLoading) {
     this.state.isLoading = isLoading;
 
@@ -330,13 +326,6 @@
     if (normalizedPostcode.length !== 8) {
       if (!isAutomatic) {
         this.showError(strings.invalidPostcode || 'Informe um CEP v\u00e1lido com 8 n\u00fameros.');
-      }
-      return;
-    }
-
-    if (this.requiresVariation() && this.getVariationId() === 0) {
-      if (!isAutomatic) {
-        this.showError(strings.selectVariation || 'Selecione uma varia\u00e7\u00e3o para calcular a entrega.');
       }
       return;
     }
@@ -629,7 +618,7 @@
   };
 
   ProductShippingCalculator.prototype.getFastTruckIconSvg = function () {
-    return '<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M2.5 10h2.75M1.5 13h3.75M4 7h2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><path d="M6.5 8h8.5v6H14a2.25 2.25 0 0 0-4.5 0H9A2.25 2.25 0 0 0 4.5 14v-4A2 2 0 0 1 6.5 8Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M15 10h2.8l2.2 2.35V14h-1.1a2.25 2.25 0 0 0-4.4 0H15v-4Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="10.75" cy="16.25" r="1.25" fill="none" stroke="currentColor" stroke-width="1.5"></circle><circle cx="17.25" cy="16.25" r="1.25" fill="none" stroke="currentColor" stroke-width="1.5"></circle></svg>';
+    return '<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M3 9.25h8.5c1.65 0 2.75-.85 2.75-2.15S13.15 5 11.5 5H10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 13h13.5c1.45 0 2.5-.7 2.5-1.85s-1.05-1.9-2.5-1.9h-.75" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 16.75h6.75c1.45 0 2.5.7 2.5 1.85s-1.05 1.9-2.5 1.9H7.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
   };
 
   document.addEventListener('DOMContentLoaded', function () {

@@ -69,7 +69,6 @@ class USEUP_ME_Product_Shipping_Calculator {
 					'seeOptions'      => 'Ver opções',
 					'noRates'         => 'Não encontramos opções de entrega para este CEP.',
 					'genericError'    => 'Não foi possível calcular o frete agora. Tente novamente em instantes.',
-					'selectVariation' => 'Selecione uma variação para calcular a entrega.',
 				),
 			)
 		);
@@ -259,16 +258,14 @@ class USEUP_ME_Product_Shipping_Calculator {
 			$variation = wc_get_product( $variation_id );
 
 			if ( ! $variation || ! $variation->exists() || 'variation' !== $variation->get_type() ) {
-				return new WP_Error( 'useup_me_invalid_variation', 'Selecione uma variação para calcular a entrega.' );
+				return new WP_Error( 'useup_me_invalid_variation', 'Não foi possível identificar a variação selecionada para cálculo.' );
 			}
 
 			if ( (int) $variation->get_parent_id() !== (int) $product_id ) {
-				return new WP_Error( 'useup_me_invalid_variation', 'Selecione uma variação para calcular a entrega.' );
+				return new WP_Error( 'useup_me_invalid_variation', 'Não foi possível identificar a variação selecionada para cálculo.' );
 			}
 
 			$product = $variation;
-		} elseif ( $product->is_type( 'variable' ) ) {
-			return new WP_Error( 'useup_me_variation_required', 'Selecione uma variação para calcular a entrega.' );
 		}
 
 		if ( ! $product->needs_shipping() ) {

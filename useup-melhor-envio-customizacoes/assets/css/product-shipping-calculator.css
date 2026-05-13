@@ -30,16 +30,16 @@
 .useup-me-product-shipping__icon,
 .useup-me-product-shipping__title-icon {
 	display: inline-flex;
-	width: 16px;
-	height: 16px;
+	width: 21px;
+	height: 23px;
 	color: #111;
 }
 
 .useup-me-product-shipping__icon svg,
 .useup-me-product-shipping__title-icon svg {
 	display: block;
-	width: 16px;
-	height: 16px;
+	width: 21px;
+	height: 21px;
 }
 
 .useup-me-product-shipping__toggle {
@@ -151,17 +151,17 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 17px;
-	height: 17px;
-	flex: 0 0 17px;
-	color: #333;
+	width: 18px;
+	height: 18px;
+	flex: 0 0 18px;
+	color: #111;
 }
 
 .useup-me-product-shipping__estimate-icon svg,
 .useup-me-product-shipping__fastest-icon svg {
 	display: block;
-	width: 17px;
-	height: 17px;
+	width: 18px;
+	height: 18px;
 }
 
 .useup-me-product-shipping__rate {
@@ -186,17 +186,23 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 18px;
+	width: auto;
 	height: 18px;
+	flex: 0 0 auto;
 	padding: 0;
 	border: 0;
 	background: transparent;
-	color: #333;
+	color: #111;
+	cursor: pointer;
+}
+
+.useup-me-product-shipping__fastest-icon {
+	margin-right: 6px;
 	cursor: pointer;
 }
 
 .useup-me-product-shipping__fastest-badge .useup-me-product-shipping__fastest-icon {
-	color: #333;
+	color: #111;
 }
 
 .useup-me-product-shipping__fastest-tooltip {
