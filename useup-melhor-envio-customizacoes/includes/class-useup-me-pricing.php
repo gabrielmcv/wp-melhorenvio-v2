@@ -25,9 +25,9 @@ class USEUP_ME_Pricing {
 
 	public static function get_product_wholesale_price( WC_Product $product ) {
 		if ( $product->is_type( 'variable' ) ) {
-			$price = (float) $product->get_variation_price( 'min', true );
+			$price = (float) $product->get_variation_price( 'min', false );
 		} else {
-			$price = (float) wc_get_price_to_display( $product );
+			$price = (float) $product->get_price( 'edit' );
 		}
 
 		return max( 0, (float) $price );
@@ -44,9 +44,24 @@ class USEUP_ME_Pricing {
 	}
 
 	public static function get_wholesale_tooltip_lines() {
-		return array(
-			'Preço de atacado da peça.',
-			'O valor de varejo aparece logo abaixo.',
+		$lines = array(
+			trim( (string) USEUP_ME_Settings::get( 'product_wholesale_tooltip_line_1', 'Preço de atacado da peça.' ) ),
+			trim( (string) USEUP_ME_Settings::get( 'product_wholesale_tooltip_line_2', 'O valor de varejo aparece logo abaixo.' ) ),
 		);
+
+		$lines = array_values(
+			array_filter(
+				$lines,
+				static function ( $line ) {
+					return '' !== $line;
+				}
+			)
+		);
+
+		if ( empty( $lines ) ) {
+			$lines[] = 'Preço de atacado da peça.';
+		}
+
+		return $lines;
 	}
 }

@@ -416,7 +416,7 @@ class USEUP_ME_Complementary_Products {
 			return array();
 		}
 
-		$wholesale_price = (float) wc_get_price_to_display( $product );
+		$wholesale_price = (float) $product->get_price( 'edit' );
 
 		if ( $wholesale_price <= 0 ) {
 			return array();
@@ -451,7 +451,7 @@ class USEUP_ME_Complementary_Products {
 				continue;
 			}
 
-			$wholesale_price = (float) wc_get_price_to_display( $variation );
+			$wholesale_price = (float) $variation->get_price( 'edit' );
 
 			if ( $wholesale_price <= 0 ) {
 				continue;

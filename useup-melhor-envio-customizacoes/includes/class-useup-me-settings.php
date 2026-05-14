@@ -49,6 +49,8 @@ class USEUP_ME_Settings {
 			'product_installment_badge_text'          => 'Até 12x',
 			'enable_product_pix_badge'                => true,
 			'product_pix_badge_text'                  => '5% no PIX',
+			'product_wholesale_tooltip_line_1'        => 'Preço de atacado da peça.',
+			'product_wholesale_tooltip_line_2'        => 'O valor de varejo aparece logo abaixo.',
 			'retail_markup_percent'                   => 50.0,
 			'retail_markup_fixed'                     => 10.0,
 			'enable_checkout_polish'                  => true,
@@ -134,6 +136,12 @@ class USEUP_ME_Settings {
 			'enable_product_pix_badge'                => ! isset( $settings['enable_product_pix_badge'] ) || ! empty( $settings['enable_product_pix_badge'] ),
 			'product_pix_badge_text'                  => sanitize_text_field(
 				isset( $settings['product_pix_badge_text'] ) ? $settings['product_pix_badge_text'] : $defaults['product_pix_badge_text']
+			),
+			'product_wholesale_tooltip_line_1'        => sanitize_text_field(
+				isset( $settings['product_wholesale_tooltip_line_1'] ) ? $settings['product_wholesale_tooltip_line_1'] : $defaults['product_wholesale_tooltip_line_1']
+			),
+			'product_wholesale_tooltip_line_2'        => sanitize_text_field(
+				isset( $settings['product_wholesale_tooltip_line_2'] ) ? $settings['product_wholesale_tooltip_line_2'] : $defaults['product_wholesale_tooltip_line_2']
 			),
 			'retail_markup_percent'                   => self::sanitize_decimal(
 				isset( $settings['retail_markup_percent'] ) ? $settings['retail_markup_percent'] : $defaults['retail_markup_percent'],

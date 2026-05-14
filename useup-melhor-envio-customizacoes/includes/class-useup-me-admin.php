@@ -146,6 +146,8 @@ class USEUP_ME_Admin {
 							<p class="description">Use `{amount}` para inserir o valor formatado automaticamente. Deixe vazio para não exibir a mensagem.</p>
 						</div>
 					</div>
+
+
 				</div>
 
 				<div class="useup-me-card">
@@ -480,6 +482,31 @@ class USEUP_ME_Admin {
 								class="regular-text"
 							/>
 							<p class="description">Valor fixo somado ao preço de varejo após o acréscimo percentual.</p>
+						</div>
+					</div>
+					<div class="useup-me-grid" style="margin-top: 16px;">
+						<div>
+							<label for="useup-me-product-wholesale-tooltip-line-1">Texto 1 do popover de atacado</label>
+							<input
+								type="text"
+								id="useup-me-product-wholesale-tooltip-line-1"
+								name="useup_me_settings[product_wholesale_tooltip_line_1]"
+								value="<?php echo esc_attr( $settings['product_wholesale_tooltip_line_1'] ); ?>"
+								class="regular-text"
+							/>
+							<p class="description">Primeira linha exibida no texto de apoio do indicador &ldquo;no atacado&rdquo;.</p>
+						</div>
+
+						<div>
+							<label for="useup-me-product-wholesale-tooltip-line-2">Texto 2 do popover de atacado</label>
+							<input
+								type="text"
+								id="useup-me-product-wholesale-tooltip-line-2"
+								name="useup_me_settings[product_wholesale_tooltip_line_2]"
+								value="<?php echo esc_attr( $settings['product_wholesale_tooltip_line_2'] ); ?>"
+								class="regular-text"
+							/>
+							<p class="description">Segunda linha exibida logo abaixo da primeira no popover.</p>
 						</div>
 					</div>
 				</div>
