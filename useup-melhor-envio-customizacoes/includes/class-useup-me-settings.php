@@ -44,6 +44,10 @@ class USEUP_ME_Settings {
 			'complementary_category_ids'              => array(),
 			'complementary_tag_ids'                   => array(),
 			'complementary_target_product_ids'        => array(),
+			'enable_ajax_shop_filter'                 => false,
+			'ajax_shop_filter_items'                  => self::get_default_ajax_shop_filter_items(),
+			'ajax_shop_products_per_page'             => 12,
+			'ajax_shop_pagination_mode'               => 'pagination',
 			'enable_product_page_polish'              => true,
 			'enable_product_installment_badge'        => true,
 			'product_installment_badge_text'          => 'Até 12x',
@@ -128,6 +132,19 @@ class USEUP_ME_Settings {
 			'complementary_target_product_ids'        => self::sanitize_positive_id_list(
 				isset( $settings['complementary_target_product_ids'] ) ? $settings['complementary_target_product_ids'] : $defaults['complementary_target_product_ids']
 			),
+			'enable_ajax_shop_filter'                 => ! empty( $settings['enable_ajax_shop_filter'] ),
+			'ajax_shop_filter_items'                  => self::sanitize_ajax_shop_filter_items(
+				isset( $settings['ajax_shop_filter_items'] ) ? $settings['ajax_shop_filter_items'] : $defaults['ajax_shop_filter_items']
+			),
+			'ajax_shop_products_per_page'             => self::sanitize_positive_int(
+				isset( $settings['ajax_shop_products_per_page'] ) ? $settings['ajax_shop_products_per_page'] : $defaults['ajax_shop_products_per_page'],
+				$defaults['ajax_shop_products_per_page']
+			),
+			'ajax_shop_pagination_mode'               => self::sanitize_enum(
+				isset( $settings['ajax_shop_pagination_mode'] ) ? $settings['ajax_shop_pagination_mode'] : $defaults['ajax_shop_pagination_mode'],
+				array( 'pagination', 'load_more' ),
+				$defaults['ajax_shop_pagination_mode']
+			),
 			'enable_product_page_polish'              => ! isset( $settings['enable_product_page_polish'] ) || ! empty( $settings['enable_product_page_polish'] ),
 			'enable_product_installment_badge'        => ! isset( $settings['enable_product_installment_badge'] ) || ! empty( $settings['enable_product_installment_badge'] ),
 			'product_installment_badge_text'          => sanitize_text_field(
@@ -193,6 +210,12 @@ class USEUP_ME_Settings {
 		$enabled = (bool) self::get( 'enable_complementary_products', false );
 
 		return (bool) apply_filters( 'useup_me_enable_complementary_products', $enabled );
+	}
+
+	public static function is_ajax_shop_filter_enabled() {
+		$enabled = (bool) self::get( 'enable_ajax_shop_filter', false );
+
+		return (bool) apply_filters( 'useup_me_enable_ajax_shop_filter', $enabled );
 	}
 
 	private static function sanitize_free_shipping_threshold( $value ) {
@@ -277,6 +300,142 @@ class USEUP_ME_Settings {
 		}
 
 		return array_values( array_unique( $sanitized ) );
+	}
+
+	private static function sanitize_ajax_shop_filter_items( $items ) {
+		$allowed_types = array( 'all', 'category', 'tag', 'best_sellers', 'custom' );
+		$allowed_icons = array( 'grid', 'flame', 'sparkle', 'necklace', 'escapulario', 'bracelet', 'pendant', 'link', 'heart', 'cross' );
+
+		if ( ! is_array( $items ) ) {
+			return self::get_default_ajax_shop_filter_items();
+		}
+
+		$sanitized = array();
+
+		foreach ( $items as $item ) {
+			$type = isset( $item['type'] ) ? sanitize_key( (string) $item['type'] ) : 'all';
+			$icon = isset( $item['icon'] ) ? sanitize_key( (string) $item['icon'] ) : '';
+
+			if ( ! in_array( $type, $allowed_types, true ) ) {
+				$type = 'all';
+			}
+
+			if ( ! in_array( $icon, $allowed_icons, true ) ) {
+				$icon = '';
+			}
+
+			$sanitized[] = array(
+				'label'         => sanitize_text_field( isset( $item['label'] ) ? $item['label'] : '' ),
+				'type'          => $type,
+				'category_slug' => sanitize_title( isset( $item['category_slug'] ) ? $item['category_slug'] : '' ),
+				'tag_slug'      => sanitize_title( isset( $item['tag_slug'] ) ? $item['tag_slug'] : '' ),
+				'custom_key'    => sanitize_key( isset( $item['custom_key'] ) ? $item['custom_key'] : '' ),
+				'icon'          => $icon,
+				'order'         => absint( isset( $item['order'] ) ? $item['order'] : 0 ),
+				'enabled'       => ! empty( $item['enabled'] ),
+			);
+		}
+
+		if ( empty( $sanitized ) ) {
+			return self::get_default_ajax_shop_filter_items();
+		}
+
+		return array_values( $sanitized );
+	}
+
+	private static function get_default_ajax_shop_filter_items() {
+		return array(
+			array(
+				'label'         => 'Todos',
+				'type'          => 'all',
+				'category_slug' => '',
+				'tag_slug'      => '',
+				'custom_key'    => '',
+				'icon'          => 'grid',
+				'order'         => 10,
+				'enabled'       => true,
+			),
+			array(
+				'label'         => 'Mais vendidos',
+				'type'          => 'best_sellers',
+				'category_slug' => '',
+				'tag_slug'      => '',
+				'custom_key'    => '',
+				'icon'          => 'flame',
+				'order'         => 20,
+				'enabled'       => true,
+			),
+			array(
+				'label'         => 'Personalizados',
+				'type'          => 'category',
+				'category_slug' => 'personalizados',
+				'tag_slug'      => '',
+				'custom_key'    => '',
+				'icon'          => 'sparkle',
+				'order'         => 30,
+				'enabled'       => true,
+			),
+			array(
+				'label'         => 'Colares',
+				'type'          => 'category',
+				'category_slug' => 'colares',
+				'tag_slug'      => '',
+				'custom_key'    => '',
+				'icon'          => 'necklace',
+				'order'         => 40,
+				'enabled'       => true,
+			),
+			array(
+				'label'         => 'Pulseiras',
+				'type'          => 'category',
+				'category_slug' => 'pulseiras',
+				'tag_slug'      => '',
+				'custom_key'    => '',
+				'icon'          => 'bracelet',
+				'order'         => 50,
+				'enabled'       => true,
+			),
+			array(
+				'label'         => 'Pingentes',
+				'type'          => 'category',
+				'category_slug' => 'pingentes',
+				'tag_slug'      => '',
+				'custom_key'    => '',
+				'icon'          => 'pendant',
+				'order'         => 60,
+				'enabled'       => true,
+			),
+			array(
+				'label'         => 'Correntes',
+				'type'          => 'category',
+				'category_slug' => 'correntes',
+				'tag_slug'      => '',
+				'custom_key'    => '',
+				'icon'          => 'link',
+				'order'         => 70,
+				'enabled'       => true,
+			),
+			array(
+				'label'         => 'Berloques',
+				'type'          => 'category',
+				'category_slug' => 'berloques',
+				'tag_slug'      => '',
+				'custom_key'    => '',
+				'icon'          => 'heart',
+				'order'         => 80,
+				'enabled'       => true,
+			),
+			array(
+				'label'         => 'Religiosos',
+				'type'          => 'category',
+				'category_slug' => 'religiosos',
+				'tag_slug'      => '',
+				'custom_key'    => '',
+				'icon'          => 'cross',
+				'order'         => 90,
+				'enabled'       => true,
+			),
+		);
 	}
 
 }

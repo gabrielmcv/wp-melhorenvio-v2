@@ -1,8 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
-  var container = document.getElementById('useup-me-rules');
-  var addButton = document.getElementById('useup-me-add-rule');
-  var template = document.getElementById('useup-me-rule-template');
+  var ruleContainer = document.getElementById('useup-me-rules');
+  var addRuleButton = document.getElementById('useup-me-add-rule');
+  var ruleTemplate = document.getElementById('useup-me-rule-template');
   var displayModeSelect = document.querySelector('.useup-me-complementary-display-mode');
+  var shopFilterContainer = document.getElementById('useup-me-shop-filter-items');
+  var addShopFilterButton = document.getElementById('useup-me-add-shop-filter-item');
+  var shopFilterTemplate = document.getElementById('useup-me-shop-filter-item-template');
 
   function syncComplementaryTargets() {
     var mode;
@@ -16,21 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.useup-me-complementary-display-target').forEach(function (target) {
       target.hidden = target.getAttribute('data-display-mode') !== mode;
     });
-  }
-
-  if (window.jQuery) {
-    window.jQuery(function ($) {
-      $(document.body).trigger('wc-enhanced-select-init');
-    });
-  }
-
-  if (displayModeSelect) {
-    displayModeSelect.addEventListener('change', syncComplementaryTargets);
-    syncComplementaryTargets();
-  }
-
-  if (!container || !addButton || !template) {
-    return;
   }
 
   function syncRuleCard(ruleCard) {
@@ -54,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     if (valueLabel) {
-      valueLabel.textContent = isBetween ? 'Valor mínimo' : 'Valor';
+      valueLabel.textContent = isBetween ? 'Valor minimo' : 'Valor';
     }
 
     if (valueToWrap) {
@@ -62,46 +50,119 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  function syncAllRuleCards() {
-    container.querySelectorAll('.useup-me-rule').forEach(syncRuleCard);
+  function syncShopFilterItem(itemCard) {
+    var typeSelect = itemCard.querySelector('.useup-me-shop-filter-item-type');
+    var type;
+
+    if (!typeSelect) {
+      return;
+    }
+
+    type = typeSelect.value;
+
+    itemCard.querySelectorAll('.useup-me-shop-filter-item-target').forEach(function (target) {
+      target.hidden = target.getAttribute('data-shop-filter-target') !== type;
+    });
   }
 
-  addButton.addEventListener('click', function () {
-    var nextIndex = parseInt(container.dataset.nextIndex || '0', 10);
-    var markup = template.innerHTML.replace(/__index__/g, String(nextIndex));
-    container.insertAdjacentHTML('beforeend', markup);
-    container.dataset.nextIndex = String(nextIndex + 1);
-    syncAllRuleCards();
-  });
+  if (window.jQuery) {
+    window.jQuery(function ($) {
+      $(document.body).trigger('wc-enhanced-select-init');
+    });
+  }
 
-  container.addEventListener('click', function (event) {
-    var target = event.target;
+  if (displayModeSelect) {
+    displayModeSelect.addEventListener('change', syncComplementaryTargets);
+    syncComplementaryTargets();
+  }
 
-    if (!target.classList.contains('useup-me-remove-rule')) {
-      return;
+  if (ruleContainer) {
+    ruleContainer.querySelectorAll('.useup-me-rule').forEach(syncRuleCard);
+
+    if (addRuleButton && ruleTemplate) {
+      addRuleButton.addEventListener('click', function () {
+        var nextIndex = parseInt(ruleContainer.dataset.nextIndex || '0', 10);
+        var markup = ruleTemplate.innerHTML.replace(/__index__/g, String(nextIndex));
+
+        ruleContainer.insertAdjacentHTML('beforeend', markup);
+        ruleContainer.dataset.nextIndex = String(nextIndex + 1);
+        ruleContainer.querySelectorAll('.useup-me-rule').forEach(syncRuleCard);
+      });
     }
 
-    var rule = target.closest('.useup-me-rule');
+    ruleContainer.addEventListener('click', function (event) {
+      var target = event.target;
+      var rule;
 
-    if (rule) {
-      rule.remove();
+      if (!target.classList.contains('useup-me-remove-rule')) {
+        return;
+      }
+
+      rule = target.closest('.useup-me-rule');
+
+      if (rule) {
+        rule.remove();
+      }
+    });
+
+    ruleContainer.addEventListener('change', function (event) {
+      var target = event.target;
+      var ruleCard;
+
+      if (!target.classList.contains('useup-me-rule-parameter') && !target.classList.contains('useup-me-rule-comparison-operator')) {
+        return;
+      }
+
+      ruleCard = target.closest('.useup-me-rule');
+
+      if (ruleCard) {
+        syncRuleCard(ruleCard);
+      }
+    });
+  }
+
+  if (shopFilterContainer) {
+    shopFilterContainer.querySelectorAll('.useup-me-shop-filter-item').forEach(syncShopFilterItem);
+
+    if (addShopFilterButton && shopFilterTemplate) {
+      addShopFilterButton.addEventListener('click', function () {
+        var nextIndex = parseInt(shopFilterContainer.dataset.nextIndex || '0', 10);
+        var markup = shopFilterTemplate.innerHTML.replace(/__index__/g, String(nextIndex));
+
+        shopFilterContainer.insertAdjacentHTML('beforeend', markup);
+        shopFilterContainer.dataset.nextIndex = String(nextIndex + 1);
+        shopFilterContainer.querySelectorAll('.useup-me-shop-filter-item').forEach(syncShopFilterItem);
+      });
     }
-  });
 
-  container.addEventListener('change', function (event) {
-    var target = event.target;
-    var ruleCard;
+    shopFilterContainer.addEventListener('click', function (event) {
+      var target = event.target;
+      var itemCard;
 
-    if (!target.classList.contains('useup-me-rule-parameter') && !target.classList.contains('useup-me-rule-comparison-operator')) {
-      return;
-    }
+      if (!target.classList.contains('useup-me-remove-shop-filter-item')) {
+        return;
+      }
 
-    ruleCard = target.closest('.useup-me-rule');
+      itemCard = target.closest('.useup-me-shop-filter-item');
 
-    if (ruleCard) {
-      syncRuleCard(ruleCard);
-    }
-  });
+      if (itemCard) {
+        itemCard.remove();
+      }
+    });
 
-  syncAllRuleCards();
+    shopFilterContainer.addEventListener('change', function (event) {
+      var target = event.target;
+      var itemCard;
+
+      if (!target.classList.contains('useup-me-shop-filter-item-type')) {
+        return;
+      }
+
+      itemCard = target.closest('.useup-me-shop-filter-item');
+
+      if (itemCard) {
+        syncShopFilterItem(itemCard);
+      }
+    });
+  }
 });

@@ -85,6 +85,9 @@ class USEUP_ME_Admin {
 		$tags             = $this->get_terms_for_taxonomy( 'product_tag' );
 		$shipping_classes = $this->get_shipping_classes();
 		$shipping_methods = $this->get_shipping_methods();
+		$shop_filter_items = ! empty( $settings['ajax_shop_filter_items'] ) && is_array( $settings['ajax_shop_filter_items'] )
+			? array_values( $settings['ajax_shop_filter_items'] )
+			: array( $this->get_empty_ajax_shop_filter_item() );
 		?>
 		<div class="wrap useup-me-admin">
 			<h1>USEUP! Entrega</h1>
@@ -377,6 +380,58 @@ class USEUP_ME_Admin {
 				</div>
 
 				<div class="useup-me-card">
+					<h2>Filtro AJAX do Shop</h2>
+					<p>Ativa uma navegacao premium e curada no Shop, com filtro via AJAX e fallback por links reais.</p>
+					<label class="useup-me-checkbox">
+						<input
+							type="checkbox"
+							name="useup_me_settings[enable_ajax_shop_filter]"
+							value="1"
+							<?php checked( ! empty( $settings['enable_ajax_shop_filter'] ), true ); ?>
+						/>
+						Ativar filtro AJAX do Shop
+					</label>
+
+					<div class="useup-me-grid" style="margin-top: 16px;">
+						<div>
+							<label for="useup-me-ajax-shop-products-per-page">Quantidade de produtos por pagina</label>
+							<input
+								type="number"
+								min="1"
+								step="1"
+								id="useup-me-ajax-shop-products-per-page"
+								name="useup_me_settings[ajax_shop_products_per_page]"
+								value="<?php echo esc_attr( $settings['ajax_shop_products_per_page'] ); ?>"
+								class="small-text"
+							/>
+						</div>
+
+						<div>
+							<label for="useup-me-ajax-shop-pagination-mode">Comportamento de paginacao</label>
+							<select
+								id="useup-me-ajax-shop-pagination-mode"
+								name="useup_me_settings[ajax_shop_pagination_mode]"
+							>
+								<option value="pagination" <?php selected( $settings['ajax_shop_pagination_mode'], 'pagination' ); ?>>Paginacao AJAX</option>
+								<option value="load_more" <?php selected( $settings['ajax_shop_pagination_mode'], 'load_more' ); ?>>Carregar mais</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="useup-me-toolbar useup-me-toolbar--tight">
+						<h3>Itens do filtro</h3>
+						<button type="button" class="button button-secondary" id="useup-me-add-shop-filter-item">Adicionar item</button>
+					</div>
+
+					<div id="useup-me-shop-filter-items" data-next-index="<?php echo esc_attr( count( $shop_filter_items ) ); ?>">
+						<?php foreach ( $shop_filter_items as $index => $item ) : ?>
+							<?php $this->render_ajax_shop_filter_item( $index, $item, $categories, $tags ); ?>
+						<?php endforeach; ?>
+					</div>
+					<p class="description">Use apenas os itens curados que devem aparecer no topo do Shop. Categorias e tags usam o slug real do WooCommerce.</p>
+				</div>
+
+				<div class="useup-me-card">
 					<h2>Visual premium no checkout</h2>
 					<p>Redesenha visualmente a área de entrega e total do checkout para manter a experiência premium da USEUP!.</p>
 					<label class="useup-me-checkbox">
@@ -558,6 +613,10 @@ class USEUP_ME_Admin {
 					$shipping_classes
 				);
 				?>
+			</template>
+
+			<template id="useup-me-shop-filter-item-template">
+				<?php $this->render_ajax_shop_filter_item( '__index__', $this->get_empty_ajax_shop_filter_item(), $categories, $tags ); ?>
 			</template>
 		</div>
 		<?php
@@ -780,6 +839,175 @@ class USEUP_ME_Admin {
 			</div>
 		</div>
 		<?php
+	}
+
+	private function render_ajax_shop_filter_item( $index, $item, $categories, $tags ) {
+		$item         = wp_parse_args( is_array( $item ) ? $item : array(), $this->get_empty_ajax_shop_filter_item() );
+		$type_options = $this->get_ajax_shop_filter_type_options();
+		$icon_options = $this->get_ajax_shop_filter_icon_options();
+		?>
+		<div class="useup-me-card useup-me-shop-filter-item">
+			<div class="useup-me-rule-header">
+				<h3>Item do filtro</h3>
+				<button type="button" class="button-link-delete useup-me-remove-shop-filter-item">Remover</button>
+			</div>
+
+			<div class="useup-me-grid">
+				<div>
+					<label for="useup-me-shop-filter-label-<?php echo esc_attr( $index ); ?>">Label</label>
+					<input
+						type="text"
+						id="useup-me-shop-filter-label-<?php echo esc_attr( $index ); ?>"
+						name="useup_me_settings[ajax_shop_filter_items][<?php echo esc_attr( $index ); ?>][label]"
+						value="<?php echo esc_attr( $item['label'] ); ?>"
+						class="regular-text"
+					/>
+				</div>
+
+				<div>
+					<label for="useup-me-shop-filter-type-<?php echo esc_attr( $index ); ?>">Tipo</label>
+					<select
+						id="useup-me-shop-filter-type-<?php echo esc_attr( $index ); ?>"
+						name="useup_me_settings[ajax_shop_filter_items][<?php echo esc_attr( $index ); ?>][type]"
+						class="useup-me-shop-filter-item-type"
+					>
+						<?php foreach ( $type_options as $value => $label ) : ?>
+							<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $item['type'], $value ); ?>><?php echo esc_html( $label ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<div>
+					<label for="useup-me-shop-filter-icon-<?php echo esc_attr( $index ); ?>">Icone</label>
+					<select
+						id="useup-me-shop-filter-icon-<?php echo esc_attr( $index ); ?>"
+						name="useup_me_settings[ajax_shop_filter_items][<?php echo esc_attr( $index ); ?>][icon]"
+					>
+						<?php foreach ( $icon_options as $value => $label ) : ?>
+							<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $item['icon'], $value ); ?>><?php echo esc_html( $label ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<div>
+					<label for="useup-me-shop-filter-order-<?php echo esc_attr( $index ); ?>">Ordem</label>
+					<input
+						type="number"
+						min="0"
+						step="1"
+						id="useup-me-shop-filter-order-<?php echo esc_attr( $index ); ?>"
+						name="useup_me_settings[ajax_shop_filter_items][<?php echo esc_attr( $index ); ?>][order]"
+						value="<?php echo esc_attr( $item['order'] ); ?>"
+						class="small-text"
+					/>
+				</div>
+			</div>
+
+			<div class="useup-me-grid useup-me-shop-filter-item-targets">
+				<div
+					class="useup-me-shop-filter-item-target"
+					data-shop-filter-target="category"
+					<?php echo 'category' === $item['type'] ? '' : 'hidden'; ?>
+				>
+					<label for="useup-me-shop-filter-category-<?php echo esc_attr( $index ); ?>">Categoria vinculada</label>
+					<select
+						id="useup-me-shop-filter-category-<?php echo esc_attr( $index ); ?>"
+						name="useup_me_settings[ajax_shop_filter_items][<?php echo esc_attr( $index ); ?>][category_slug]"
+					>
+						<option value="">Selecione</option>
+						<?php foreach ( $categories as $term ) : ?>
+							<option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( $item['category_slug'], $term->slug ); ?>><?php echo esc_html( $term->name ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<div
+					class="useup-me-shop-filter-item-target"
+					data-shop-filter-target="tag"
+					<?php echo 'tag' === $item['type'] ? '' : 'hidden'; ?>
+				>
+					<label for="useup-me-shop-filter-tag-<?php echo esc_attr( $index ); ?>">Tag vinculada</label>
+					<select
+						id="useup-me-shop-filter-tag-<?php echo esc_attr( $index ); ?>"
+						name="useup_me_settings[ajax_shop_filter_items][<?php echo esc_attr( $index ); ?>][tag_slug]"
+					>
+						<option value="">Selecione</option>
+						<?php foreach ( $tags as $term ) : ?>
+							<option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( $item['tag_slug'], $term->slug ); ?>><?php echo esc_html( $term->name ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<div
+					class="useup-me-shop-filter-item-target"
+					data-shop-filter-target="custom"
+					<?php echo 'custom' === $item['type'] ? '' : 'hidden'; ?>
+				>
+					<label for="useup-me-shop-filter-custom-<?php echo esc_attr( $index ); ?>">Chave custom</label>
+					<input
+						type="text"
+						id="useup-me-shop-filter-custom-<?php echo esc_attr( $index ); ?>"
+						name="useup_me_settings[ajax_shop_filter_items][<?php echo esc_attr( $index ); ?>][custom_key]"
+						value="<?php echo esc_attr( $item['custom_key'] ); ?>"
+						class="regular-text"
+						placeholder="colecao_autoral"
+					/>
+					<p class="description">Use junto ao filtro <code>useup_me_ajax_shop_custom_filter_query_args</code>.</p>
+				</div>
+
+				<div>
+					<label class="useup-me-checkbox" for="useup-me-shop-filter-enabled-<?php echo esc_attr( $index ); ?>">
+						<input
+							type="checkbox"
+							id="useup-me-shop-filter-enabled-<?php echo esc_attr( $index ); ?>"
+							name="useup_me_settings[ajax_shop_filter_items][<?php echo esc_attr( $index ); ?>][enabled]"
+							value="1"
+							<?php checked( ! empty( $item['enabled'] ), true ); ?>
+						/>
+						Item ativo
+					</label>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
+	private function get_empty_ajax_shop_filter_item() {
+		return array(
+			'label'         => '',
+			'type'          => 'category',
+			'category_slug' => '',
+			'tag_slug'      => '',
+			'custom_key'    => '',
+			'icon'          => 'grid',
+			'order'         => 10,
+			'enabled'       => true,
+		);
+	}
+
+	private function get_ajax_shop_filter_type_options() {
+		return array(
+			'all'          => 'Todos',
+			'category'     => 'Categoria',
+			'tag'          => 'Tag',
+			'best_sellers' => 'Mais vendidos',
+			'custom'       => 'Custom',
+		);
+	}
+
+	private function get_ajax_shop_filter_icon_options() {
+		return array(
+			'grid'      => 'Grid',
+			'flame'     => 'Flame',
+			'sparkle'   => 'Sparkle',
+			'necklace'  => 'Necklace',
+			'escapulario'  => 'Escapulário',
+			'bracelet'  => 'Bracelet',
+			'pendant'   => 'Pendant',
+			'link'      => 'Link',
+			'heart'     => 'Heart',
+			'cross'     => 'Cross',
+		);
 	}
 
 	private function get_terms_for_taxonomy( $taxonomy ) {

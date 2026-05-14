@@ -58,7 +58,8 @@
 
 .useup-me-rule-parameter-fields[hidden],
 .useup-me-rule-value-to-wrap[hidden],
-.useup-me-complementary-display-target[hidden] {
+.useup-me-complementary-display-target[hidden],
+.useup-me-shop-filter-item-target[hidden] {
 	display: none !important;
 }
 
@@ -68,4 +69,12 @@
 
 .useup-me-complementary-display-targets {
 	align-items: start;
+}
+
+.useup-me-toolbar--tight {
+	margin-top: 20px;
+}
+
+.useup-me-shop-filter-item .useup-me-grid + .useup-me-grid {
+	margin-top: 16px;
 }

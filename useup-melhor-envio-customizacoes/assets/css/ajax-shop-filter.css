@@ -1,0 +1,120 @@
+.useup-shop-filter {
+	border-top: 1px solid #eeeeee;
+	border-bottom: 1px solid #eeeeee;
+	background: #fff;
+}
+
+.useup-shop-filter__inner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 34px;
+	overflow-x: auto;
+	padding: 32px 0 25px;
+	scrollbar-width: none;
+}
+
+.useup-shop-filter__inner::-webkit-scrollbar {
+	display: none;
+}
+
+.useup-shop-filter__item {
+	appearance: none;
+	position: relative;
+	border: 0;
+	background: transparent;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	color: #111;
+	font-size: 14px;
+	line-height: 1;
+	cursor: pointer;
+	white-space: nowrap;
+	padding: 0 0 10px;
+	text-decoration: none;
+	transition: opacity 0.18s ease, color 0.18s ease;
+}
+
+.useup-shop-filter__item:hover {
+	opacity: 0.72;
+}
+
+.useup-shop-filter__item.is-active {
+	background: transparent;
+	border-radius: 0;
+	color: #111;
+	opacity: 1;
+}
+
+.useup-shop-filter__item.is-active::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 1px;
+	background: #111;
+}
+
+.useup-shop-filter__icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	flex: 0 0 24px;
+	color: currentColor;
+	line-height: 1;
+}
+
+.useup-shop-filter__icon svg {
+	width: 24px;
+	height: 24px;
+	display: block;
+	stroke-width: 1.6;
+}
+
+.useup-shop-filter__label {
+	display: inline-flex;
+	align-items: center;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1;
+}
+
+.useup-shop-filter-results.useup-shop-products-loading {
+	opacity: 0.45;
+	pointer-events: none;
+	transition: opacity 0.18s ease;
+}
+
+.useup-shop-filter__load-more-wrap {
+	display: flex;
+	justify-content: center;
+	margin-top: 28px;
+}
+
+.useup-shop-filter__load-more.button {
+	border-radius: 999px;
+	padding: 12px 24px;
+}
+
+@media (max-width: 768px) {
+
+	.useup-shop-filter__inner {
+		justify-content: flex-start;
+		gap: 20px;
+		padding: 15px 16px;
+	}
+
+	.useup-shop-filter__item {
+		font-size: 13px;
+		padding-bottom: 9px;
+	}
+
+	.useup-shop-filter__label {
+		font-size: 13px;
+	}
+}

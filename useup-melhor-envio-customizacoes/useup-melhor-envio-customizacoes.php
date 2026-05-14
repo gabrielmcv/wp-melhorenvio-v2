@@ -28,6 +28,7 @@ require_once USEUP_ME_PATH . 'includes/class-useup-me-checkout-polish.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-checkout-form-design.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-product-page-polish.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-complementary-products.php';
+require_once USEUP_ME_PATH . 'includes/class-useup-me-ajax-shop-filter.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-melhor-envio-hooks.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-rules.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-delivery-label.php';

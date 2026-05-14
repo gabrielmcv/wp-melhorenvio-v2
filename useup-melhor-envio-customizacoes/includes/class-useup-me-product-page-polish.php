@@ -11,17 +11,32 @@ class USEUP_ME_Product_Page_Polish {
 	 */
 	private $description_parts = array();
 
+	/**
+	 * @var bool
+	 */
+	private $hooks_setup = false;
+
 	public function init() {
 		add_action( 'wp', array( $this, 'setup_hooks' ) );
+		add_action( 'wp_ajax_useup_me_filter_shop_products', array( $this, 'setup_hooks' ), 1 );
+		add_action( 'wp_ajax_nopriv_useup_me_filter_shop_products', array( $this, 'setup_hooks' ), 1 );
+
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_filter( 'body_class', array( $this, 'add_body_class' ) );
 		add_filter( 'woocommerce_post_class', array( $this, 'filter_product_post_class' ), 10, 2 );
 	}
 
 	public function setup_hooks() {
+
+		if ( $this->hooks_setup ) {
+			return;
+		}
+
 		if ( ! $this->is_enabled() ) {
 			return;
 		}
+
+		$this->hooks_setup = true;
 
 		remove_action( 'woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_price', 10 );
 		add_action( 'woocommerce_after_shop_loop_item_title', array( $this, 'render_loop_price' ), 10 );
