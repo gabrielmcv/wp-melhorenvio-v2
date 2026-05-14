@@ -302,6 +302,10 @@
       body.classList.contains('woocommerce-shop');
   }
 
+  function isSingleProductPage() {
+    return document.body.classList.contains('single-product');
+  }
+
   function prepareLoopCard(card, containerClassName) {
     var container;
     var image;
@@ -357,7 +361,7 @@
   function applyLoopCardBackgrounds(root) {
     var scope = root && root.querySelectorAll ? root : document;
 
-    if (document.body.classList.contains('single-product') || !isShopArchivePage()) {
+    if (isSingleProductPage() || !isShopArchivePage()) {
       return;
     }
 
@@ -369,7 +373,7 @@
   function applyExternalLoopGaps(root) {
     var scope = root && root.querySelectorAll ? root : document;
 
-    if (document.body.classList.contains('single-product') || isShopArchivePage()) {
+    if (isSingleProductPage() || isShopArchivePage()) {
       return;
     }
 
@@ -394,6 +398,48 @@
 
       cards.forEach(function (card) {
         prepareLoopCard(card, 'useup-loop-cards-carousel-enabled');
+      });
+    });
+  }
+
+  function applyRelatedProductCards(root) {
+    var scope = root && root.querySelectorAll ? root : document;
+
+    if (!isSingleProductPage()) {
+      return;
+    }
+
+    scope.querySelectorAll('.related .products, .related ul.products').forEach(function (container) {
+      var cards = [];
+
+      if (container.matches('ul.products')) {
+        cards = Array.prototype.filter.call(container.children, function (child) {
+          return child && child.nodeType === 1 && child.classList.contains('product');
+        });
+      }
+
+      if (!cards.length) {
+        cards = Array.prototype.slice.call(container.querySelectorAll('.slick-track > li.product'));
+      }
+
+      if (!cards.length) {
+        return;
+      }
+
+      if (cards.some(function (card) { return card.classList.contains('slick-slide'); })) {
+        container.classList.add('useup-related-loop-cards-carousel-enabled');
+
+        cards.forEach(function (card) {
+          prepareLoopCard(card, 'useup-related-loop-cards-carousel-enabled');
+        });
+
+        return;
+      }
+
+      container.classList.add('useup-related-loop-cards-enabled');
+
+      cards.forEach(function (card) {
+        prepareLoopCard(card, 'useup-related-loop-cards-enabled');
       });
     });
   }
@@ -427,6 +473,7 @@
         scheduled = false;
         applyLoopCardBackgrounds(document);
         applyExternalLoopGaps(document);
+        applyRelatedProductCards(document);
       });
     });
 
@@ -441,6 +488,7 @@
     setupVariationPriceSync();
     applyLoopCardBackgrounds(document);
     applyExternalLoopGaps(document);
+    applyRelatedProductCards(document);
     setupLoopCardObserver();
     hideVariationLoosePrice($('.single-product'));
   }
@@ -449,6 +497,7 @@
   $(window).on('load', function () {
     applyLoopCardBackgrounds(document);
     applyExternalLoopGaps(document);
+    applyRelatedProductCards(document);
   });
 
   $(document).on('click', '.useup-short-description__toggle', function () {

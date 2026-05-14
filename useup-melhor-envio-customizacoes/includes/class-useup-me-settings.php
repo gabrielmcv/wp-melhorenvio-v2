@@ -30,6 +30,12 @@ class USEUP_ME_Settings {
 			'show_product_shipping_calculator'        => false,
 			'product_shipping_free_shipping_threshold' => 199.0,
 			'product_shipping_free_shipping_message'   => 'Frete grátis acima de {amount}.',
+			'enable_shipping_quantity_discount'       => false,
+			'shipping_discount_per_item'              => 8.0,
+			'shipping_discount_max_items'             => 4,
+			'shipping_discount_label'                 => 'Desconto de frete por quantidade',
+			'shipping_discount_apply_to_free_shipping' => false,
+			'shipping_discount_allowed_methods'       => array(),
 			'enable_product_page_polish'              => true,
 			'enable_product_installment_badge'        => true,
 			'product_installment_badge_text'          => 'Até 12x',
@@ -71,6 +77,22 @@ class USEUP_ME_Settings {
 			),
 			'product_shipping_free_shipping_message'   => sanitize_text_field(
 				isset( $settings['product_shipping_free_shipping_message'] ) ? $settings['product_shipping_free_shipping_message'] : $defaults['product_shipping_free_shipping_message']
+			),
+			'enable_shipping_quantity_discount'       => ! empty( $settings['enable_shipping_quantity_discount'] ),
+			'shipping_discount_per_item'              => self::sanitize_decimal(
+				isset( $settings['shipping_discount_per_item'] ) ? $settings['shipping_discount_per_item'] : $defaults['shipping_discount_per_item'],
+				$defaults['shipping_discount_per_item']
+			),
+			'shipping_discount_max_items'             => self::sanitize_positive_int(
+				isset( $settings['shipping_discount_max_items'] ) ? $settings['shipping_discount_max_items'] : $defaults['shipping_discount_max_items'],
+				$defaults['shipping_discount_max_items']
+			),
+			'shipping_discount_label'                 => sanitize_text_field(
+				isset( $settings['shipping_discount_label'] ) ? $settings['shipping_discount_label'] : $defaults['shipping_discount_label']
+			),
+			'shipping_discount_apply_to_free_shipping' => ! empty( $settings['shipping_discount_apply_to_free_shipping'] ),
+			'shipping_discount_allowed_methods'       => self::sanitize_string_list(
+				isset( $settings['shipping_discount_allowed_methods'] ) ? $settings['shipping_discount_allowed_methods'] : $defaults['shipping_discount_allowed_methods']
 			),
 			'enable_product_page_polish'              => ! isset( $settings['enable_product_page_polish'] ) || ! empty( $settings['enable_product_page_polish'] ),
 			'enable_product_installment_badge'        => ! isset( $settings['enable_product_installment_badge'] ) || ! empty( $settings['enable_product_installment_badge'] ),
@@ -121,6 +143,12 @@ class USEUP_ME_Settings {
 		return (bool) apply_filters( 'useup_me_enable_checkout_form_design', $enabled );
 	}
 
+	public static function is_shipping_quantity_discount_enabled() {
+		$enabled = (bool) self::get( 'enable_shipping_quantity_discount', false );
+
+		return (bool) apply_filters( 'useup_me_shipping_quantity_discount_enabled', $enabled );
+	}
+
 	private static function sanitize_free_shipping_threshold( $value ) {
 		if ( '' === $value || null === $value ) {
 			return 0.0;
@@ -147,6 +175,34 @@ class USEUP_ME_Settings {
 		}
 
 		return max( 0, (float) $value );
+	}
+
+	private static function sanitize_positive_int( $value, $default ) {
+		$value = absint( $value );
+
+		if ( $value < 1 ) {
+			return max( 1, (int) $default );
+		}
+
+		return $value;
+	}
+
+	private static function sanitize_string_list( $values ) {
+		if ( ! is_array( $values ) ) {
+			return array();
+		}
+
+		$sanitized = array();
+
+		foreach ( $values as $value ) {
+			$value = sanitize_text_field( (string) $value );
+
+			if ( '' !== $value ) {
+				$sanitized[] = $value;
+			}
+		}
+
+		return array_values( array_unique( $sanitized ) );
 	}
 
 }

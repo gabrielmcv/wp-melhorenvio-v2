@@ -80,6 +80,7 @@ class USEUP_ME_Admin {
 		$categories       = $this->get_terms_for_taxonomy( 'product_cat' );
 		$tags             = $this->get_terms_for_taxonomy( 'product_tag' );
 		$shipping_classes = $this->get_shipping_classes();
+		$shipping_methods = $this->get_shipping_methods();
 		?>
 		<div class="wrap useup-me-admin">
 			<h1>USEUP! Entrega</h1>
@@ -139,6 +140,100 @@ class USEUP_ME_Admin {
 								class="regular-text"
 							/>
 							<p class="description">Use `{amount}` para inserir o valor formatado automaticamente. Deixe vazio para não exibir a mensagem.</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="useup-me-card">
+					<h2>Desconto de frete por quantidade</h2>
+					<p>Aplica desconto nos metodos de frete retornados pelo WooCommerce conforme a quantidade total de produtos no carrinho.</p>
+					<label class="useup-me-checkbox">
+						<input
+							type="checkbox"
+							name="useup_me_settings[enable_shipping_quantity_discount]"
+							value="1"
+							<?php checked( ! empty( $settings['enable_shipping_quantity_discount'] ), true ); ?>
+						/>
+						Ativar desconto de frete por quantidade
+					</label>
+
+					<div class="useup-me-grid" style="margin-top: 16px;">
+						<div>
+							<label for="useup-me-shipping-discount-per-item">Valor de desconto por produto</label>
+							<input
+								type="number"
+								min="0"
+								step="0.01"
+								id="useup-me-shipping-discount-per-item"
+								name="useup_me_settings[shipping_discount_per_item]"
+								value="<?php echo esc_attr( $settings['shipping_discount_per_item'] ); ?>"
+								class="regular-text"
+							/>
+							<p class="description">Valor descontado do frete para cada produto no carrinho, respeitando o limite maximo configurado.</p>
+						</div>
+
+						<div>
+							<label for="useup-me-shipping-discount-max-items">Quantidade maxima de produtos com desconto</label>
+							<input
+								type="number"
+								min="1"
+								step="1"
+								id="useup-me-shipping-discount-max-items"
+								name="useup_me_settings[shipping_discount_max_items]"
+								value="<?php echo esc_attr( $settings['shipping_discount_max_items'] ); ?>"
+								class="small-text"
+							/>
+							<p class="description">Carrinhos acima do limite continuam recebendo desconto calculado sobre a quantidade maxima configurada.</p>
+						</div>
+					</div>
+
+					<div class="useup-me-grid" style="margin-top: 16px;">
+						<div>
+							<label for="useup-me-shipping-discount-label">Texto do desconto no checkout/carrinho</label>
+							<input
+								type="text"
+								id="useup-me-shipping-discount-label"
+								name="useup_me_settings[shipping_discount_label]"
+								value="<?php echo esc_attr( $settings['shipping_discount_label'] ); ?>"
+								class="regular-text"
+							/>
+							<p class="description">Texto exibido ao cliente quando o desconto for aplicado ao metodo de frete.</p>
+						</div>
+
+						<div>
+							<label class="useup-me-checkbox" for="useup-me-shipping-discount-apply-free">
+								<input
+									type="checkbox"
+									id="useup-me-shipping-discount-apply-free"
+									name="useup_me_settings[shipping_discount_apply_to_free_shipping]"
+									value="1"
+									<?php checked( ! empty( $settings['shipping_discount_apply_to_free_shipping'] ), true ); ?>
+								/>
+								Aplicar em frete gratis?
+							</label>
+							<p class="description">Quando desativado, metodos de frete gratis nao recebem desconto adicional.</p>
+						</div>
+					</div>
+
+					<div class="useup-me-grid" style="margin-top: 16px;">
+						<div>
+							<label for="useup-me-shipping-discount-methods">Metodos de frete elegiveis</label>
+							<select
+								id="useup-me-shipping-discount-methods"
+								name="useup_me_settings[shipping_discount_allowed_methods][]"
+								multiple="multiple"
+								size="6"
+							>
+								<?php foreach ( $shipping_methods as $method_id => $method_label ) : ?>
+									<option
+										value="<?php echo esc_attr( $method_id ); ?>"
+										<?php selected( in_array( (string) $method_id, $settings['shipping_discount_allowed_methods'], true ), true ); ?>
+									>
+										<?php echo esc_html( $method_label ); ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+							<p class="description">Se nenhum metodo for selecionado, o desconto sera aplicado a todos os fretes pagos.</p>
 						</div>
 					</div>
 				</div>
@@ -547,5 +642,51 @@ class USEUP_ME_Admin {
 		}
 
 		return $shipping_classes;
+	}
+
+	private function get_shipping_methods() {
+		if ( ! function_exists( 'WC' ) || ! WC()->shipping() ) {
+			return array();
+		}
+
+		$methods = WC()->shipping()->load_shipping_methods();
+
+		if ( empty( $methods ) || ! is_array( $methods ) ) {
+			return array();
+		}
+
+		$options = array();
+
+		foreach ( $methods as $method ) {
+			if ( ! is_object( $method ) ) {
+				continue;
+			}
+
+			$method_id = '';
+			$title     = '';
+
+			if ( method_exists( $method, 'get_method_title' ) ) {
+				$title = (string) $method->get_method_title();
+			} elseif ( isset( $method->method_title ) ) {
+				$title = (string) $method->method_title;
+			}
+
+			if ( method_exists( $method, 'get_method_id' ) ) {
+				$method_id = (string) $method->get_method_id();
+			} elseif ( isset( $method->id ) ) {
+				$method_id = (string) $method->id;
+			}
+
+			$method_id = sanitize_text_field( $method_id );
+			$title     = '' !== $title ? $title : $method_id;
+
+			if ( '' !== $method_id ) {
+				$options[ $method_id ] = $title;
+			}
+		}
+
+		asort( $options, SORT_NATURAL | SORT_FLAG_CASE );
+
+		return $options;
 	}
 }

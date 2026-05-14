@@ -368,6 +368,10 @@
       };
     });
 
+    var hasFreeShippingRate = rates.some(function (rate) {
+      return parseFloat(rate && rate.raw_cost) === 0;
+    });
+
     if (safeData.estimate_label) {
       this.results.appendChild(this.buildEstimateNode(safeData.estimate_label));
     }
@@ -378,7 +382,7 @@
       this.results.appendChild(this.buildRateNode(rate, index === fastestIndex));
     }.bind(this));
 
-    if (safeData.free_shipping_note) {
+    if (safeData.free_shipping_note && !hasFreeShippingRate) {
       var notice = document.createElement('div');
       notice.className = 'useup-me-product-shipping__free-shipping';
       notice.textContent = safeData.free_shipping_note;
@@ -438,13 +442,16 @@
     var methodWrap = document.createElement('span');
     var methodLabel = document.createElement('span');
     var cost = document.createElement('strong');
+    var rawCost = parseFloat(rate && rate.raw_cost);
+    var isFreeShipping = !isNaN(rawCost) && rawCost === 0;
 
     node.className = 'useup-me-product-shipping__rate';
     main.className = 'useup-me-product-shipping__rate-main';
     methodWrap.className = 'useup-me-product-shipping__rate-label';
 
     methodLabel.textContent = rate && rate.label ? fixMojibakeText(rate.label) : 'Entrega';
-    cost.textContent = this.formatRateCost(rate && rate.cost ? rate.cost : '');
+    cost.className = isFreeShipping ? 'useup-me-free-shipping-label useup-me-product-shipping__free-label' : '';
+    cost.textContent = isFreeShipping ? 'FRETE GRÁTIS' : this.formatRateCost(rate && rate.cost ? rate.cost : '');
 
     methodWrap.appendChild(methodLabel);
 

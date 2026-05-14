@@ -379,6 +379,11 @@
 	color: #111;
 }
 
+.useup-checkout-polish .useup-shipping-price .useup-shipping-free-label,
+.useup-checkout-polish .useup-shipping-price .useup-me-free-shipping-label {
+	margin-left: 0;
+}
+
 .useup-checkout-polish .woocommerce-shipping-methods p,
 .useup-checkout-polish .woocommerce-shipping-methods small,
 .useup-checkout-polish .woocommerce-shipping-methods div,

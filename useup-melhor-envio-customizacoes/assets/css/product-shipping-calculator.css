@@ -171,6 +171,12 @@
 	color: #222;
 }
 
+.useup-me-product-shipping__rate > strong {
+	margin-left: auto;
+	white-space: nowrap;
+	text-align: right;
+}
+
 .useup-me-product-shipping__rate-main,
 .useup-me-product-shipping__rate-label {
 	display: inline-flex;
@@ -186,6 +192,26 @@
 	font-weight: 600;
 	color: #555;
 	white-space: nowrap;
+}
+
+.useup-me-free-shipping-label,
+.useup-shipping-free-label {
+	margin-left: auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-end;
+	font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	font-size: 10px;
+	line-height: 1;
+	font-weight: 500;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: #111;
+	white-space: nowrap;
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	padding: 0;
 }
 
 .useup-me-product-shipping__free-shipping {
@@ -220,6 +246,16 @@
 	}
 
 	.useup-me-product-shipping__button {
+		width: 100%;
+	}
+
+	.useup-me-product-shipping__rate {
+		align-items: flex-start;
+		flex-wrap: wrap;
+	}
+
+	.useup-me-product-shipping__rate > strong {
+		margin-left: 0;
 		width: 100%;
 	}
 

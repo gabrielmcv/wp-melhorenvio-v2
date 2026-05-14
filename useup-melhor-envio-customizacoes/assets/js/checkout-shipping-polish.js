@@ -198,9 +198,16 @@
             $li.toggleClass('is-selected', $input.is(':checked'));
 
             var originalText = $.trim($label.text());
+            var $freeLabel = $label.find('.useup-shipping-free-label, .useup-me-free-shipping-label').first();
             var $amount = $label.find('.amount').first();
-            var priceHtml = $amount.length ? $('<div>').append($amount.clone()).html() : '';
-            var textWithoutPrice = originalText.replace(/R\$\s?\d+(?:[.,]\d{2})?/g, '').trim();
+            var priceHtml = '';
+            var textWithoutPrice = originalText.replace(/R\$\s?\d+(?:[.,]\d{2})?/g, '').replace(/FRETE GR[ÁA]TIS/gi, '').trim();
+
+            if ($freeLabel.length) {
+                priceHtml = $('<div>').append($freeLabel.clone()).html();
+            } else if ($amount.length) {
+                priceHtml = $('<div>').append($amount.clone()).html();
+            }
 
             textWithoutPrice = normalizeMethodName(textWithoutPrice);
 
@@ -302,6 +309,16 @@
             var $input = $li.find('input[type="radio"]').first();
             var $label = $li.find('label').first();
             var $box = $li.find('.payment_box').first();
+            var $existingLabelText;
+            var $labelClone;
+            var $images;
+            var storedOriginalLabel;
+            var fallbackSource;
+            var searchableSource;
+            var finalLabelText;
+            var rawLabelText;
+            var methodName;
+            var badgeText = '';
 
             if (!$input.length || !$label.length) {
                 return;
@@ -310,26 +327,46 @@
             $li.toggleClass('is-selected', $input.is(':checked'));
             $label.addClass('useup-payment-method-label');
 
-            var $labelClone = $label.clone();
-            var $images = $label.find('img').detach();
-            var rawLabelText;
-            var methodName;
-            var badgeText = '';
+            $existingLabelText = $label.find('.useup-payment-label-text').first();
+            storedOriginalLabel = $.trim($label.attr('data-useup-payment-original-label') || '');
+            $labelClone = $label.clone();
+            $images = $label.find('img').detach();
 
-            $labelClone.find('.useup-payment-badge, .useup-payment-label-text').remove();
+            $labelClone.find('.useup-payment-badge, .useup-payment-label-text, .useup-payment-method-icon, img').remove();
 
-            rawLabelText = stripCardHelperText($.trim($labelClone.text()));
+            rawLabelText = stripCardHelperText(
+                $.trim($existingLabelText.text()) ||
+                storedOriginalLabel ||
+                $.trim($labelClone.text())
+            );
             methodName = normalizePaymentName(rawLabelText);
+            searchableSource = [
+                methodName,
+                rawLabelText,
+                storedOriginalLabel,
+                $input.attr('id') || '',
+                $input.val() || '',
+                $li.attr('class') || ''
+            ].join(' ');
+            fallbackSource = normalizeComparableText(searchableSource);
 
-            if (/pix/i.test(methodName)) {
+            if (!methodName && fallbackSource.indexOf('pix') !== -1) {
+                methodName = 'PIX';
+            } else if (!methodName && /(cartao|credito|infinitepay)/i.test(fallbackSource)) {
+                methodName = 'Cartão de crédito';
+            }
+
+            if (/pix/i.test(methodName || '')) {
                 badgeText = config.pixBadge || '5% NO PIX';
-            } else if (/(cartao|credito)/i.test(normalizeComparableText(methodName))) {
+            } else if (/(cartao|credito)/i.test(normalizeComparableText(methodName || ''))) {
                 badgeText = config.cardBadge || 'AT\u00c9 12X';
             }
 
+            finalLabelText = methodName || rawLabelText || storedOriginalLabel;
+            $label.attr('data-useup-payment-original-label', finalLabelText);
             $label.empty();
             $label.append('<span class="useup-payment-label-text"></span>');
-            $label.find('.useup-payment-label-text').text(methodName || rawLabelText);
+            $label.find('.useup-payment-label-text').text(finalLabelText);
 
             if ($images.length) {
                 $images.addClass('useup-payment-method-icon');
@@ -340,7 +377,7 @@
                 $label.append('<span class="useup-payment-badge">' + badgeText + '</span>');
             }
 
-            if ($box.length && /(cartao|credito|infinitepay)/i.test(normalizeComparableText(methodName))) {
+            if ($box.length && /(cartao|credito|infinitepay)/i.test(normalizeComparableText(methodName || finalLabelText || ''))) {
                 if (!$.trim($box.text()) && config.cardHelper) {
                     $box.text(config.cardHelper);
                 }

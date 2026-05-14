@@ -32,6 +32,7 @@ class USEUP_ME_Loader {
 			( new USEUP_ME_Checkout_Form_Design() )->init();
 			( new USEUP_ME_Product_Page_Polish() )->init();
 			( new USEUP_ME_Melhor_Envio_Hooks() )->init();
+			( new USEUP_ME_Shipping_Quantity_Discount() )->init();
 			( new USEUP_ME_Product_Shipping_Calculator() )->init();
 		}
 

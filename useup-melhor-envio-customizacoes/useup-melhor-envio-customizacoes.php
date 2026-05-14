@@ -31,6 +31,7 @@ require_once USEUP_ME_PATH . 'includes/class-useup-me-melhor-envio-hooks.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-rules.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-delivery-label.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-time-extra.php';
+require_once USEUP_ME_PATH . 'includes/class-useup-me-shipping-quantity-discount.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-product-shipping-calculator.php';
 
 function useup_me_plugin() {
