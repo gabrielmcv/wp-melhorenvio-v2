@@ -48,6 +48,9 @@ class USEUP_ME_Settings {
 			'ajax_shop_filter_items'                  => self::get_default_ajax_shop_filter_items(),
 			'ajax_shop_products_per_page'             => 12,
 			'ajax_shop_pagination_mode'               => 'pagination',
+			'enable_premium_category_pages'          => false,
+			'category_use_description_subtitle'      => true,
+			'category_show_title_ornament'           => true,
 			'enable_product_page_polish'              => true,
 			'enable_product_installment_badge'        => true,
 			'product_installment_badge_text'          => 'Até 12x',
@@ -145,6 +148,9 @@ class USEUP_ME_Settings {
 				array( 'pagination', 'load_more' ),
 				$defaults['ajax_shop_pagination_mode']
 			),
+			'enable_premium_category_pages'          => ! empty( $settings['enable_premium_category_pages'] ),
+			'category_use_description_subtitle'      => ! isset( $settings['category_use_description_subtitle'] ) || ! empty( $settings['category_use_description_subtitle'] ),
+			'category_show_title_ornament'           => ! isset( $settings['category_show_title_ornament'] ) || ! empty( $settings['category_show_title_ornament'] ),
 			'enable_product_page_polish'              => ! isset( $settings['enable_product_page_polish'] ) || ! empty( $settings['enable_product_page_polish'] ),
 			'enable_product_installment_badge'        => ! isset( $settings['enable_product_installment_badge'] ) || ! empty( $settings['enable_product_installment_badge'] ),
 			'product_installment_badge_text'          => sanitize_text_field(
@@ -216,6 +222,12 @@ class USEUP_ME_Settings {
 		$enabled = (bool) self::get( 'enable_ajax_shop_filter', false );
 
 		return (bool) apply_filters( 'useup_me_enable_ajax_shop_filter', $enabled );
+	}
+
+	public static function is_premium_category_pages_enabled() {
+		$enabled = (bool) self::get( 'enable_premium_category_pages', false );
+
+		return (bool) apply_filters( 'useup_me_enable_premium_category_pages', $enabled );
 	}
 
 	private static function sanitize_free_shipping_threshold( $value ) {

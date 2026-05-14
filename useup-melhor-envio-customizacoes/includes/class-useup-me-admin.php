@@ -432,6 +432,50 @@ class USEUP_ME_Admin {
 				</div>
 
 				<div class="useup-me-card">
+					<h2>Paginas de categoria premium</h2>
+					<p>Ativa um cabecalho editorial mais elegante nas paginas de categoria de produto, sem mexer no grid e nos cards.</p>
+					<label class="useup-me-checkbox">
+						<input
+							type="checkbox"
+							name="useup_me_settings[enable_premium_category_pages]"
+							value="1"
+							<?php checked( ! empty( $settings['enable_premium_category_pages'] ), true ); ?>
+						/>
+						Ativar paginas de categoria premium
+					</label>
+
+					<div class="useup-me-grid" style="margin-top: 16px;">
+						<div>
+							<label class="useup-me-checkbox" for="useup-me-category-use-description-subtitle">
+								<input
+									type="checkbox"
+									id="useup-me-category-use-description-subtitle"
+									name="useup_me_settings[category_use_description_subtitle]"
+									value="1"
+									<?php checked( ! empty( $settings['category_use_description_subtitle'] ), true ); ?>
+								/>
+								Usar descricao da categoria como subtitulo
+							</label>
+							<p class="description">Quando a categoria tiver descricao, ela aparece abaixo do titulo do cabecalho premium.</p>
+						</div>
+
+						<div>
+							<label class="useup-me-checkbox" for="useup-me-category-show-title-ornament">
+								<input
+									type="checkbox"
+									id="useup-me-category-show-title-ornament"
+									name="useup_me_settings[category_show_title_ornament]"
+									value="1"
+									<?php checked( ! empty( $settings['category_show_title_ornament'] ), true ); ?>
+								/>
+								Exibir elemento decorativo abaixo do titulo
+							</label>
+							<p class="description">Renderiza uma linha delicada com ponto central entre o titulo e o subtitulo.</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="useup-me-card">
 					<h2>Visual premium no checkout</h2>
 					<p>Redesenha visualmente a área de entrega e total do checkout para manter a experiência premium da USEUP!.</p>
 					<label class="useup-me-checkbox">

@@ -33,6 +33,7 @@ class USEUP_ME_Loader {
 			( new USEUP_ME_Product_Page_Polish() )->init();
 			( new USEUP_ME_Complementary_Products() )->init();
 			( new USEUP_ME_Ajax_Shop_Filter() )->init();
+			( new USEUP_ME_Premium_Category_Pages() )->init();
 			( new USEUP_ME_Melhor_Envio_Hooks() )->init();
 			( new USEUP_ME_Shipping_Quantity_Discount() )->init();
 			( new USEUP_ME_Product_Shipping_Calculator() )->init();

@@ -1,0 +1,80 @@
+.useup-premium-category-header {
+  max-width: 760px;
+  margin: 50px auto 5px;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.useup-premium-category-header__title {
+  margin: 0;
+  font-family: Cardo, Georgia, serif;
+  font-size: 42px;
+  line-height: 1.12;
+  font-weight: 400;
+  color: #111;
+  letter-spacing: -0.015em;
+}
+
+.useup-premium-category-header__ornament {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 16px 0 12px;
+  color: #a58066;
+}
+
+.useup-premium-category-header__ornament span {
+  display: block;
+  width: 78px;
+  height: 1px;
+  background: #e5d8cc;
+}
+
+.useup-premium-category-header__ornament i {
+  display: block;
+  width: 6px;
+  height: 6px;
+  background: #a58066;
+  transform: rotate(45deg);
+}
+
+.useup-premium-category-header__subtitle {
+  max-width: 660px;
+  margin: 0 auto;
+  font-family: Cardo, Georgia, serif;
+  font-size: 18px;
+  line-height: 1.55;
+  font-weight: 400;
+  color: #6f6a67;
+}
+
+.useup-premium-category-header__subtitle p {
+  margin: 0;
+}
+
+body.tax-product_cat.useup-premium-category-enabled .woocommerce-products-header__title,
+body.tax-product_cat.useup-premium-category-enabled .et-shop-title,
+body.tax-product_cat.useup-premium-category-enabled .page-title,
+body.tax-product_cat.useup-premium-category-enabled .term-description,
+body.tax-product_cat.useup-premium-category-enabled .archive-description {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .useup-premium-category-header {
+    margin: 24px auto 22px;
+  }
+
+  .useup-premium-category-header__title {
+    font-size: 34px;
+  }
+
+  .useup-premium-category-header__ornament span {
+    width: 54px;
+  }
+
+  .useup-premium-category-header__subtitle {
+    font-size: 16px;
+  }
+}
