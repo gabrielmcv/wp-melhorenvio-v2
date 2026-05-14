@@ -306,7 +306,9 @@ class USEUP_ME_Admin {
 	}
 
 	private function render_rule_card( $index, $rule, $categories, $tags, $shipping_classes ) {
-		$rule = USEUP_ME_Rules::normalize_rule( $rule );
+		$rule                 = USEUP_ME_Rules::normalize_rule( $rule );
+		$parameter_options    = USEUP_ME_Rules::get_parameter_options();
+		$comparison_operators = USEUP_ME_Rules::get_comparison_operator_options();
 		?>
 		<div class="useup-me-card useup-me-rule">
 			<div class="useup-me-rule-header">
@@ -373,6 +375,70 @@ class USEUP_ME_Admin {
 						<option value="any" <?php selected( $rule['match_mode'], 'any' ); ?>>Se qualquer item corresponder</option>
 						<option value="all" <?php selected( $rule['match_mode'], 'all' ); ?>>Se todos os itens corresponderem</option>
 					</select>
+				</div>
+
+				<div>
+					<label for="useup-me-rule-parameter-<?php echo esc_attr( $index ); ?>">Parâmetro adicional</label>
+					<select
+						id="useup-me-rule-parameter-<?php echo esc_attr( $index ); ?>"
+						name="useup_me_settings[rules][<?php echo esc_attr( $index ); ?>][parameter]"
+						class="useup-me-rule-parameter"
+					>
+						<?php foreach ( $parameter_options as $value => $label ) : ?>
+							<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $rule['parameter'], $value ); ?>>
+								<?php echo esc_html( $label ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<div class="useup-me-rule-parameter-fields" <?php echo empty( $rule['parameter'] ) ? 'hidden' : ''; ?>>
+					<label for="useup-me-rule-comparison-operator-<?php echo esc_attr( $index ); ?>">Operador numérico</label>
+					<select
+						id="useup-me-rule-comparison-operator-<?php echo esc_attr( $index ); ?>"
+						name="useup_me_settings[rules][<?php echo esc_attr( $index ); ?>][comparison_operator]"
+						class="useup-me-rule-comparison-operator"
+					>
+						<?php foreach ( $comparison_operators as $value => $label ) : ?>
+							<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $rule['comparison_operator'], $value ); ?>>
+								<?php echo esc_html( $label ); ?>
+							</option>
+						<?php endforeach; ?>
+					</select>
+				</div>
+
+				<div class="useup-me-rule-parameter-fields" <?php echo empty( $rule['parameter'] ) ? 'hidden' : ''; ?>>
+					<label
+						for="useup-me-rule-value-<?php echo esc_attr( $index ); ?>"
+						class="useup-me-rule-value-label"
+					><?php echo ( 'between' === $rule['comparison_operator'] ) ? 'Valor mínimo' : 'Valor'; ?></label>
+					<input
+						type="number"
+						min="0"
+						step="1"
+						id="useup-me-rule-value-<?php echo esc_attr( $index ); ?>"
+						name="useup_me_settings[rules][<?php echo esc_attr( $index ); ?>][value]"
+						value="<?php echo esc_attr( $rule['value'] ); ?>"
+						class="small-text useup-me-rule-value"
+						placeholder="Ex.: 5"
+					/>
+				</div>
+
+				<div
+					class="useup-me-rule-value-to-wrap"
+					<?php echo ( empty( $rule['parameter'] ) || 'between' !== $rule['comparison_operator'] ) ? 'hidden' : ''; ?>
+				>
+					<label for="useup-me-rule-value-to-<?php echo esc_attr( $index ); ?>">Valor máximo</label>
+					<input
+						type="number"
+						min="0"
+						step="1"
+						id="useup-me-rule-value-to-<?php echo esc_attr( $index ); ?>"
+						name="useup_me_settings[rules][<?php echo esc_attr( $index ); ?>][value_to]"
+						value="<?php echo esc_attr( $rule['value_to'] ); ?>"
+						class="small-text useup-me-rule-value-to"
+						placeholder="Ex.: 9"
+					/>
 				</div>
 			</div>
 

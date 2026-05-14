@@ -55,3 +55,8 @@
 .useup-me-conditions {
 	margin-top: 20px;
 }
+
+.useup-me-rule-parameter-fields[hidden],
+.useup-me-rule-value-to-wrap[hidden] {
+	display: none !important;
+}

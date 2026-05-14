@@ -311,6 +311,12 @@ class USEUP_ME_Product_Shipping_Calculator {
 			'contents_cost'            => $contents_total,
 			'cart_subtotal'            => $contents_total,
 			'product_page_calculation' => true,
+			'useup_me_rule_context'    => array(
+				'product_id'   => $catalog_id,
+				'variation_id' => $product->is_type( 'variation' ) ? $product_id : 0,
+				'quantity'     => max( 1, (int) $quantity ),
+				'postcode'     => $postcode,
+			),
 			'destination'              => array(
 				'country'   => 'BR',
 				'state'     => $state,
