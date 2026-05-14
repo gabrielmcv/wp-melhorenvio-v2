@@ -36,6 +36,14 @@ class USEUP_ME_Settings {
 			'shipping_discount_label'                 => 'Desconto de frete por quantidade',
 			'shipping_discount_apply_to_free_shipping' => false,
 			'shipping_discount_allowed_methods'       => array(),
+			'enable_complementary_products'           => false,
+			'complementary_products_title'            => 'Complete com uma corrente',
+			'complementary_products_subtitle'         => 'O pingente e vendido separadamente. Escolha uma ou mais correntes, se desejar.',
+			'complementary_product_ids'               => array(),
+			'complementary_display_mode'              => 'selected_categories',
+			'complementary_category_ids'              => array(),
+			'complementary_tag_ids'                   => array(),
+			'complementary_target_product_ids'        => array(),
 			'enable_product_page_polish'              => true,
 			'enable_product_installment_badge'        => true,
 			'product_installment_badge_text'          => 'Até 12x',
@@ -94,6 +102,30 @@ class USEUP_ME_Settings {
 			'shipping_discount_allowed_methods'       => self::sanitize_string_list(
 				isset( $settings['shipping_discount_allowed_methods'] ) ? $settings['shipping_discount_allowed_methods'] : $defaults['shipping_discount_allowed_methods']
 			),
+			'enable_complementary_products'           => ! empty( $settings['enable_complementary_products'] ),
+			'complementary_products_title'            => sanitize_text_field(
+				isset( $settings['complementary_products_title'] ) ? $settings['complementary_products_title'] : $defaults['complementary_products_title']
+			),
+			'complementary_products_subtitle'         => sanitize_textarea_field(
+				isset( $settings['complementary_products_subtitle'] ) ? $settings['complementary_products_subtitle'] : $defaults['complementary_products_subtitle']
+			),
+			'complementary_product_ids'               => self::sanitize_positive_id_list(
+				isset( $settings['complementary_product_ids'] ) ? $settings['complementary_product_ids'] : $defaults['complementary_product_ids']
+			),
+			'complementary_display_mode'              => self::sanitize_enum(
+				isset( $settings['complementary_display_mode'] ) ? $settings['complementary_display_mode'] : $defaults['complementary_display_mode'],
+				array( 'all_products', 'selected_categories', 'selected_tags', 'selected_products' ),
+				$defaults['complementary_display_mode']
+			),
+			'complementary_category_ids'              => self::sanitize_positive_id_list(
+				isset( $settings['complementary_category_ids'] ) ? $settings['complementary_category_ids'] : $defaults['complementary_category_ids']
+			),
+			'complementary_tag_ids'                   => self::sanitize_positive_id_list(
+				isset( $settings['complementary_tag_ids'] ) ? $settings['complementary_tag_ids'] : $defaults['complementary_tag_ids']
+			),
+			'complementary_target_product_ids'        => self::sanitize_positive_id_list(
+				isset( $settings['complementary_target_product_ids'] ) ? $settings['complementary_target_product_ids'] : $defaults['complementary_target_product_ids']
+			),
 			'enable_product_page_polish'              => ! isset( $settings['enable_product_page_polish'] ) || ! empty( $settings['enable_product_page_polish'] ),
 			'enable_product_installment_badge'        => ! isset( $settings['enable_product_installment_badge'] ) || ! empty( $settings['enable_product_installment_badge'] ),
 			'product_installment_badge_text'          => sanitize_text_field(
@@ -149,6 +181,12 @@ class USEUP_ME_Settings {
 		return (bool) apply_filters( 'useup_me_shipping_quantity_discount_enabled', $enabled );
 	}
 
+	public static function is_complementary_products_enabled() {
+		$enabled = (bool) self::get( 'enable_complementary_products', false );
+
+		return (bool) apply_filters( 'useup_me_enable_complementary_products', $enabled );
+	}
+
 	private static function sanitize_free_shipping_threshold( $value ) {
 		if ( '' === $value || null === $value ) {
 			return 0.0;
@@ -182,6 +220,34 @@ class USEUP_ME_Settings {
 
 		if ( $value < 1 ) {
 			return max( 1, (int) $default );
+		}
+
+		return $value;
+	}
+
+	private static function sanitize_positive_id_list( $values ) {
+		if ( ! is_array( $values ) ) {
+			return array();
+		}
+
+		$sanitized = array();
+
+		foreach ( $values as $value ) {
+			$value = absint( $value );
+
+			if ( $value > 0 ) {
+				$sanitized[] = $value;
+			}
+		}
+
+		return array_values( array_unique( $sanitized ) );
+	}
+
+	private static function sanitize_enum( $value, $allowed_values, $default ) {
+		$value = sanitize_text_field( (string) $value );
+
+		if ( ! in_array( $value, $allowed_values, true ) ) {
+			return $default;
 		}
 
 		return $value;

@@ -31,6 +31,10 @@ class USEUP_ME_Admin {
 			return;
 		}
 
+		wp_enqueue_style( 'woocommerce_admin_styles' );
+		wp_enqueue_script( 'selectWoo' );
+		wp_enqueue_script( 'wc-enhanced-select' );
+
 		wp_enqueue_style(
 			'useup-me-admin',
 			USEUP_ME_URL . 'assets/admin.css',
@@ -41,7 +45,7 @@ class USEUP_ME_Admin {
 		wp_enqueue_script(
 			'useup-me-admin',
 			USEUP_ME_URL . 'assets/admin.js',
-			array(),
+			array( 'jquery', 'wc-enhanced-select' ),
 			USEUP_ME_VERSION,
 			true
 		);
@@ -183,7 +187,7 @@ class USEUP_ME_Admin {
 								value="<?php echo esc_attr( $settings['shipping_discount_max_items'] ); ?>"
 								class="small-text"
 							/>
-							<p class="description">Carrinhos acima do limite continuam recebendo desconto calculado sobre a quantidade maxima configurada.</p>
+							<p class="description">Carrinhos acima do limite configurado nao recebem desconto adicional.</p>
 						</div>
 					</div>
 
@@ -234,6 +238,138 @@ class USEUP_ME_Admin {
 								<?php endforeach; ?>
 							</select>
 							<p class="description">Se nenhum metodo for selecionado, o desconto sera aplicado a todos os fretes pagos.</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="useup-me-card">
+					<h2>Produtos complementares</h2>
+					<p>Exibe produtos complementares na pagina individual do produto, permitindo adicionar itens extras ao carrinho junto com o produto principal.</p>
+					<label class="useup-me-checkbox">
+						<input
+							type="checkbox"
+							name="useup_me_settings[enable_complementary_products]"
+							value="1"
+							<?php checked( ! empty( $settings['enable_complementary_products'] ), true ); ?>
+						/>
+						Ativar produtos complementares na pagina do produto
+					</label>
+
+					<div class="useup-me-grid" style="margin-top: 16px;">
+						<div>
+							<label for="useup-me-complementary-title">Titulo do bloco</label>
+							<input
+								type="text"
+								id="useup-me-complementary-title"
+								name="useup_me_settings[complementary_products_title]"
+								value="<?php echo esc_attr( $settings['complementary_products_title'] ); ?>"
+								class="regular-text"
+							/>
+						</div>
+
+						<div>
+							<label for="useup-me-complementary-subtitle">Texto de apoio do bloco</label>
+							<textarea
+								id="useup-me-complementary-subtitle"
+								name="useup_me_settings[complementary_products_subtitle]"
+								rows="3"
+								class="large-text"
+							><?php echo esc_textarea( $settings['complementary_products_subtitle'] ); ?></textarea>
+						</div>
+					</div>
+
+					<div class="useup-me-grid" style="margin-top: 16px;">
+						<div>
+							<label for="useup-me-complementary-products">Produtos complementares</label>
+							<?php
+							$this->render_product_search_field(
+								'useup-me-complementary-products',
+								'useup_me_settings[complementary_product_ids][]',
+								$settings['complementary_product_ids'],
+								'Busque por nome ou SKU'
+							);
+							?>
+							<p class="description">Selecione um ou mais produtos reais do WooCommerce para exibir como complementares.</p>
+						</div>
+					</div>
+
+					<div class="useup-me-grid" style="margin-top: 16px;">
+						<div>
+							<label for="useup-me-complementary-display-mode">Exibir em quais produtos?</label>
+							<select
+								id="useup-me-complementary-display-mode"
+								name="useup_me_settings[complementary_display_mode]"
+								class="useup-me-complementary-display-mode"
+							>
+								<option value="all_products" <?php selected( $settings['complementary_display_mode'], 'all_products' ); ?>>Todos os produtos</option>
+								<option value="selected_categories" <?php selected( $settings['complementary_display_mode'], 'selected_categories' ); ?>>Categorias selecionadas</option>
+								<option value="selected_tags" <?php selected( $settings['complementary_display_mode'], 'selected_tags' ); ?>>Tags selecionadas</option>
+								<option value="selected_products" <?php selected( $settings['complementary_display_mode'], 'selected_products' ); ?>>Produtos principais selecionados</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="useup-me-grid useup-me-complementary-display-targets" style="margin-top: 16px;">
+						<div
+							class="useup-me-complementary-display-target useup-me-complementary-display-target--categories"
+							data-display-mode="selected_categories"
+						>
+							<label for="useup-me-complementary-categories">Categorias alvo</label>
+							<select
+								id="useup-me-complementary-categories"
+								name="useup_me_settings[complementary_category_ids][]"
+								multiple="multiple"
+								size="6"
+							>
+								<?php foreach ( $categories as $term ) : ?>
+									<option
+										value="<?php echo esc_attr( $term->term_id ); ?>"
+										<?php selected( in_array( (int) $term->term_id, $settings['complementary_category_ids'], true ), true ); ?>
+									>
+										<?php echo esc_html( $term->name ); ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+							<p class="description">O bloco sera exibido apenas em produtos destas categorias.</p>
+						</div>
+
+						<div
+							class="useup-me-complementary-display-target useup-me-complementary-display-target--tags"
+							data-display-mode="selected_tags"
+						>
+							<label for="useup-me-complementary-tags">Tags alvo</label>
+							<select
+								id="useup-me-complementary-tags"
+								name="useup_me_settings[complementary_tag_ids][]"
+								multiple="multiple"
+								size="6"
+							>
+								<?php foreach ( $tags as $term ) : ?>
+									<option
+										value="<?php echo esc_attr( $term->term_id ); ?>"
+										<?php selected( in_array( (int) $term->term_id, $settings['complementary_tag_ids'], true ), true ); ?>
+									>
+										<?php echo esc_html( $term->name ); ?>
+									</option>
+								<?php endforeach; ?>
+							</select>
+							<p class="description">O bloco sera exibido apenas em produtos com estas tags.</p>
+						</div>
+
+						<div
+							class="useup-me-complementary-display-target useup-me-complementary-display-target--products"
+							data-display-mode="selected_products"
+						>
+							<label for="useup-me-complementary-target-products">Produtos principais selecionados</label>
+							<?php
+							$this->render_product_search_field(
+								'useup-me-complementary-target-products',
+								'useup_me_settings[complementary_target_product_ids][]',
+								$settings['complementary_target_product_ids'],
+								'Busque os produtos principais'
+							);
+							?>
+							<p class="description">Use esta opcao quando quiser exibir os complementares apenas em produtos especificos.</p>
 						</div>
 					</div>
 				</div>
@@ -686,6 +822,53 @@ class USEUP_ME_Admin {
 		}
 
 		asort( $options, SORT_NATURAL | SORT_FLAG_CASE );
+
+		return $options;
+	}
+
+	private function render_product_search_field( $field_id, $field_name, $selected_ids, $placeholder ) {
+		$selected_ids = is_array( $selected_ids ) ? array_map( 'absint', $selected_ids ) : array();
+		$options      = $this->get_product_search_options( $selected_ids );
+		?>
+		<select
+			id="<?php echo esc_attr( $field_id ); ?>"
+			name="<?php echo esc_attr( $field_name ); ?>"
+			class="wc-product-search"
+			multiple="multiple"
+			data-placeholder="<?php echo esc_attr( $placeholder ); ?>"
+			data-action="woocommerce_json_search_products"
+			data-allow_clear="true"
+			data-sortable="true"
+			style="width: 100%;"
+		>
+			<?php foreach ( $options as $product_id => $product_label ) : ?>
+				<option value="<?php echo esc_attr( $product_id ); ?>" selected="selected">
+					<?php echo esc_html( $product_label ); ?>
+				</option>
+			<?php endforeach; ?>
+		</select>
+		<?php
+	}
+
+	private function get_product_search_options( $product_ids ) {
+		$options = array();
+
+		foreach ( $product_ids as $product_id ) {
+			$product = wc_get_product( $product_id );
+
+			if ( ! $product instanceof WC_Product ) {
+				continue;
+			}
+
+			$label = $product->get_formatted_name();
+			$sku   = $product->get_sku();
+
+			if ( '' !== $sku ) {
+				$label .= ' (' . $sku . ')';
+			}
+
+			$options[ $product_id ] = $label;
+		}
 
 		return $options;
 	}

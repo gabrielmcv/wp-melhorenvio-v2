@@ -2,6 +2,32 @@ document.addEventListener('DOMContentLoaded', function () {
   var container = document.getElementById('useup-me-rules');
   var addButton = document.getElementById('useup-me-add-rule');
   var template = document.getElementById('useup-me-rule-template');
+  var displayModeSelect = document.querySelector('.useup-me-complementary-display-mode');
+
+  function syncComplementaryTargets() {
+    var mode;
+
+    if (!displayModeSelect) {
+      return;
+    }
+
+    mode = displayModeSelect.value;
+
+    document.querySelectorAll('.useup-me-complementary-display-target').forEach(function (target) {
+      target.hidden = target.getAttribute('data-display-mode') !== mode;
+    });
+  }
+
+  if (window.jQuery) {
+    window.jQuery(function ($) {
+      $(document.body).trigger('wc-enhanced-select-init');
+    });
+  }
+
+  if (displayModeSelect) {
+    displayModeSelect.addEventListener('change', syncComplementaryTargets);
+    syncComplementaryTargets();
+  }
 
   if (!container || !addButton || !template) {
     return;

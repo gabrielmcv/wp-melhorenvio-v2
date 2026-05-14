@@ -57,6 +57,15 @@
 }
 
 .useup-me-rule-parameter-fields[hidden],
-.useup-me-rule-value-to-wrap[hidden] {
+.useup-me-rule-value-to-wrap[hidden],
+.useup-me-complementary-display-target[hidden] {
 	display: none !important;
+}
+
+.useup-me-admin .wc-product-search {
+	width: 100%;
+}
+
+.useup-me-complementary-display-targets {
+	align-items: start;
 }
