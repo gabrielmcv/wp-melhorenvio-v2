@@ -110,9 +110,6 @@
       $(this.variationForm).on('hide_variation reset_data', this.handleVariationReset.bind(this));
     }
 
-    this.element.addEventListener('click', this.handleLocalClick.bind(this));
-    document.addEventListener('click', this.handleDocumentClick.bind(this));
-    document.addEventListener('keyup', this.handleDocumentKeyup.bind(this));
   };
 
   ProductShippingCalculator.prototype.handleInput = function (event) {
@@ -144,32 +141,6 @@
   ProductShippingCalculator.prototype.handleVariationReset = function () {
     this.clearError();
     this.clearResults();
-  };
-
-  ProductShippingCalculator.prototype.handleLocalClick = function (event) {
-    var fastestTrigger = event.target.closest('.useup-me-product-shipping__fastest-badge');
-
-    if (!fastestTrigger) {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-    this.toggleFastestTooltip(fastestTrigger);
-  };
-
-  ProductShippingCalculator.prototype.handleDocumentClick = function (event) {
-    if (event.target.closest('.useup-me-product-shipping__fastest-badge')) {
-      return;
-    }
-
-    this.closeFastestTooltips();
-  };
-
-  ProductShippingCalculator.prototype.handleDocumentKeyup = function (event) {
-    if (event.key === 'Escape') {
-      this.closeFastestTooltips();
-    }
   };
 
   ProductShippingCalculator.prototype.normalizeVisibleCopy = function () {
@@ -331,7 +302,6 @@
     }
 
     this.clearError();
-    this.closeFastestTooltips();
     this.setLoading(true);
 
     var requestBody = new window.URLSearchParams();
@@ -473,14 +443,15 @@
     main.className = 'useup-me-product-shipping__rate-main';
     methodWrap.className = 'useup-me-product-shipping__rate-label';
 
-    if (isFastest) {
-      methodWrap.appendChild(this.buildFastestBadge());
-    }
-
     methodLabel.textContent = rate && rate.label ? fixMojibakeText(rate.label) : 'Entrega';
     cost.textContent = this.formatRateCost(rate && rate.cost ? rate.cost : '');
 
     methodWrap.appendChild(methodLabel);
+
+    if (isFastest) {
+      methodWrap.appendChild(this.buildFastestLabel());
+    }
+
     main.appendChild(methodWrap);
     node.appendChild(main);
     node.appendChild(cost);
@@ -488,60 +459,15 @@
     return node;
   };
 
-  ProductShippingCalculator.prototype.buildFastestBadge = function () {
-    var badge = document.createElement('button');
-    var icon = document.createElement('span');
-    var tooltip = document.createElement('span');
+  ProductShippingCalculator.prototype.buildFastestLabel = function () {
+    var label = document.createElement('span');
 
-    badge.type = 'button';
-    badge.className = 'useup-me-product-shipping__fastest-badge';
-    badge.setAttribute('aria-expanded', 'false');
-    badge.setAttribute('aria-label', 'Entrega mais r\u00e1pida');
+    label.className = 'useup-me-product-shipping__fastest-label';
+    label.textContent = '\u2014 mais r\u00e1pido';
+    label.setAttribute('title', 'Entrega mais r\u00e1pida');
+    label.setAttribute('aria-label', 'Entrega mais r\u00e1pida');
 
-    icon.className = 'useup-me-product-shipping__fastest-icon';
-    icon.setAttribute('aria-hidden', 'true');
-    icon.innerHTML = this.getFastTruckIconSvg();
-
-    tooltip.className = 'useup-me-product-shipping__fastest-tooltip useup-me-tooltip useup-me-tooltip--fastest';
-    tooltip.hidden = true;
-    tooltip.textContent = 'Entrega mais r\u00e1pida';
-
-    badge.appendChild(icon);
-    badge.appendChild(tooltip);
-
-    return badge;
-  };
-
-  ProductShippingCalculator.prototype.toggleFastestTooltip = function (trigger) {
-    var isExpanded = trigger.getAttribute('aria-expanded') === 'true';
-
-    this.closeFastestTooltips(trigger);
-
-    if (isExpanded) {
-      return;
-    }
-
-    trigger.setAttribute('aria-expanded', 'true');
-    trigger.classList.add('is-open');
-    this.getFastestTooltip(trigger).hidden = false;
-  };
-
-  ProductShippingCalculator.prototype.closeFastestTooltips = function (except) {
-    var triggers = this.element.querySelectorAll('.useup-me-product-shipping__fastest-badge');
-
-    Array.prototype.forEach.call(triggers, function (trigger) {
-      if (except && trigger === except) {
-        return;
-      }
-
-      trigger.setAttribute('aria-expanded', 'false');
-      trigger.classList.remove('is-open');
-      this.getFastestTooltip(trigger).hidden = true;
-    }.bind(this));
-  };
-
-  ProductShippingCalculator.prototype.getFastestTooltip = function (trigger) {
-    return trigger.querySelector('.useup-me-tooltip--fastest');
+    return label;
   };
 
   ProductShippingCalculator.prototype.findFastestRateIndex = function (rates) {
@@ -615,10 +541,6 @@
 
   ProductShippingCalculator.prototype.getCalendarIconSvg = function () {
     return '<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><rect x="4" y="5.5" width="16" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"></rect><path d="M8 3.75v3.5M16 3.75v3.5M4 9.25h16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>';
-  };
-
-  ProductShippingCalculator.prototype.getFastTruckIconSvg = function () {
-    return '<svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M3 9.25h8.5c1.65 0 2.75-.85 2.75-2.15S13.15 5 11.5 5H10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 13h13.5c1.45 0 2.5-.7 2.5-1.85s-1.05-1.9-2.5-1.9h-.75" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 16.75h6.75c1.45 0 2.5.7 2.5 1.85s-1.05 1.9-2.5 1.9H7.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
   };
 
   document.addEventListener('DOMContentLoaded', function () {

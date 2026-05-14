@@ -49,7 +49,7 @@ class USEUP_ME_Admin {
 
 	public function save_settings() {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
-			wp_die( esc_html__( 'Voce nao tem permissao para salvar estas configuracoes.', 'useup-melhor-envio-customizacoes' ) );
+			wp_die( esc_html__( 'Você não tem permissão para salvar estas configurações.', 'useup-melhor-envio-customizacoes' ) );
 		}
 
 		check_admin_referer( 'useup_me_save_settings', 'useup_me_nonce' );
@@ -73,7 +73,7 @@ class USEUP_ME_Admin {
 
 	public function render_page() {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
-			wp_die( esc_html__( 'Voce nao tem permissao para acessar esta pagina.', 'useup-melhor-envio-customizacoes' ) );
+			wp_die( esc_html__( 'Você não tem permissão para acessar esta página.', 'useup-melhor-envio-customizacoes' ) );
 		}
 
 		$settings         = USEUP_ME_Settings::get_all();
@@ -83,17 +83,17 @@ class USEUP_ME_Admin {
 		?>
 		<div class="wrap useup-me-admin">
 			<h1>USEUP! Entrega</h1>
-			<p>Configure regras para acrescentar dias ao prazo do Melhor Envio sem alterar preco do frete.</p>
+			<p>Configure regras para acrescentar dias ao prazo do Melhor Envio sem alterar preço do frete.</p>
 
 			<?php if ( isset( $_GET['updated'] ) ) : ?>
 				<div class="notice notice-success is-dismissible">
-					<p>Configuracoes salvas com sucesso.</p>
+					<p>Configurações salvas com sucesso.</p>
 				</div>
 			<?php endif; ?>
 
 			<?php if ( isset( $_GET['useup_me_hooks_sync'] ) ) : ?>
 				<div class="notice notice-info is-dismissible">
-					<p>Verificacao dos hooks do Melhor Envio executada novamente.</p>
+					<p>Verificação dos hooks do Melhor Envio executada novamente.</p>
 				</div>
 			<?php endif; ?>
 
@@ -155,6 +155,16 @@ class USEUP_ME_Admin {
 						/>
 						Aplicar visual premium no checkout
 					</label>
+					<label class="useup-me-checkbox" style="margin-top: 14px;">
+						<input
+							type="checkbox"
+							name="useup_me_settings[enable_checkout_form_design]"
+							value="1"
+							<?php checked( ! empty( $settings['enable_checkout_form_design'] ), true ); ?>
+						/>
+						Aplicar design premium no formulário do checkout
+					</label>
+					<p class="description">Organiza visualmente os campos do formulário de checkout em grupos e aplica um design mais limpo e premium.</p>
 				</div>
 
 				<div class="useup-me-card">
@@ -211,14 +221,44 @@ class USEUP_ME_Admin {
 							/>
 						</div>
 					</div>
+
+					<div class="useup-me-grid" style="margin-top: 16px;">
+						<div>
+							<label for="useup-me-retail-markup-percent">Percentual de acréscimo para preço de varejo</label>
+							<input
+								type="number"
+								min="0"
+								step="0.01"
+								id="useup-me-retail-markup-percent"
+								name="useup_me_settings[retail_markup_percent]"
+								value="<?php echo esc_attr( $settings['retail_markup_percent'] ); ?>"
+								class="regular-text"
+							/>
+							<p class="description">Percentual aplicado sobre o preço de atacado para calcular o preço de varejo exibido no produto.</p>
+						</div>
+
+						<div>
+							<label for="useup-me-retail-markup-fixed">Acréscimo fixo para preço de varejo</label>
+							<input
+								type="number"
+								min="0"
+								step="0.01"
+								id="useup-me-retail-markup-fixed"
+								name="useup_me_settings[retail_markup_fixed]"
+								value="<?php echo esc_attr( $settings['retail_markup_fixed'] ); ?>"
+								class="regular-text"
+							/>
+							<p class="description">Valor fixo somado ao preço de varejo após o acréscimo percentual.</p>
+						</div>
+					</div>
 				</div>
 
 				<div class="useup-me-card">
-					<h2>Combinacao global das regras</h2>
+					<h2>Combinação global das regras</h2>
 					<p>Defina como o plugin deve consolidar os dias extras quando mais de uma regra corresponder ao mesmo pacote.</p>
 					<select name="useup_me_settings[combine_mode]">
-						<option value="max" <?php selected( $settings['combine_mode'], 'max' ); ?>>Usar apenas o maior acrescimo</option>
-						<option value="sum" <?php selected( $settings['combine_mode'], 'sum' ); ?>>Somar acrescimos das regras correspondentes</option>
+						<option value="max" <?php selected( $settings['combine_mode'], 'max' ); ?>>Usar apenas o maior acréscimo</option>
+						<option value="sum" <?php selected( $settings['combine_mode'], 'sum' ); ?>>Somar acréscimos das regras correspondentes</option>
 					</select>
 				</div>
 
@@ -245,7 +285,7 @@ class USEUP_ME_Admin {
 					?>
 				</div>
 
-				<?php submit_button( 'Salvar configuracoes' ); ?>
+				<?php submit_button( 'Salvar configurações' ); ?>
 			</form>
 
 			<?php USEUP_ME_Melhor_Envio_Hooks::render_admin_panel(); ?>

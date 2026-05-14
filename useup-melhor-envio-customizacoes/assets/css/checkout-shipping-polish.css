@@ -535,8 +535,8 @@
 
 .useup-checkout-polish #payment ul.payment_methods > li {
 	display: flex;
-	align-items: flex-start;
-	flex-wrap: wrap;
+	align-items: center;
+	flex-wrap: nowrap;
 	gap: 10px;
 	width: 100%;
 	box-sizing: border-box;
@@ -563,19 +563,23 @@
 
 .useup-checkout-polish #payment ul.payment_methods input[type="radio"] {
 	flex: 0 0 auto;
-	width: 18px;
-	height: 18px;
-	margin: 0;
+	align-self: center;
+	width: 16px;
+	height: 16px;
+	margin: 0 !important;
 	accent-color: #000;
 }
 
-.useup-checkout-polish #payment ul.payment_methods > li > label {
+.useup-checkout-polish #payment ul.payment_methods > li > label,
+.useup-checkout-polish .wc_payment_method > label,
+.useup-checkout-polish .useup-payment-method-label {
 	display: flex !important;
-	align-items: center;
+	align-items: center !important;
 	gap: 10px;
-	flex: 1 1 0;
+	flex: 1 1 auto;
 	min-width: 0;
 	width: 100%;
+	min-height: 48px;
 	margin: 0;
 	color: #111;
 	font-size: 14px !important;
@@ -595,6 +599,8 @@
 
 .useup-checkout-polish .useup-payment-label-text {
 	flex: 0 1 auto;
+	display: inline-flex;
+	align-items: center;
 	min-width: 0;
 	font-size: 14px !important;
 	line-height: 1.4;
@@ -605,10 +611,13 @@
 .useup-checkout-polish .payment_method_useup_infinitepay img,
 .useup-checkout-polish .useup-payment-method-icon {
 	flex: 0 0 auto;
+	align-self: center;
+	display: inline-block;
 	margin-left: 10px !important;
 	margin-right: 0 !important;
 	max-height: 20px;
 	width: auto;
+	vertical-align: middle;
 }
 
 .useup-checkout-polish .useup-payment-badge,
@@ -617,6 +626,7 @@
 	align-items: center;
 	justify-content: center;
 	margin-left: auto !important;
+	align-self: center;
 	flex: 0 0 auto;
 	min-height: 22px;
 	padding: 3px 9px;

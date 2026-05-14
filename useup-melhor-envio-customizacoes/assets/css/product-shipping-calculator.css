@@ -146,8 +146,7 @@
 	color: #111;
 }
 
-.useup-me-product-shipping__estimate-icon,
-.useup-me-product-shipping__fastest-icon {
+.useup-me-product-shipping__estimate-icon {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -157,8 +156,7 @@
 	color: #111;
 }
 
-.useup-me-product-shipping__estimate-icon svg,
-.useup-me-product-shipping__fastest-icon svg {
+.useup-me-product-shipping__estimate-icon svg {
 	display: block;
 	width: 18px;
 	height: 18px;
@@ -181,49 +179,12 @@
 	min-width: 0;
 }
 
-.useup-me-product-shipping__fastest-badge {
-	position: relative;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: auto;
-	height: 18px;
-	flex: 0 0 auto;
-	padding: 0;
-	border: 0;
-	background: transparent;
-	color: #111;
-	cursor: pointer;
-}
-
-.useup-me-product-shipping__fastest-icon {
-	margin-right: 6px;
-	cursor: pointer;
-}
-
-.useup-me-product-shipping__fastest-badge .useup-me-product-shipping__fastest-icon {
-	color: #111;
-}
-
-.useup-me-product-shipping__fastest-tooltip {
-	font-size: 11px;
-	line-height: 1.3;
-}
-
-.useup-me-tooltip {
-	position: absolute;
-	top: calc(100% + 8px);
-	left: 50%;
-	transform: translateX(-50%);
-	z-index: 8;
-	padding: 6px 8px;
-	border: 1px solid #e7e7e7;
-	border-radius: 6px;
-	background: #fff;
-	box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-	color: #333;
-	font-size: 11.5px;
-	line-height: 1.35;
+.useup-me-product-shipping__fastest-label {
+	margin-left: 4px;
+	font-size: 12px;
+	line-height: 1.2;
+	font-weight: 600;
+	color: #555;
 	white-space: nowrap;
 }
 
@@ -262,8 +223,4 @@
 		width: 100%;
 	}
 
-	.useup-me-tooltip {
-		left: 0;
-		transform: none;
-	}
 }

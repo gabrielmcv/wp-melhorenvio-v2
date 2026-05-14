@@ -15,22 +15,28 @@ class USEUP_ME_Product_Page_Polish {
 		add_action( 'wp', array( $this, 'setup_hooks' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_filter( 'body_class', array( $this, 'add_body_class' ) );
+		add_filter( 'woocommerce_post_class', array( $this, 'filter_product_post_class' ), 10, 2 );
 	}
 
 	public function setup_hooks() {
-		if ( ! $this->is_enabled() || ! $this->is_product_context() ) {
+		if ( ! $this->is_enabled() ) {
 			return;
 		}
 
-		remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
-		remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20 );
+		remove_action( 'woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_price', 10 );
+		add_action( 'woocommerce_after_shop_loop_item_title', array( $this, 'render_loop_price' ), 10 );
 
-		add_action( 'woocommerce_single_product_summary', array( $this, 'render_price_block' ), 10 );
-		add_action( 'woocommerce_single_product_summary', array( $this, 'render_short_description' ), 20 );
+		if ( $this->is_product_context() ) {
+			remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
+			remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20 );
+
+			add_action( 'woocommerce_single_product_summary', array( $this, 'render_price_block' ), 10 );
+			add_action( 'woocommerce_single_product_summary', array( $this, 'render_short_description' ), 20 );
+		}
 	}
 
 	public function enqueue_assets() {
-		if ( ! $this->is_enabled() || ! $this->is_product_context() ) {
+		if ( ! $this->is_enabled() || is_admin() ) {
 			return;
 		}
 
@@ -53,13 +59,15 @@ class USEUP_ME_Product_Page_Polish {
 			'useup-me-product-page-polish',
 			'useupMeProductPagePolish',
 			array(
-				'expandLabel'    => 'Ler descrição',
-				'collapseLabel'  => 'Ocultar descrição',
-				'priceFormat'    => get_woocommerce_price_format(),
-				'currencySymbol' => get_woocommerce_currency_symbol(),
-				'decimalSep'     => wc_get_price_decimal_separator(),
-				'thousandSep'    => wc_get_price_thousand_separator(),
-				'decimals'       => wc_get_price_decimals(),
+				'expandLabel'         => 'Ler descrição',
+				'collapseLabel'       => 'Ocultar descrição',
+				'priceFormat'         => get_woocommerce_price_format(),
+				'currencySymbol'      => get_woocommerce_currency_symbol(),
+				'decimalSep'          => wc_get_price_decimal_separator(),
+				'thousandSep'         => wc_get_price_thousand_separator(),
+				'decimals'            => wc_get_price_decimals(),
+				'retailMarkupPercent' => USEUP_ME_Pricing::get_retail_markup_percent(),
+				'retailMarkupFixed'   => USEUP_ME_Pricing::get_retail_markup_fixed(),
 			)
 		);
 	}
@@ -72,6 +80,56 @@ class USEUP_ME_Product_Page_Polish {
 		return $classes;
 	}
 
+	public function filter_product_post_class( $classes, $product ) {
+		if ( ! $this->is_enabled() || ! $product instanceof WC_Product ) {
+			return $classes;
+		}
+
+		if ( ! function_exists( 'wc_get_loop_prop' ) || (int) wc_get_loop_prop( 'total', 0 ) < 1 ) {
+			return $classes;
+		}
+
+		$classes[] = 'useup-loop-card';
+
+		if ( $product->is_type( 'variable' ) ) {
+			$classes[] = 'useup-loop-card--variable';
+		}
+
+		return array_values( array_unique( $classes ) );
+	}
+
+	public function render_loop_price() {
+		global $product;
+
+		if ( ! $product instanceof WC_Product ) {
+			return;
+		}
+
+		$price_data = $this->get_price_data( $product );
+
+		if ( $price_data['wholesale_value'] <= 0 ) {
+			return;
+		}
+
+		$is_variable = $product->is_type( 'variable' );
+		?>
+		<div class="useup-loop-price">
+			<div class="useup-loop-price__main">
+				<?php if ( $is_variable ) : ?>
+					<span class="useup-loop-price__prefix">A partir de</span>
+				<?php endif; ?>
+				<span class="useup-loop-price__amount"><?php echo esc_html( $price_data['wholesale_text'] ); ?></span>
+				<span class="useup-loop-price__mode">no atacado</span>
+			</div>
+			<?php if ( ! empty( $price_data['retail_text'] ) ) : ?>
+				<div class="useup-loop-price__retail">
+					ou <?php echo esc_html( $price_data['retail_text'] ); ?> no varejo
+				</div>
+			<?php endif; ?>
+		</div>
+		<?php
+	}
+
 	public function render_price_block() {
 		$product = $this->get_product();
 
@@ -79,9 +137,10 @@ class USEUP_ME_Product_Page_Polish {
 			return;
 		}
 
-		$price_data = $this->get_price_data( $product );
-		$badges     = $this->get_badges();
-		$popover_id = 'useup-wholesale-popover-' . $product->get_id();
+		$price_data    = $this->get_price_data( $product );
+		$badges        = $this->get_badges();
+		$popover_id    = 'useup-wholesale-popover-' . $product->get_id();
+		$tooltip_lines = USEUP_ME_Pricing::get_wholesale_tooltip_lines();
 		?>
 		<div
 			class="useup-price-block"
@@ -108,8 +167,9 @@ class USEUP_ME_Product_Page_Polish {
 						</span>
 					</button>
 					<span class="useup-wholesale-popover" id="<?php echo esc_attr( $popover_id ); ?>" role="tooltip" hidden>
-						<span>Preço de atacado válido acima de 5 peças no pedido.</span>
-						<span>As peças podem ser variadas.</span>
+						<?php foreach ( $tooltip_lines as $line ) : ?>
+							<span><?php echo esc_html( $line ); ?></span>
+						<?php endforeach; ?>
 					</span>
 				</span>
 			</div>
@@ -246,22 +306,13 @@ class USEUP_ME_Product_Page_Polish {
 	}
 
 	private function get_price_data( WC_Product $product ) {
-		$retail_value = 0.0;
-
-		if ( $product->is_type( 'variable' ) ) {
-			$retail_value = (float) $product->get_variation_price( 'min', true );
-		} else {
-			$retail_value = (float) wc_get_price_to_display( $product );
-		}
-
-		$retail_value    = max( 0, (float) $retail_value );
-		$wholesale_value = $retail_value > 0 ? round( $retail_value * 0.60, 2 ) : 0.0;
+		$price_data = USEUP_ME_Pricing::get_product_price_data( $product );
 
 		return array(
-			'wholesale_value' => $wholesale_value,
-			'retail_value'    => $retail_value,
-			'wholesale_text'  => $this->format_price_text( $wholesale_value ),
-			'retail_text'     => $retail_value > 0 ? $this->format_price_text( $retail_value ) : '',
+			'wholesale_value' => $price_data['wholesale_value'],
+			'retail_value'    => $price_data['retail_value'],
+			'wholesale_text'  => $this->format_price_text( $price_data['wholesale_value'] ),
+			'retail_text'     => $price_data['retail_value'] > 0 ? $this->format_price_text( $price_data['retail_value'] ) : '',
 		);
 	}
 

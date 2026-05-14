@@ -97,6 +97,12 @@
     $popover.attr('hidden', isExpanded);
   }
 
+  function hideVariationLoosePrice($scope) {
+    var $root = $scope && $scope.length ? $scope : $(document);
+
+    $root.find('.woocommerce-variation .woocommerce-variation-price, .woocommerce-variation-price').hide();
+  }
+
   function updatePriceBlock($scope, wholesaleValue, retailValue) {
     var $block = $scope.find('.useup-price-block').first();
     var wholesale = Number(wholesaleValue || 0);
@@ -121,16 +127,47 @@
   }
 
   function normalizePriceValues(displayPrice) {
-    var retail = Number(displayPrice || 0);
+    var wholesale = Number(displayPrice || 0);
+    var percent = Number(config.retailMarkupPercent || 0);
+    var fixed = Number(config.retailMarkupFixed || 0);
+    var decimals = Number(config.decimals || 2);
+    var retail;
 
-    if (retail <= 0) {
+    if (wholesale <= 0) {
       return { wholesale: 0, retail: 0 };
     }
 
+    retail = Number(((wholesale * (1 + (percent / 100))) + fixed).toFixed(decimals));
+
     return {
-      wholesale: Number((retail * 0.60).toFixed(2)),
+      wholesale: wholesale,
       retail: retail
     };
+  }
+
+  function getVariationWholesalePrice(variation, $block) {
+    var wholesale = 0;
+
+    if (variation && variation.display_price !== undefined && variation.display_price !== null && variation.display_price !== '') {
+      wholesale = Number(variation.display_price);
+    }
+
+    if (wholesale <= 0 && variation && variation.display_regular_price !== undefined && variation.display_regular_price !== null && variation.display_regular_price !== '') {
+      wholesale = Number(variation.display_regular_price);
+    }
+
+    if (wholesale <= 0 && $block && $block.length) {
+      wholesale = Number($block.data('baseWholesale') || 0);
+    }
+
+    return wholesale > 0 ? wholesale : 0;
+  }
+
+  function syncVariationPriceBlock($summary, $block, variation) {
+    var wholesale = getVariationWholesalePrice(variation, $block);
+    var values = normalizePriceValues(wholesale);
+
+    updatePriceBlock($summary, values.wholesale, values.retail);
   }
 
   function setupVariationPriceSync() {
@@ -143,33 +180,232 @@
         return;
       }
 
-      $form.on('show_variation', function (event, variation) {
-        var values;
+      $form.off('.useupPricePolish');
 
+      $form.on('found_variation.useupPricePolish show_variation.useupPricePolish', function (event, variation) {
         if (!variation) {
           return;
         }
 
-        values = normalizePriceValues(variation.display_price);
-        updatePriceBlock($summary, values.wholesale, values.retail);
+        syncVariationPriceBlock($summary, $block, variation);
+        hideVariationLoosePrice($summary);
+        window.setTimeout(function () {
+          syncVariationPriceBlock($summary, $block, variation);
+          hideVariationLoosePrice($summary);
+        }, 0);
       });
 
-      $form.on('hide_variation reset_data', function () {
-        updatePriceBlock(
-          $summary,
-          $block.data('baseWholesale'),
-          $block.data('baseRetail')
-        );
+      $form.on('hide_variation.useupPricePolish reset_data.useupPricePolish woocommerce_variation_has_changed.useupPricePolish', function () {
+        window.setTimeout(function () {
+          updatePriceBlock(
+            $summary,
+            $block.data('baseWholesale'),
+            $block.data('baseRetail')
+          );
+          hideVariationLoosePrice($summary);
+        }, 0);
       });
+    });
+  }
+
+  function setLoopCardMediaBackground(media, image) {
+    var src;
+
+    if (!media || !image) {
+      return;
+    }
+
+    src = image.currentSrc || image.getAttribute('src') || image.getAttribute('data-src') || image.getAttribute('data-lazy-src');
+
+    if (!src) {
+      return;
+    }
+
+    media.style.backgroundImage = 'url("' + String(src).replace(/"/g, '\\"') + '")';
+    media.setAttribute('data-useup-bg-ready', '1');
+  }
+
+  function getLoopCardMedia(card, image) {
+    var media = card.querySelector('.useup-loop-card__media, .et-product-thumbnail, .product-thumbnail, .product-image-wrapper, .mf-product-thumbnail, .box-image');
+    var imageParent;
+
+    if (media) {
+      media.classList.add('useup-loop-card__media');
+      return media;
+    }
+
+    if (!image) {
+      return null;
+    }
+
+    imageParent = image.parentElement;
+
+    if (imageParent && imageParent.tagName === 'A' && imageParent.children.length === 1) {
+      imageParent.classList.add('useup-loop-card__media');
+      return imageParent;
+    }
+
+    media = document.createElement('span');
+    media.className = 'useup-loop-card__media';
+    image.parentNode.insertBefore(media, image);
+    media.appendChild(image);
+
+    return media;
+  }
+
+  function getLoopCardContent(card, media) {
+    var content = card.querySelector('.useup-loop-card__content, .caption, .product-caption, .product-content, .content-product-imagin, .mf-product-content, .box-text, .product-details');
+    var children;
+
+    if (content) {
+      content.classList.add('useup-loop-card__content');
+      content.classList.add('useup-loop-card__caption');
+      return content;
+    }
+
+    content = document.createElement('div');
+    content.className = 'useup-loop-card__content useup-loop-card__caption';
+
+    if (media && media.parentNode === card) {
+      if (media.nextSibling) {
+        card.insertBefore(content, media.nextSibling);
+      } else {
+        card.appendChild(content);
+      }
+    } else {
+      card.appendChild(content);
+    }
+
+    children = Array.prototype.slice.call(card.children);
+
+    children.forEach(function (child) {
+      if (child === media || child === content) {
+        return;
+      }
+
+      if (child.matches('.onsale, .sale, .wc-block-grid__product-onsale')) {
+        return;
+      }
+
+      content.appendChild(child);
+    });
+
+    return content;
+  }
+
+  function prepareLoopCard(card) {
+    var container;
+    var image;
+    var media;
+    var content;
+    var title;
+
+    if (!card || card.nodeType !== 1) {
+      return;
+    }
+
+    card.classList.add('useup-loop-card');
+    container = card.closest('ul.products, .products');
+
+    if (container) {
+      container.classList.add('useup-loop-cards-enabled');
+    }
+
+    image = card.querySelector('img.attachment-woocommerce_thumbnail, img.wp-post-image, .et-product-thumbnail img, img');
+
+    if (!image) {
+      return;
+    }
+
+    media = getLoopCardMedia(card, image);
+
+    if (!media) {
+      return;
+    }
+
+    content = getLoopCardContent(card, media);
+
+    if (content) {
+      content.classList.add('useup-loop-card__content');
+      content.classList.add('useup-loop-card__caption');
+    }
+
+    title = card.querySelector('.woocommerce-loop-product__title');
+    if (title) {
+      title.classList.add('useup-loop-card__title');
+    }
+
+    setLoopCardMediaBackground(media, image);
+
+    if (!image.dataset.useupLoopBgBound) {
+      image.dataset.useupLoopBgBound = '1';
+      image.addEventListener('load', function () {
+        setLoopCardMediaBackground(media, image);
+      });
+    }
+  }
+
+  function applyLoopCardBackgrounds(root) {
+    var scope = root && root.querySelectorAll ? root : document;
+
+    if (document.body.classList.contains('single-product')) {
+      return;
+    }
+
+    scope.querySelectorAll('.woocommerce ul.products li.product, ul.products li.product').forEach(function (card) {
+      prepareLoopCard(card);
+    });
+  }
+
+  function setupLoopCardObserver() {
+    var scheduled = false;
+    var observer;
+
+    if (!window.MutationObserver || !document.body) {
+      return;
+    }
+
+    observer = new window.MutationObserver(function (mutations) {
+      var shouldRefresh = mutations.some(function (mutation) {
+        return Array.prototype.some.call(mutation.addedNodes, function (node) {
+          if (!node || node.nodeType !== 1) {
+            return false;
+          }
+
+          return node.matches('.woocommerce ul.products li.product, ul.products li.product') ||
+            Boolean(node.querySelector && node.querySelector('.woocommerce ul.products li.product, ul.products li.product'));
+        });
+      });
+
+      if (!shouldRefresh || scheduled) {
+        return;
+      }
+
+      scheduled = true;
+      window.requestAnimationFrame(function () {
+        scheduled = false;
+        applyLoopCardBackgrounds(document);
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
     });
   }
 
   function init() {
     setupShortDescriptions();
     setupVariationPriceSync();
+    applyLoopCardBackgrounds(document);
+    setupLoopCardObserver();
+    hideVariationLoosePrice($('.single-product'));
   }
 
   $(document).ready(init);
+  $(window).on('load', function () {
+    applyLoopCardBackgrounds(document);
+  });
 
   $(document).on('click', '.useup-short-description__toggle', function () {
     toggleShortDescription(this);

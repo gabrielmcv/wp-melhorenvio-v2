@@ -142,6 +142,16 @@
         $('.useup-checkout-polish .pix-por-piggly--featured').hide();
     }
 
+    function cleanTotalTaxParentheses() {
+        $('.useup-checkout-polish .useup-checkout-total-tax').each(function() {
+            var html = $.trim($(this).html() || '');
+
+            html = html.replace(/^\(/, '').replace(/\)$/, '');
+
+            $(this).html(html);
+        });
+    }
+
     function cleanupVisualCheckout() {
         $('.useup-checkout-polish .useup-checkout-product-card, .useup-checkout-polish .useup-checkout-total-card, .useup-checkout-polish .useup-checkout-pix-discount-card, .useup-checkout-polish .useup-checkout-security-note').remove();
         $('.useup-checkout-polish .useup-checkout-visual-source').removeClass('useup-checkout-visual-source');
@@ -298,6 +308,7 @@
             }
 
             $li.toggleClass('is-selected', $input.is(':checked'));
+            $label.addClass('useup-payment-method-label');
 
             var $labelClone = $label.clone();
             var $images = $label.find('img').detach();
@@ -448,7 +459,7 @@
         $amountClone = $valueCell.clone();
         $amountClone.find('small, .includes_tax').remove();
         amountHtml = $.trim($amountClone.html() || '');
-        taxText = $.trim($valueCell.find('small, .includes_tax').first().text() || '');
+        taxText = $.trim($valueCell.find('small, .includes_tax').first().text() || '').replace(/^\(/, '').replace(/\)$/, '');
 
         $card = $(
             '<div class="useup-checkout-total-card">' +
@@ -520,6 +531,7 @@
         buildReviewOrderCards();
         ensureSecurityNote();
         removeDuplicateCheckoutBits();
+        cleanTotalTaxParentheses();
     }
 
     $(document).ready(initUseupCheckoutPolish);

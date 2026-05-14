@@ -1,0 +1,201 @@
+.useup-checkout-form-design .col2-set .col-1 {
+	color: #111;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .woocommerce-billing-fields > h3,
+.useup-checkout-form-design .col2-set .col-1 .woocommerce-billing-fields > .checkout-form-title {
+	margin: 0 0 28px;
+	font-size: 24px;
+	line-height: 1.2;
+	font-weight: 500;
+	color: #111;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .useup-checkout-form-section {
+	border-top: 1px solid #e8e8e8;
+	padding-top: 26px;
+	margin-top: 30px;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .useup-checkout-form-section:first-of-type {
+	margin-top: 0;
+	border-top: 0;
+	padding-top: 0;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .useup-checkout-form-section__title {
+	display: flex;
+	align-items: baseline;
+	gap: 10px;
+	margin-bottom: 20px;
+	font-size: 14px;
+	line-height: 1.35;
+	font-weight: 500;
+	color: #111;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .useup-checkout-form-section__number {
+	color: #676163;
+	font-weight: 400;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .useup-checkout-form-grid {
+	display: grid;
+	gap: 16px;
+	margin-top: 16px;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .useup-checkout-form-grid:first-of-type {
+	margin-top: 0;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .useup-grid-1 {
+	grid-template-columns: 1fr;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .useup-grid-2 {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.useup-checkout-form-design .col2-set .col-1 .useup-grid-3 {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.useup-checkout-form-design .col2-set .col-1 .useup-grid-address-number {
+	grid-template-columns: minmax(0, 3fr) minmax(120px, 1fr);
+}
+
+.useup-checkout-form-design .col2-set .col-1 .form-row {
+	width: 100% !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	float: none !important;
+	clear: none !important;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .form-row label {
+	display: block;
+	margin-bottom: 7px;
+	font-size: 11px;
+	line-height: 1.2;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #2f3542;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .form-row input.input-text,
+.useup-checkout-form-design .col2-set .col-1 .form-row textarea,
+.useup-checkout-form-design .col2-set .col-1 .form-row select,
+.useup-checkout-form-design .col2-set .col-1 .select2-container .select2-selection--single {
+	width: 100%;
+	min-height: 42px;
+	border: 1px solid #dcdcdc;
+	border-radius: 4px;
+	background: #fff;
+	color: #111;
+	font-size: 13px;
+	line-height: 1.4;
+	padding: 0 12px;
+	box-sizing: border-box;
+	transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .select2-container .select2-selection--single {
+	display: flex;
+	align-items: center;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .select2-container--default .select2-selection--single .select2-selection__rendered {
+	padding-left: 0;
+	line-height: 40px;
+	color: #111;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .select2-container--default .select2-selection--single .select2-selection__arrow {
+	height: 40px;
+	right: 10px;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .form-row textarea {
+	min-height: 92px;
+	padding-top: 12px;
+	resize: vertical;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .form-row input.input-text:focus,
+.useup-checkout-form-design .col2-set .col-1 .form-row textarea:focus,
+.useup-checkout-form-design .col2-set .col-1 .form-row select:focus,
+.useup-checkout-form-design .col2-set .col-1 .select2-container--open .select2-selection--single,
+.useup-checkout-form-design .col2-set .col-1 .select2-container--focus .select2-selection--single {
+	border-color: #111;
+	outline: none;
+	box-shadow: none;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .form-row input::placeholder,
+.useup-checkout-form-design .col2-set .col-1 .form-row textarea::placeholder {
+	color: #9a9a9a;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .woocommerce-input-wrapper {
+	display: block;
+	width: 100%;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .woocommerce-shipping-fields {
+	margin-top: 16px;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .woocommerce-shipping-fields > h3 {
+	margin: 0;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .woocommerce-shipping-fields__field-wrapper {
+	display: grid;
+	gap: 16px;
+	margin-top: 16px;
+}
+
+.useup-checkout-form-design .col2-set .col-1 #ship-to-different-address,
+.useup-checkout-form-design .col2-set .col-1 .woocommerce-form__label-for-checkbox,
+.useup-checkout-form-design .col2-set .col-1 label.checkbox {
+	display: block;
+}
+
+.useup-checkout-form-design .col2-set .col-1 #ship-to-different-address .woocommerce-form__label-for-checkbox,
+.useup-checkout-form-design .col2-set .col-1 .woocommerce-form__label-for-checkbox,
+.useup-checkout-form-design .col2-set .col-1 label.checkbox {
+	display: inline-flex !important;
+	align-items: center;
+	gap: 9px;
+	font-size: 13px;
+	line-height: 1.4;
+	font-weight: 400;
+	text-transform: none;
+	letter-spacing: 0;
+	color: #111;
+}
+
+.useup-checkout-form-design .col2-set .col-1 input[type="checkbox"] {
+	width: 15px;
+	height: 15px;
+	accent-color: #111;
+}
+
+.useup-checkout-form-design .col2-set .col-1 .useup-checkout-form-source-empty {
+	display: none !important;
+}
+
+@media (max-width: 768px) {
+	.useup-checkout-form-design .col2-set .col-1 .useup-grid-2,
+	.useup-checkout-form-design .col2-set .col-1 .useup-grid-3,
+	.useup-checkout-form-design .col2-set .col-1 .useup-grid-address-number {
+		grid-template-columns: 1fr;
+	}
+
+	.useup-checkout-form-design .col2-set .col-1 .useup-checkout-form-section {
+		padding-top: 22px;
+		margin-top: 26px;
+	}
+}
