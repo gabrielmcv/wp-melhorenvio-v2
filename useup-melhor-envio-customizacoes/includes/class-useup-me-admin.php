@@ -88,6 +88,9 @@ class USEUP_ME_Admin {
 		$shop_filter_items = ! empty( $settings['ajax_shop_filter_items'] ) && is_array( $settings['ajax_shop_filter_items'] )
 			? array_values( $settings['ajax_shop_filter_items'] )
 			: array( $this->get_empty_ajax_shop_filter_item() );
+		$quantity_price_adjustments = ! empty( $settings['quantity_price_adjustments'] ) && is_array( $settings['quantity_price_adjustments'] )
+			? array_values( $settings['quantity_price_adjustments'] )
+			: array( $this->get_empty_quantity_price_adjustment() );
 		?>
 		<div class="wrap useup-me-admin">
 			<h1>USEUP! Entrega</h1>
@@ -151,6 +154,58 @@ class USEUP_ME_Admin {
 					</div>
 
 
+				</div>
+
+				<div class="useup-me-card">
+					<h2>Controle de preco por quantidade</h2>
+					<p>Aplica acrescimos ao preco dos produtos enquanto o carrinho nao atingir a quantidade minima configurada para atacado.</p>
+					<label class="useup-me-checkbox">
+						<input
+							type="checkbox"
+							name="useup_me_settings[enable_quantity_price_control]"
+							value="1"
+							<?php checked( ! empty( $settings['enable_quantity_price_control'] ), true ); ?>
+						/>
+						Ativar controle de preco por quantidade
+					</label>
+
+					<div class="useup-me-grid" style="margin-top: 16px;">
+						<div>
+							<label for="useup-me-wholesale-min-quantity">Quantidade minima para preco de atacado</label>
+							<input
+								type="number"
+								min="1"
+								step="1"
+								id="useup-me-wholesale-min-quantity"
+								name="useup_me_settings[wholesale_min_quantity]"
+								value="<?php echo esc_attr( $settings['wholesale_min_quantity'] ); ?>"
+								class="small-text"
+							/>
+						</div>
+
+						<div>
+							<label for="useup-me-wholesale-quantity-count-mode">Tipo de contagem</label>
+							<select
+								id="useup-me-wholesale-quantity-count-mode"
+								name="useup_me_settings[wholesale_quantity_count_mode]"
+							>
+								<option value="total_cart_items" <?php selected( $settings['wholesale_quantity_count_mode'], 'total_cart_items' ); ?>>Todas as pecas do carrinho</option>
+								<option value="eligible_products_only" <?php selected( $settings['wholesale_quantity_count_mode'], 'eligible_products_only' ); ?>>Apenas produtos elegiveis</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="useup-me-toolbar useup-me-toolbar--tight">
+						<h3>Acrescimos de preco</h3>
+						<button type="button" class="button button-secondary" id="useup-me-add-quantity-price-adjustment">Adicionar acrescimo</button>
+					</div>
+
+					<div id="useup-me-quantity-price-adjustments" data-next-index="<?php echo esc_attr( count( $quantity_price_adjustments ) ); ?>">
+						<?php foreach ( $quantity_price_adjustments as $index => $adjustment ) : ?>
+							<?php $this->render_quantity_price_adjustment( $index, $adjustment ); ?>
+						<?php endforeach; ?>
+					</div>
+					<p class="description">Os acrescimos sao aplicados em sequencia, na ordem configurada. O preco de varejo exibido usa a mesma regra.</p>
 				</div>
 
 				<div class="useup-me-card">
@@ -662,6 +717,10 @@ class USEUP_ME_Admin {
 			<template id="useup-me-shop-filter-item-template">
 				<?php $this->render_ajax_shop_filter_item( '__index__', $this->get_empty_ajax_shop_filter_item(), $categories, $tags ); ?>
 			</template>
+
+			<template id="useup-me-quantity-price-adjustment-template">
+				<?php $this->render_quantity_price_adjustment( '__index__', $this->get_empty_quantity_price_adjustment() ); ?>
+			</template>
 		</div>
 		<?php
 	}
@@ -1046,11 +1105,85 @@ class USEUP_ME_Admin {
 			'sparkle'   => 'Sparkle',
 			'necklace'  => 'Necklace',
 			'escapulario'  => 'Escapulário',
+			'foto'  => 'Foto',
 			'bracelet'  => 'Bracelet',
 			'pendant'   => 'Pendant',
 			'link'      => 'Link',
 			'heart'     => 'Heart',
 			'cross'     => 'Cross',
+		);
+	}
+
+	private function render_quantity_price_adjustment( $index, $adjustment ) {
+		$adjustment = wp_parse_args( is_array( $adjustment ) ? $adjustment : array(), $this->get_empty_quantity_price_adjustment() );
+		?>
+		<div class="useup-me-card useup-me-quantity-price-adjustment">
+			<div class="useup-me-rule-header">
+				<h3>Acrescimo</h3>
+				<button type="button" class="button-link-delete useup-me-remove-quantity-price-adjustment">Remover</button>
+			</div>
+
+			<div class="useup-me-grid">
+				<div>
+					<label for="useup-me-quantity-price-adjustment-type-<?php echo esc_attr( $index ); ?>">Tipo</label>
+					<select
+						id="useup-me-quantity-price-adjustment-type-<?php echo esc_attr( $index ); ?>"
+						name="useup_me_settings[quantity_price_adjustments][<?php echo esc_attr( $index ); ?>][type]"
+					>
+						<option value="percent" <?php selected( $adjustment['type'], 'percent' ); ?>>Porcentagem</option>
+						<option value="fixed" <?php selected( $adjustment['type'], 'fixed' ); ?>>Valor fixo</option>
+					</select>
+				</div>
+
+				<div>
+					<label for="useup-me-quantity-price-adjustment-value-<?php echo esc_attr( $index ); ?>">Valor</label>
+					<input
+						type="number"
+						min="0"
+						step="0.01"
+						id="useup-me-quantity-price-adjustment-value-<?php echo esc_attr( $index ); ?>"
+						name="useup_me_settings[quantity_price_adjustments][<?php echo esc_attr( $index ); ?>][value]"
+						value="<?php echo esc_attr( $adjustment['value'] ); ?>"
+						class="regular-text"
+					/>
+				</div>
+
+				<div>
+					<label for="useup-me-quantity-price-adjustment-order-<?php echo esc_attr( $index ); ?>">Ordem</label>
+					<input
+						type="number"
+						min="0"
+						step="1"
+						id="useup-me-quantity-price-adjustment-order-<?php echo esc_attr( $index ); ?>"
+						name="useup_me_settings[quantity_price_adjustments][<?php echo esc_attr( $index ); ?>][order]"
+						value="<?php echo esc_attr( $adjustment['order'] ); ?>"
+						class="small-text"
+					/>
+				</div>
+
+				<div>
+					<label class="useup-me-checkbox" for="useup-me-quantity-price-adjustment-enabled-<?php echo esc_attr( $index ); ?>">
+						<input
+							type="checkbox"
+							id="useup-me-quantity-price-adjustment-enabled-<?php echo esc_attr( $index ); ?>"
+							name="useup_me_settings[quantity_price_adjustments][<?php echo esc_attr( $index ); ?>][enabled]"
+							value="1"
+							<?php checked( ! empty( $adjustment['enabled'] ), true ); ?>
+						/>
+						Ativo
+					</label>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
+	private function get_empty_quantity_price_adjustment() {
+		return array(
+			'type'    => 'percent',
+			'value'   => '',
+			'order'   => 10,
+			'enabled' => true,
 		);
 	}
 

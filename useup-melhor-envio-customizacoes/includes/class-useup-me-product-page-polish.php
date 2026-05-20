@@ -24,6 +24,7 @@ class USEUP_ME_Product_Page_Polish {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_filter( 'body_class', array( $this, 'add_body_class' ) );
 		add_filter( 'woocommerce_post_class', array( $this, 'filter_product_post_class' ), 10, 2 );
+		add_filter( 'woocommerce_available_variation', array( $this, 'add_variation_price_data' ), 10, 3 );
 	}
 
 	public function setup_hooks() {
@@ -83,6 +84,8 @@ class USEUP_ME_Product_Page_Polish {
 				'decimals'            => wc_get_price_decimals(),
 				'retailMarkupPercent' => USEUP_ME_Pricing::get_retail_markup_percent(),
 				'retailMarkupFixed'   => USEUP_ME_Pricing::get_retail_markup_fixed(),
+				'quantityPriceControlEnabled' => USEUP_ME_Settings::is_quantity_price_control_enabled(),
+				'retailAdjustments'   => USEUP_ME_Settings::get_quantity_price_adjustments(),
 			)
 		);
 	}
@@ -111,6 +114,21 @@ class USEUP_ME_Product_Page_Polish {
 		}
 
 		return array_values( array_unique( $classes ) );
+	}
+
+	public function add_variation_price_data( $data, $product, $variation ) {
+		if ( ! $this->is_enabled() || ! $variation instanceof WC_Product_Variation ) {
+			return $data;
+		}
+
+		$price_data = USEUP_ME_Pricing::get_product_price_data( $variation );
+
+		$data['useup_wholesale_price']      = max( 0, (float) $price_data['wholesale_value'] );
+		$data['useup_retail_price']         = max( 0, (float) $price_data['retail_value'] );
+		$data['useup_wholesale_price_html'] = $price_data['wholesale_value'] > 0 ? wc_price( $price_data['wholesale_value'] ) : '';
+		$data['useup_retail_price_html']    = $price_data['retail_value'] > 0 ? wc_price( $price_data['retail_value'] ) : '';
+
+		return $data;
 	}
 
 	public function render_loop_price() {

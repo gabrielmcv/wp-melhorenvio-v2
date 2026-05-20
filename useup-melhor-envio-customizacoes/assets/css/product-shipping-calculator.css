@@ -167,8 +167,12 @@
 	justify-content: space-between;
 	align-items: center;
 	gap: 10px;
-	margin: 4px 0;
+	padding: 3px 7px 2px;
 	color: #222;
+}
+
+.useup-me-product-shipping__results > .useup-me-product-shipping__rate:nth-child(even) {
+    background: #fafafa;
 }
 
 .useup-me-product-shipping__rate > strong {
@@ -257,6 +261,7 @@
 	.useup-me-product-shipping__rate > strong {
 		margin-left: 0;
 		width: 100%;
+		display: contents;
 	}
 
 }

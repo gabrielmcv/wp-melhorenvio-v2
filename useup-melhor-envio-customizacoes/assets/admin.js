@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var shopFilterContainer = document.getElementById('useup-me-shop-filter-items');
   var addShopFilterButton = document.getElementById('useup-me-add-shop-filter-item');
   var shopFilterTemplate = document.getElementById('useup-me-shop-filter-item-template');
+  var quantityPriceContainer = document.getElementById('useup-me-quantity-price-adjustments');
+  var addQuantityPriceButton = document.getElementById('useup-me-add-quantity-price-adjustment');
+  var quantityPriceTemplate = document.getElementById('useup-me-quantity-price-adjustment-template');
 
   function syncComplementaryTargets() {
     var mode;
@@ -162,6 +165,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (itemCard) {
         syncShopFilterItem(itemCard);
+      }
+    });
+  }
+
+  if (quantityPriceContainer) {
+    if (addQuantityPriceButton && quantityPriceTemplate) {
+      addQuantityPriceButton.addEventListener('click', function () {
+        var nextIndex = parseInt(quantityPriceContainer.dataset.nextIndex || '0', 10);
+        var markup = quantityPriceTemplate.innerHTML.replace(/__index__/g, String(nextIndex));
+
+        quantityPriceContainer.insertAdjacentHTML('beforeend', markup);
+        quantityPriceContainer.dataset.nextIndex = String(nextIndex + 1);
+      });
+    }
+
+    quantityPriceContainer.addEventListener('click', function (event) {
+      var target = event.target;
+      var itemCard;
+
+      if (!target.classList.contains('useup-me-remove-quantity-price-adjustment')) {
+        return;
+      }
+
+      itemCard = target.closest('.useup-me-quantity-price-adjustment');
+
+      if (itemCard) {
+        itemCard.remove();
       }
     });
   }

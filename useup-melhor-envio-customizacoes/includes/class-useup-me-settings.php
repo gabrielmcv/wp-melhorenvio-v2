@@ -30,6 +30,10 @@ class USEUP_ME_Settings {
 			'show_product_shipping_calculator'        => false,
 			'product_shipping_free_shipping_threshold' => 199.0,
 			'product_shipping_free_shipping_message'   => 'Frete grátis acima de {amount}.',
+			'enable_quantity_price_control'           => false,
+			'wholesale_min_quantity'                  => 5,
+			'wholesale_quantity_count_mode'           => 'total_cart_items',
+			'quantity_price_adjustments'              => self::get_default_quantity_price_adjustments(),
 			'enable_shipping_quantity_discount'       => false,
 			'shipping_discount_per_item'              => 8.0,
 			'shipping_discount_max_items'             => 4,
@@ -94,6 +98,19 @@ class USEUP_ME_Settings {
 			),
 			'product_shipping_free_shipping_message'   => sanitize_text_field(
 				isset( $settings['product_shipping_free_shipping_message'] ) ? $settings['product_shipping_free_shipping_message'] : $defaults['product_shipping_free_shipping_message']
+			),
+			'enable_quantity_price_control'           => ! empty( $settings['enable_quantity_price_control'] ),
+			'wholesale_min_quantity'                  => self::sanitize_positive_int(
+				isset( $settings['wholesale_min_quantity'] ) ? $settings['wholesale_min_quantity'] : $defaults['wholesale_min_quantity'],
+				$defaults['wholesale_min_quantity']
+			),
+			'wholesale_quantity_count_mode'           => self::sanitize_enum(
+				isset( $settings['wholesale_quantity_count_mode'] ) ? $settings['wholesale_quantity_count_mode'] : $defaults['wholesale_quantity_count_mode'],
+				array( 'total_cart_items', 'eligible_products_only' ),
+				$defaults['wholesale_quantity_count_mode']
+			),
+			'quantity_price_adjustments'              => self::sanitize_quantity_price_adjustments(
+				isset( $settings['quantity_price_adjustments'] ) ? $settings['quantity_price_adjustments'] : $defaults['quantity_price_adjustments']
 			),
 			'enable_shipping_quantity_discount'       => ! empty( $settings['enable_shipping_quantity_discount'] ),
 			'shipping_discount_per_item'              => self::sanitize_decimal(
@@ -206,6 +223,12 @@ class USEUP_ME_Settings {
 		return (bool) apply_filters( 'useup_me_enable_checkout_form_design', $enabled );
 	}
 
+	public static function is_quantity_price_control_enabled() {
+		$enabled = (bool) self::get( 'enable_quantity_price_control', false );
+
+		return (bool) apply_filters( 'useup_me_enable_quantity_price_control', $enabled );
+	}
+
 	public static function is_shipping_quantity_discount_enabled() {
 		$enabled = (bool) self::get( 'enable_shipping_quantity_discount', false );
 
@@ -228,6 +251,33 @@ class USEUP_ME_Settings {
 		$enabled = (bool) self::get( 'enable_premium_category_pages', false );
 
 		return (bool) apply_filters( 'useup_me_enable_premium_category_pages', $enabled );
+	}
+
+	public static function get_wholesale_min_quantity() {
+		return max( 1, (int) self::get( 'wholesale_min_quantity', 5 ) );
+	}
+
+	public static function get_wholesale_quantity_count_mode() {
+		return self::sanitize_enum(
+			(string) self::get( 'wholesale_quantity_count_mode', 'total_cart_items' ),
+			array( 'total_cart_items', 'eligible_products_only' ),
+			'total_cart_items'
+		);
+	}
+
+	public static function get_quantity_price_adjustments() {
+		$adjustments = self::sanitize_quantity_price_adjustments(
+			self::get( 'quantity_price_adjustments', self::get_default_quantity_price_adjustments() )
+		);
+
+		return array_values(
+			array_filter(
+				$adjustments,
+				static function ( $adjustment ) {
+					return ! empty( $adjustment['enabled'] );
+				}
+			)
+		);
 	}
 
 	private static function sanitize_free_shipping_threshold( $value ) {
@@ -316,7 +366,7 @@ class USEUP_ME_Settings {
 
 	private static function sanitize_ajax_shop_filter_items( $items ) {
 		$allowed_types = array( 'all', 'category', 'tag', 'best_sellers', 'custom' );
-		$allowed_icons = array( 'grid', 'flame', 'sparkle', 'necklace', 'escapulario', 'bracelet', 'pendant', 'link', 'heart', 'cross' );
+		$allowed_icons = array( 'grid', 'flame', 'sparkle', 'necklace', 'escapulario', 'foto', 'bracelet', 'pendant', 'link', 'heart', 'cross' );
 
 		if ( ! is_array( $items ) ) {
 			return self::get_default_ajax_shop_filter_items();
@@ -446,6 +496,62 @@ class USEUP_ME_Settings {
 				'icon'          => 'cross',
 				'order'         => 90,
 				'enabled'       => true,
+			),
+		);
+	}
+
+	private static function sanitize_quantity_price_adjustments( $adjustments ) {
+		if ( ! is_array( $adjustments ) ) {
+			return self::get_default_quantity_price_adjustments();
+		}
+
+		$sanitized = array();
+
+		foreach ( $adjustments as $adjustment ) {
+			$type    = isset( $adjustment['type'] ) ? sanitize_key( (string) $adjustment['type'] ) : 'fixed';
+			$value   = self::sanitize_decimal( isset( $adjustment['value'] ) ? $adjustment['value'] : 0, 0 );
+			$order   = absint( isset( $adjustment['order'] ) ? $adjustment['order'] : 0 );
+			$enabled = ! empty( $adjustment['enabled'] );
+
+			if ( ! in_array( $type, array( 'percent', 'fixed' ), true ) ) {
+				$type = 'fixed';
+			}
+
+			if ( $value <= 0 ) {
+				continue;
+			}
+
+			$sanitized[] = array(
+				'type'    => $type,
+				'value'   => $value,
+				'order'   => $order,
+				'enabled' => $enabled,
+			);
+		}
+
+		usort(
+			$sanitized,
+			static function ( $left, $right ) {
+				return (int) $left['order'] <=> (int) $right['order'];
+			}
+		);
+
+		return $sanitized;
+	}
+
+	private static function get_default_quantity_price_adjustments() {
+		return array(
+			array(
+				'type'    => 'percent',
+				'value'   => 50,
+				'order'   => 10,
+				'enabled' => true,
+			),
+			array(
+				'type'    => 'fixed',
+				'value'   => 10,
+				'order'   => 20,
+				'enabled' => true,
 			),
 		);
 	}

@@ -78,3 +78,7 @@
 .useup-me-shop-filter-item .useup-me-grid + .useup-me-grid {
 	margin-top: 16px;
 }
+
+.useup-me-quantity-price-adjustment .useup-me-grid + .useup-me-grid {
+	margin-top: 16px;
+}
