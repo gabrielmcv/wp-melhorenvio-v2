@@ -487,8 +487,8 @@ class USEUP_ME_Admin {
 				</div>
 
 				<div class="useup-me-card">
-					<h2>Paginas de categoria premium</h2>
-					<p>Ativa um cabecalho editorial mais elegante nas paginas de categoria de produto, sem mexer no grid e nos cards.</p>
+					<h2>Paginas de categoria e tag premium</h2>
+					<p>Ativa um cabecalho editorial mais elegante nas paginas de categorias e tags de produto, sem mexer no grid e nos cards.</p>
 					<label class="useup-me-checkbox">
 						<input
 							type="checkbox"
@@ -496,7 +496,7 @@ class USEUP_ME_Admin {
 							value="1"
 							<?php checked( ! empty( $settings['enable_premium_category_pages'] ), true ); ?>
 						/>
-						Ativar paginas de categoria premium
+						Ativar paginas de categoria e tag premium
 					</label>
 
 					<div class="useup-me-grid" style="margin-top: 16px;">
@@ -511,7 +511,7 @@ class USEUP_ME_Admin {
 								/>
 								Usar descricao da categoria como subtitulo
 							</label>
-							<p class="description">Quando a categoria tiver descricao, ela aparece abaixo do titulo do cabecalho premium.</p>
+							<p class="description">Quando a categoria ou tag tiver descricao, ela aparece abaixo do titulo do cabecalho premium.</p>
 						</div>
 
 						<div>

@@ -36,7 +36,7 @@ class USEUP_ME_Premium_Category_Pages {
 		}
 
 		if ( $this->should_render_description() ) {
-			$raw_description = term_description( $term->term_id, 'product_cat' );
+			$raw_description = term_description( $term->term_id, $term->taxonomy );
 
 			if ( '' !== trim( wp_strip_all_tags( $raw_description ) ) ) {
 				$description = wp_kses_post( $raw_description );
@@ -81,7 +81,15 @@ class USEUP_ME_Premium_Category_Pages {
 	}
 
 	private function should_render() {
-		return USEUP_ME_Settings::is_premium_category_pages_enabled() && function_exists( 'is_product_category' ) && is_product_category();
+		if ( ! USEUP_ME_Settings::is_premium_category_pages_enabled() ) {
+			return false;
+		}
+
+		if ( function_exists( 'is_product_category' ) && is_product_category() ) {
+			return true;
+		}
+
+		return function_exists( 'is_product_tag' ) && is_product_tag();
 	}
 
 	private function should_render_description() {
@@ -95,7 +103,7 @@ class USEUP_ME_Premium_Category_Pages {
 	private function get_current_term() {
 		$term = get_queried_object();
 
-		if ( ! $term instanceof WP_Term || 'product_cat' !== $term->taxonomy ) {
+		if ( ! $term instanceof WP_Term || ! in_array( $term->taxonomy, array( 'product_cat', 'product_tag' ), true ) ) {
 			return null;
 		}
 

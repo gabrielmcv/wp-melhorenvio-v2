@@ -769,6 +769,153 @@
 	font-weight: 600;
 }
 
+#benefits-block {
+	max-width: 1320px;
+	margin: 48px auto 38px;
+	padding: 0 20px;
+	background: transparent !important;
+}
+
+#benefits-block,
+#benefits-block .vc_row,
+#benefits-block .vc_column-inner,
+#benefits-block .wpb_wrapper {
+	background: transparent !important;
+}
+
+#benefits-block .vc_row::before,
+#benefits-block .vc_row::after {
+	content: none !important;
+	display: none !important;
+}
+
+#benefits-block > .vc_column-inner {
+	padding: 0 !important;
+}
+
+#benefits-block .wpb_wrapper > .vc_row.vc_inner {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 0;
+	margin: 0 !important;
+	padding: 0;
+	background: #f7f7f7 !important;
+	border: 1px solid #eee;
+	border-radius: 12px;
+	box-shadow: 0 8px 28px rgba(0, 0, 0, 0.035);
+	overflow: hidden;
+}
+
+#benefits-block .wpb_wrapper > .vc_row.vc_inner.max_width {
+	width: 100%;
+	max-width: none !important;
+}
+
+#benefits-block .vc_row.vc_inner > .wpb_column {
+	width: auto !important;
+	max-width: none !important;
+	flex: none !important;
+	position: relative;
+}
+
+#benefits-block .vc_row.vc_inner > .wpb_column > .vc_column-inner {
+	height: 100%;
+	padding: 0 !important;
+}
+
+#benefits-block .vc_row.vc_inner > .wpb_column > .vc_column-inner > .wpb_wrapper {
+	height: 100%;
+}
+
+#benefits-block .vc_row.vc_inner > .wpb_column + .wpb_column::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 24px;
+	bottom: 24px;
+	width: 1px;
+	background: #eee;
+}
+
+#benefits-block .et-iconbox {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+#benefits-block .et-icon-inner {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+	height: 100%;
+	padding: 24px 28px;
+	text-align: left;
+	justify-content: flex-start;
+}
+
+#benefits-block .et-feature-icon {
+	flex: 0 0 34px;
+	width: 34px;
+	height: 34px;
+	margin: 0 !important;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	color: #111 !important;
+}
+
+#benefits-block .et-feature-icon span,
+#benefits-block .et-feature-icon i {
+	font-size: 26px;
+	line-height: 1;
+	color: #111 !important;
+}
+
+#benefits-block .et-feature-content {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	gap: 2px;
+	min-width: 0;
+	text-align: left;
+}
+
+#benefits-block .subtitle {
+	margin: 0 0 4px;
+	font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	font-size: 13px;
+	line-height: 1.25;
+	font-weight: 600;
+	letter-spacing: 0;
+	color: #111 !important;
+	text-transform: none;
+}
+
+#benefits-block .title {
+	margin: 0;
+	font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	font-size: 12px;
+	line-height: 1.35;
+	font-weight: 400;
+	color: #6f6a67 !important;
+	text-transform: none;
+}
+
+#benefits-block .wpb_text_column {
+	margin: 0;
+	display: none;
+}
+
+#benefits-block .wpb_text_column p {
+	margin: 4px 0 0;
+	font-size: 12px;
+	line-height: 1.35;
+	font-weight: 400;
+	color: #6f6a67 !important;
+}
+
 @media (max-width: 767px) {
 	.useup-loop-cards-enabled,
 	.useup-related-loop-cards-enabled {
@@ -812,6 +959,40 @@
 	.single-product .wapf-product-totals .wapf--inner > div {
 		padding: 6px 0;
 	}
+
+	#benefits-block {
+		margin: 34px auto 28px;
+		padding: 0 16px;
+	}
+
+	#benefits-block .wpb_wrapper > .vc_row.vc_inner {
+		grid-template-columns: 1fr;
+	}
+
+	#benefits-block .vc_row.vc_inner > .wpb_column + .wpb_column::before {
+		top: 0;
+		bottom: auto;
+		left: 24px;
+		right: 24px;
+		width: auto;
+		height: 1px;
+	}
+
+	#benefits-block .et-icon-inner {
+		padding: 18px 22px;
+		gap: 14px;
+	}
+
+	#benefits-block .et-feature-icon {
+		width: 30px;
+		height: 30px;
+		flex-basis: 30px;
+	}
+
+	#benefits-block .et-feature-icon span,
+	#benefits-block .et-feature-icon i {
+		font-size: 23px;
+	}
 }
 
 @media (max-width: 1399px) {
@@ -827,6 +1008,12 @@
 	.useup-related-loop-cards-enabled {
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 		gap: 20px;
+	}
+}
+
+@media (max-width: 1024px) {
+	#benefits-block .wpb_wrapper > .vc_row.vc_inner {
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 	}
 }
 

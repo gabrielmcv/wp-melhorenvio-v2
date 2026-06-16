@@ -17,7 +17,8 @@ class USEUP_ME_Quantity_Price_Control {
 	private $logger = null;
 
 	public function init() {
-		add_action( 'woocommerce_before_calculate_totals', array( $this, 'apply_quantity_price_control' ), 999 );
+		add_action( 'woocommerce_before_calculate_totals', array( $this, 'apply_quantity_price_control' ), PHP_INT_MAX );
+		add_action( 'woocommerce_after_calculate_totals', array( $this, 'log_cart_totals_snapshot' ), PHP_INT_MAX );
 		add_filter( 'woocommerce_add_cart_item_data', array( $this, 'capture_cart_item_source_data' ), 10, 3 );
 		add_filter( 'woocommerce_get_cart_item_from_session', array( $this, 'restore_cart_item_source_data' ), 10, 2 );
 		add_filter( 'woocommerce_cart_item_price', array( $this, 'filter_cart_item_price_html' ), 20, 3 );
@@ -48,6 +49,10 @@ class USEUP_ME_Quantity_Price_Control {
 			$cart_item['useup_me_base_wholesale_product_id'] = absint( $session_values['useup_me_base_wholesale_product_id'] );
 		}
 
+		if ( isset( $session_values['useup_me_effective_price'] ) ) {
+			$cart_item['useup_me_effective_price'] = (float) $session_values['useup_me_effective_price'];
+		}
+
 		return $cart_item;
 	}
 
@@ -76,9 +81,12 @@ class USEUP_ME_Quantity_Price_Control {
 				$is_eligible         = $product instanceof WC_Product ? $this->is_product_eligible( $product, $cart_item ) : false;
 				$adjusted_price      = $base_price > 0 ? USEUP_ME_Pricing::apply_quantity_price_adjustments( $base_price ) : 0;
 				$final_price         = $base_price;
+				$price_before_set    = $product instanceof WC_Product ? (float) $product->get_price() : 0;
+				$line_subtotal       = isset( $cart->cart_contents[ $cart_item_key ]['line_subtotal'] ) ? (float) $cart->cart_contents[ $cart_item_key ]['line_subtotal'] : 0;
+				$line_total          = isset( $cart->cart_contents[ $cart_item_key ]['line_total'] ) ? (float) $cart->cart_contents[ $cart_item_key ]['line_total'] : 0;
 
 				if ( ! $product instanceof WC_Product || $base_price <= 0 ) {
-					$this->maybe_log_item( $cart_item_key, $cart_item, $product, $source_product, $cart_quantity, $base_price, $adjusted_price, $final_price, $is_eligible, $should_apply );
+					$this->maybe_log_item( $cart_item_key, $cart_item, $product, $source_product, $cart_quantity, $base_price, $adjusted_price, $final_price, $is_eligible, $should_apply, $price_before_set, $price_before_set, $line_subtotal, $line_total );
 					continue;
 				}
 
@@ -86,12 +94,68 @@ class USEUP_ME_Quantity_Price_Control {
 					$final_price = $adjusted_price;
 				}
 
-				$product->set_price( wc_format_decimal( $final_price, wc_get_price_decimals() ) );
+				$final_price = (float) wc_format_decimal( $final_price, wc_get_price_decimals() );
 
-				$this->maybe_log_item( $cart_item_key, $cart_item, $product, $source_product, $cart_quantity, $base_price, $adjusted_price, $final_price, $is_eligible, $should_apply );
+				$product->set_price( $final_price );
+				$cart->cart_contents[ $cart_item_key ]['data']                   = $product;
+				$cart->cart_contents[ $cart_item_key ]['useup_me_effective_price'] = $final_price;
+
+				unset(
+					$cart->cart_contents[ $cart_item_key ]['line_subtotal'],
+					$cart->cart_contents[ $cart_item_key ]['line_subtotal_tax'],
+					$cart->cart_contents[ $cart_item_key ]['line_total'],
+					$cart->cart_contents[ $cart_item_key ]['line_tax']
+				);
+
+				$this->maybe_log_item(
+					$cart_item_key,
+					$cart_item,
+					$product,
+					$source_product,
+					$cart_quantity,
+					$base_price,
+					$adjusted_price,
+					$final_price,
+					$is_eligible,
+					$should_apply,
+					$price_before_set,
+					(float) $product->get_price(),
+					$line_subtotal,
+					$line_total
+				);
 			}
 		} finally {
 			$this->is_processing = false;
+		}
+	}
+
+	public function log_cart_totals_snapshot( $cart ) {
+		if ( ! $this->is_debug_enabled() || ! $cart instanceof WC_Cart ) {
+			return;
+		}
+
+		foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) {
+			$product = isset( $cart_item['data'] ) ? $cart_item['data'] : null;
+
+			$this->get_logger()->debug(
+				wp_json_encode(
+					array(
+						'stage'             => 'after_calculate_totals',
+						'cart_item_key'     => $cart_item_key,
+						'product_id'        => isset( $cart_item['product_id'] ) ? absint( $cart_item['product_id'] ) : 0,
+						'variation_id'      => isset( $cart_item['variation_id'] ) ? absint( $cart_item['variation_id'] ) : 0,
+						'data_price'        => $product instanceof WC_Product ? (float) $product->get_price() : 0,
+						'effective_price'   => isset( $cart_item['useup_me_effective_price'] ) ? (float) $cart_item['useup_me_effective_price'] : 0,
+						'line_subtotal'     => isset( $cart_item['line_subtotal'] ) ? (float) $cart_item['line_subtotal'] : 0,
+						'line_subtotal_tax' => isset( $cart_item['line_subtotal_tax'] ) ? (float) $cart_item['line_subtotal_tax'] : 0,
+						'line_total'        => isset( $cart_item['line_total'] ) ? (float) $cart_item['line_total'] : 0,
+						'line_tax'          => isset( $cart_item['line_tax'] ) ? (float) $cart_item['line_tax'] : 0,
+						'cart_contents_total' => method_exists( $cart, 'get_cart_contents_total' ) ? (float) $cart->get_cart_contents_total() : 0,
+						'cart_total'        => method_exists( $cart, 'get_total' ) ? wp_strip_all_tags( (string) $cart->get_total() ) : '',
+					)
+				),
+				array( 'source' => 'useup-me-quantity-price-control' )
+			);
 		}
 	}
 
@@ -160,18 +224,6 @@ class USEUP_ME_Quantity_Price_Control {
 	private function get_base_wholesale_price( $cart_item_key, $cart_item, WC_Cart $cart, $source_product ) {
 		$source_id = $source_product instanceof WC_Product ? $source_product->get_id() : 0;
 
-		if (
-			$source_id > 0 &&
-			isset( $cart->cart_contents[ $cart_item_key ]['useup_me_base_wholesale_price'], $cart->cart_contents[ $cart_item_key ]['useup_me_base_wholesale_product_id'] ) &&
-			(int) $cart->cart_contents[ $cart_item_key ]['useup_me_base_wholesale_product_id'] === $source_id
-		) {
-			$stored_price = (float) $cart->cart_contents[ $cart_item_key ]['useup_me_base_wholesale_price' ];
-
-			if ( $stored_price > 0 ) {
-				return max( 0, $stored_price );
-			}
-		}
-
 		$price = $source_product instanceof WC_Product ? USEUP_ME_Pricing::get_product_wholesale_price( $source_product ) : 0;
 
 		if ( $price <= 0 && $source_product instanceof WC_Product ) {
@@ -211,6 +263,10 @@ class USEUP_ME_Quantity_Price_Control {
 			return null;
 		}
 
+		if ( isset( $cart_item['useup_me_effective_price'] ) && (float) $cart_item['useup_me_effective_price'] > 0 ) {
+			return (float) wc_format_decimal( $cart_item['useup_me_effective_price'], wc_get_price_decimals() );
+		}
+
 		$product        = isset( $cart_item['data'] ) ? $cart_item['data'] : null;
 		$source_product = $this->get_source_product( $cart_item );
 
@@ -247,7 +303,7 @@ class USEUP_ME_Quantity_Price_Control {
 		return (bool) apply_filters( 'useup_me_quantity_price_control_product_is_eligible', true, $parent_product, $cart_item );
 	}
 
-	private function maybe_log_item( $cart_item_key, $cart_item, $product, $source_product, $cart_quantity, $base_price, $adjusted_price, $final_price, $is_eligible, $should_apply ) {
+	private function maybe_log_item( $cart_item_key, $cart_item, $product, $source_product, $cart_quantity, $base_price, $adjusted_price, $final_price, $is_eligible, $should_apply, $price_before_set, $price_after_set, $line_subtotal, $line_total ) {
 		if ( ! $this->is_debug_enabled() ) {
 			return;
 		}
@@ -271,11 +327,16 @@ class USEUP_ME_Quantity_Price_Control {
 					'base_price'      => (float) $base_price,
 					'adjusted_price'  => (float) $adjusted_price,
 					'final_price'     => (float) $final_price,
+					'price_before_set' => (float) $price_before_set,
+					'price_after_set'  => (float) $price_after_set,
 					'data_price_edit' => $product instanceof WC_Product ? $product->get_price( 'edit' ) : null,
 					'data_price'      => $product instanceof WC_Product ? $product->get_price() : null,
-					'hook_priority'   => 999,
+					'line_subtotal'   => (float) $line_subtotal,
+					'line_total'      => (float) $line_total,
+					'hook_priority'   => PHP_INT_MAX,
 					'stored_source_product_id' => isset( $cart_item['useup_me_source_product_id'] ) ? absint( $cart_item['useup_me_source_product_id'] ) : 0,
 					'stored_source_variation_id' => isset( $cart_item['useup_me_source_variation_id'] ) ? absint( $cart_item['useup_me_source_variation_id'] ) : 0,
+					'effective_price' => isset( $cart_item['useup_me_effective_price'] ) ? (float) $cart_item['useup_me_effective_price'] : 0,
 				)
 			),
 			array( 'source' => 'useup-me-quantity-price-control' )

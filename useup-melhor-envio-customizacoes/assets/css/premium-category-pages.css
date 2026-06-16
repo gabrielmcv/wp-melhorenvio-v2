@@ -57,7 +57,15 @@ body.tax-product_cat.useup-premium-category-enabled .woocommerce-products-header
 body.tax-product_cat.useup-premium-category-enabled .et-shop-title,
 body.tax-product_cat.useup-premium-category-enabled .page-title,
 body.tax-product_cat.useup-premium-category-enabled .term-description,
+body.tax-product_tag.useup-premium-category-enabled .woocommerce-products-header__title,
+body.tax-product_tag.useup-premium-category-enabled .et-shop-title,
+body.tax-product_tag.useup-premium-category-enabled .page-title,
+body.tax-product_tag.useup-premium-category-enabled .term-description,
 body.tax-product_cat.useup-premium-category-enabled .archive-description {
+  display: none !important;
+}
+
+body.tax-product_tag.useup-premium-category-enabled .archive-description {
   display: none !important;
 }
 

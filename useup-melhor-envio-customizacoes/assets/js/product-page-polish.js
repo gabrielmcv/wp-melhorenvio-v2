@@ -103,6 +103,13 @@
     $root.find('.woocommerce-variation .woocommerce-variation-price, .woocommerce-variation-price').hide();
   }
 
+  function getCurrentVariationId($form) {
+    var $variationInput = $form.find('input.variation_id, input[name="variation_id"]').first();
+    var variationId = parseInt($variationInput.val() || '0', 10);
+
+    return variationId > 0 ? variationId : 0;
+  }
+
   function getPriceBlockForForm($form) {
     var $summary = $form.closest('.summary, .summary.entry-summary');
     var $product = $form.closest('.product, .type-product');
@@ -272,6 +279,28 @@
     updatePriceBlock($block, values.wholesale, values.retail, wholesaleHtml, retailHtml);
   }
 
+  function syncVariationPriceBlockStable($form, $scope, $block, variation) {
+    var variationId = variation && variation.variation_id ? parseInt(variation.variation_id, 10) : 0;
+    var delays = [0, 30, 120, 300];
+
+    if (!$block.length || !variationId) {
+      return;
+    }
+
+    $block.attr('data-current-variation-id', String(variationId));
+
+    delays.forEach(function (delay) {
+      window.setTimeout(function () {
+        if (getCurrentVariationId($form) !== variationId) {
+          return;
+        }
+
+        syncVariationPriceBlock($block, variation);
+        hideVariationLoosePrice($scope);
+      }, delay);
+    });
+  }
+
   function setupVariationPriceSync() {
     $('.variations_form').each(function () {
       var $form = $(this);
@@ -290,19 +319,20 @@
           return;
         }
 
-        syncVariationPriceBlock($block, variation);
-        hideVariationLoosePrice($scope);
-        window.setTimeout(function () {
-          syncVariationPriceBlock($block, variation);
-          hideVariationLoosePrice($scope);
-        }, 0);
+        syncVariationPriceBlockStable($form, $scope, $block, variation);
       });
 
-      $form.on('hide_variation.useupPricePolish reset_data.useupPricePolish woocommerce_variation_has_changed.useupPricePolish', function () {
+      $form.on('hide_variation.useupPricePolish reset_data.useupPricePolish', function () {
         window.setTimeout(function () {
+          if (getCurrentVariationId($form)) {
+            hideVariationLoosePrice($scope);
+            return;
+          }
+
+          $block.removeAttr('data-current-variation-id');
           resetPriceBlock($block);
           hideVariationLoosePrice($scope);
-        }, 0);
+        }, 50);
       });
     });
   }
