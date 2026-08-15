@@ -139,11 +139,12 @@
 
     $block.attr('data-original-wholesale', $block.attr('data-base-wholesale') || '');
     $block.attr('data-original-retail', $block.attr('data-base-retail') || '');
+    $block.attr('data-original-hide-wholesale', $block.attr('data-hide-wholesale') || '0');
     $block.attr('data-original-wholesale-html', $main.html() || '');
     $block.attr('data-original-retail-html', $secondaryAmount.html() || '');
   }
 
-  function updatePriceBlock($block, wholesaleValue, retailValue, wholesaleHtml, retailHtml) {
+  function updatePriceBlock($block, wholesaleValue, retailValue, wholesaleHtml, retailHtml, hideWholesale) {
     var wholesale = Number(wholesaleValue || 0);
     var retail = Number(retailValue || 0);
     var safeWholesaleHtml = wholesaleHtml || formatMoney(wholesale);
@@ -151,6 +152,7 @@
     var $main = $block.find('.useup-price-block__amount').first();
     var $secondary = $block.find('.useup-price-block__retail, .useup-price-block__secondary').first();
     var $secondaryAmount = $secondary.find('.useup-price-block__secondary-amount').first();
+    var $wholesaleInfo = $block.find('.useup-wholesale-info').first();
 
     if (!$block.length || !$main.length) {
       return;
@@ -158,8 +160,18 @@
 
     captureOriginalPriceBlockState($block);
     $block.attr('data-base-wholesale', wholesale > 0 ? String(wholesale) : '');
-    $block.attr('data-base-retail', retail > 0 ? String(retail) : '');
+    $block.attr('data-base-retail', !hideWholesale && retail > 0 ? String(retail) : '');
+    $block.attr('data-hide-wholesale', hideWholesale ? '1' : '0');
     $main.html(safeWholesaleHtml);
+
+    if ($wholesaleInfo.length) {
+      $wholesaleInfo.toggle(!hideWholesale);
+    }
+
+    if (hideWholesale) {
+      $secondary.hide();
+      return;
+    }
 
     if (retail > 0) {
       $secondaryAmount.html(safeRetailHtml);
@@ -173,10 +185,12 @@
   function resetPriceBlock($block) {
     var originalWholesale = Number($block.attr('data-original-wholesale') || 0);
     var originalRetail = Number($block.attr('data-original-retail') || 0);
+    var originalHideWholesale = $block.attr('data-original-hide-wholesale') === '1';
     var originalWholesaleHtml = $block.attr('data-original-wholesale-html') || '';
     var originalRetailHtml = $block.attr('data-original-retail-html') || '';
     var $secondary = $block.find('.useup-price-block__retail, .useup-price-block__secondary').first();
     var $secondaryAmount = $secondary.find('.useup-price-block__secondary-amount').first();
+    var $wholesaleInfo = $block.find('.useup-wholesale-info').first();
 
     if (!$block.length) {
       return;
@@ -184,7 +198,17 @@
 
     $block.attr('data-base-wholesale', $block.attr('data-original-wholesale') || '');
     $block.attr('data-base-retail', $block.attr('data-original-retail') || '');
+    $block.attr('data-hide-wholesale', originalHideWholesale ? '1' : '0');
     $block.find('.useup-price-block__amount').first().html(originalWholesaleHtml);
+
+    if ($wholesaleInfo.length) {
+      $wholesaleInfo.toggle(!originalHideWholesale);
+    }
+
+    if (originalHideWholesale) {
+      $secondary.hide();
+      return;
+    }
 
     if (originalRetail > 0 && originalRetailHtml) {
       $secondaryAmount.html(originalRetailHtml);
@@ -272,11 +296,28 @@
     var retail = variation && variation.useup_retail_price !== undefined && variation.useup_retail_price !== null && variation.useup_retail_price !== ''
       ? Number(variation.useup_retail_price)
       : 0;
+    var display = variation && variation.useup_display_price !== undefined && variation.useup_display_price !== null && variation.useup_display_price !== ''
+      ? Number(variation.useup_display_price)
+      : 0;
+    var hideWholesale = Boolean(variation && (variation.useup_hide_wholesale === true || variation.useup_hide_wholesale === 1 || variation.useup_hide_wholesale === '1'));
     var wholesaleHtml = variation && variation.useup_wholesale_price_html ? String(variation.useup_wholesale_price_html) : '';
     var retailHtml = variation && variation.useup_retail_price_html ? String(variation.useup_retail_price_html) : '';
+    var displayHtml = variation && variation.useup_display_price_html ? String(variation.useup_display_price_html) : '';
     var values = normalizePriceValues(wholesale, retail);
 
-    updatePriceBlock($block, values.wholesale, values.retail, wholesaleHtml, retailHtml);
+    if (hideWholesale) {
+      updatePriceBlock(
+        $block,
+        display > 0 ? display : (retail > 0 ? retail : wholesale),
+        0,
+        displayHtml || retailHtml || wholesaleHtml,
+        '',
+        true
+      );
+      return;
+    }
+
+    updatePriceBlock($block, values.wholesale, values.retail, wholesaleHtml, retailHtml, false);
   }
 
   function syncVariationPriceBlockStable($form, $scope, $block, variation) {
@@ -428,6 +469,7 @@
     return body.classList.contains('post-type-archive-product') ||
       body.classList.contains('tax-product_cat') ||
       body.classList.contains('tax-product_tag') ||
+      body.classList.contains('tax-colecao') ||
       body.classList.contains('woocommerce-shop');
   }
 

@@ -61,11 +61,24 @@ body.tax-product_tag.useup-premium-category-enabled .woocommerce-products-header
 body.tax-product_tag.useup-premium-category-enabled .et-shop-title,
 body.tax-product_tag.useup-premium-category-enabled .page-title,
 body.tax-product_tag.useup-premium-category-enabled .term-description,
+body.tax-colecao.useup-premium-category-enabled .woocommerce-products-header__title,
+body.tax-colecao.useup-premium-category-enabled .woocommerce-products-header,
+body.tax-colecao.useup-premium-category-enabled .et-shop-title,
+body.tax-colecao.useup-premium-category-enabled .page-title,
+body.tax-colecao.useup-premium-category-enabled .archive-title,
+body.tax-colecao.useup-premium-category-enabled .archive-header .page-title,
+body.tax-colecao.useup-premium-category-enabled .archive-header h1,
+body.tax-colecao.useup-premium-category-enabled .page-header .page-title,
+body.tax-colecao.useup-premium-category-enabled .page-header h1,
+body.tax-colecao.useup-premium-category-enabled .term-title,
+body.tax-colecao.useup-premium-category-enabled .archive-description,
+body.tax-colecao.useup-premium-category-enabled .term-description,
 body.tax-product_cat.useup-premium-category-enabled .archive-description {
   display: none !important;
 }
 
-body.tax-product_tag.useup-premium-category-enabled .archive-description {
+body.tax-product_tag.useup-premium-category-enabled .archive-description,
+body.tax-colecao.useup-premium-category-enabled .archive-description {
   display: none !important;
 }
 

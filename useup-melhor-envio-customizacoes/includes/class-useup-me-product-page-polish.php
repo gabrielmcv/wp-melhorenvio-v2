@@ -75,17 +75,17 @@ class USEUP_ME_Product_Page_Polish {
 			'useup-me-product-page-polish',
 			'useupMeProductPagePolish',
 			array(
-				'expandLabel'         => 'Ler descrição',
-				'collapseLabel'       => 'Ocultar descrição',
-				'priceFormat'         => get_woocommerce_price_format(),
-				'currencySymbol'      => get_woocommerce_currency_symbol(),
-				'decimalSep'          => wc_get_price_decimal_separator(),
-				'thousandSep'         => wc_get_price_thousand_separator(),
-				'decimals'            => wc_get_price_decimals(),
-				'retailMarkupPercent' => USEUP_ME_Pricing::get_retail_markup_percent(),
-				'retailMarkupFixed'   => USEUP_ME_Pricing::get_retail_markup_fixed(),
+				'expandLabel'                 => 'Ler descrição',
+				'collapseLabel'               => 'Ocultar descrição',
+				'priceFormat'                 => get_woocommerce_price_format(),
+				'currencySymbol'              => get_woocommerce_currency_symbol(),
+				'decimalSep'                  => wc_get_price_decimal_separator(),
+				'thousandSep'                 => wc_get_price_thousand_separator(),
+				'decimals'                    => wc_get_price_decimals(),
+				'retailMarkupPercent'         => USEUP_ME_Pricing::get_retail_markup_percent(),
+				'retailMarkupFixed'           => USEUP_ME_Pricing::get_retail_markup_fixed(),
 				'quantityPriceControlEnabled' => USEUP_ME_Settings::is_quantity_price_control_enabled(),
-				'retailAdjustments'   => USEUP_ME_Settings::get_quantity_price_adjustments(),
+				'retailAdjustments'           => USEUP_ME_Settings::get_quantity_price_adjustments(),
 			)
 		);
 	}
@@ -121,12 +121,15 @@ class USEUP_ME_Product_Page_Polish {
 			return $data;
 		}
 
-		$price_data = USEUP_ME_Pricing::get_product_price_data( $variation );
+		$price_data = $this->get_price_data( $variation );
 
 		$data['useup_wholesale_price']      = max( 0, (float) $price_data['wholesale_value'] );
 		$data['useup_retail_price']         = max( 0, (float) $price_data['retail_value'] );
+		$data['useup_display_price']        = max( 0, (float) $price_data['display_value'] );
+		$data['useup_hide_wholesale']       = empty( $price_data['show_wholesale'] );
 		$data['useup_wholesale_price_html'] = $price_data['wholesale_value'] > 0 ? wc_price( $price_data['wholesale_value'] ) : '';
 		$data['useup_retail_price_html']    = $price_data['retail_value'] > 0 ? wc_price( $price_data['retail_value'] ) : '';
+		$data['useup_display_price_html']   = $price_data['display_value'] > 0 ? wc_price( $price_data['display_value'] ) : '';
 
 		return $data;
 	}
@@ -140,21 +143,23 @@ class USEUP_ME_Product_Page_Polish {
 
 		$price_data = $this->get_price_data( $product );
 
-		if ( $price_data['wholesale_value'] <= 0 ) {
+		if ( $price_data['display_value'] <= 0 ) {
 			return;
 		}
 
 		$is_variable = $product->is_type( 'variable' );
 		?>
-		<div class="useup-loop-price">
+		<div class="useup-loop-price<?php echo empty( $price_data['show_wholesale'] ) ? ' useup-loop-price--retail-only' : ''; ?>">
 			<div class="useup-loop-price__main">
 				<?php if ( $is_variable ) : ?>
 					<span class="useup-loop-price__prefix">A partir de</span>
 				<?php endif; ?>
-				<span class="useup-loop-price__amount"><?php echo esc_html( $price_data['wholesale_text'] ); ?></span>
-				<span class="useup-loop-price__mode">no atacado</span>
+				<span class="useup-loop-price__amount"><?php echo esc_html( $price_data['display_text'] ); ?></span>
+				<?php if ( ! empty( $price_data['show_wholesale'] ) ) : ?>
+					<span class="useup-loop-price__mode">no atacado</span>
+				<?php endif; ?>
 			</div>
-			<?php if ( ! empty( $price_data['retail_text'] ) ) : ?>
+			<?php if ( ! empty( $price_data['show_wholesale'] ) && ! empty( $price_data['retail_text'] ) ) : ?>
 				<div class="useup-loop-price__retail">
 					ou <?php echo esc_html( $price_data['retail_text'] ); ?> no varejo
 				</div>
@@ -174,40 +179,47 @@ class USEUP_ME_Product_Page_Polish {
 		$badges        = $this->get_badges();
 		$popover_id    = 'useup-wholesale-popover-' . $product->get_id();
 		$tooltip_lines = USEUP_ME_Pricing::get_wholesale_tooltip_lines();
+
+		if ( $price_data['display_value'] <= 0 ) {
+			return;
+		}
 		?>
 		<div
 			class="useup-price-block"
-			data-base-wholesale="<?php echo esc_attr( $price_data['wholesale_value'] ); ?>"
-			data-base-retail="<?php echo esc_attr( $price_data['retail_value'] ); ?>"
+			data-base-wholesale="<?php echo esc_attr( $price_data['display_value'] ); ?>"
+			data-base-retail="<?php echo ! empty( $price_data['show_wholesale'] ) ? esc_attr( $price_data['retail_value'] ) : ''; ?>"
+			data-hide-wholesale="<?php echo empty( $price_data['show_wholesale'] ) ? '1' : '0'; ?>"
 		>
 			<div class="useup-price-block__main">
-				<span class="useup-price-block__amount"><?php echo esc_html( $price_data['wholesale_text'] ); ?></span>
+				<span class="useup-price-block__amount"><?php echo esc_html( $price_data['display_text'] ); ?></span>
 
-				<span class="useup-wholesale-info">
-					<button
-						type="button"
-						class="useup-price-block__info-trigger useup-wholesale-info-trigger"
-						aria-expanded="false"
-						aria-controls="<?php echo esc_attr( $popover_id ); ?>"
-					>
-						<span class="useup-price-block__mode">no atacado</span>
-						<span class="useup-wholesale-info-icon" aria-hidden="true">
-							<svg viewBox="0 0 20 20" focusable="false" aria-hidden="true">
-								<circle cx="10" cy="10" r="7.25" fill="none" stroke="currentColor" stroke-width="1.25"></circle>
-								<path d="M10 8.1v4.2" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"></path>
-								<circle cx="10" cy="5.6" r="0.85" fill="currentColor"></circle>
-							</svg>
+				<?php if ( ! empty( $price_data['show_wholesale'] ) ) : ?>
+					<span class="useup-wholesale-info">
+						<button
+							type="button"
+							class="useup-price-block__info-trigger useup-wholesale-info-trigger"
+							aria-expanded="false"
+							aria-controls="<?php echo esc_attr( $popover_id ); ?>"
+						>
+							<span class="useup-price-block__mode">no atacado</span>
+							<span class="useup-wholesale-info-icon" aria-hidden="true">
+								<svg viewBox="0 0 20 20" focusable="false" aria-hidden="true">
+									<circle cx="10" cy="10" r="7.25" fill="none" stroke="currentColor" stroke-width="1.25"></circle>
+									<path d="M10 8.1v4.2" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"></path>
+									<circle cx="10" cy="5.6" r="0.85" fill="currentColor"></circle>
+								</svg>
+							</span>
+						</button>
+						<span class="useup-wholesale-popover" id="<?php echo esc_attr( $popover_id ); ?>" role="tooltip" hidden>
+							<?php foreach ( $tooltip_lines as $line ) : ?>
+								<span><?php echo esc_html( $line ); ?></span>
+							<?php endforeach; ?>
 						</span>
-					</button>
-					<span class="useup-wholesale-popover" id="<?php echo esc_attr( $popover_id ); ?>" role="tooltip" hidden>
-						<?php foreach ( $tooltip_lines as $line ) : ?>
-							<span><?php echo esc_html( $line ); ?></span>
-						<?php endforeach; ?>
 					</span>
-				</span>
+				<?php endif; ?>
 			</div>
 
-			<?php if ( ! empty( $price_data['retail_text'] ) ) : ?>
+			<?php if ( ! empty( $price_data['show_wholesale'] ) && ! empty( $price_data['retail_text'] ) ) : ?>
 				<p class="useup-price-block__retail useup-price-block__secondary">
 					<span class="useup-price-block__secondary-prefix">ou</span>
 					<span class="useup-price-block__secondary-amount"><?php echo esc_html( $price_data['retail_text'] ); ?></span>
@@ -342,10 +354,13 @@ class USEUP_ME_Product_Page_Polish {
 		$price_data = USEUP_ME_Pricing::get_product_price_data( $product );
 
 		return array(
-			'wholesale_value' => $price_data['wholesale_value'],
-			'retail_value'    => $price_data['retail_value'],
-			'wholesale_text'  => $this->format_price_text( $price_data['wholesale_value'] ),
-			'retail_text'     => $price_data['retail_value'] > 0 ? $this->format_price_text( $price_data['retail_value'] ) : '',
+			'show_wholesale' => ! empty( $price_data['show_wholesale'] ),
+			'display_value'  => (float) $price_data['display_value'],
+			'display_text'   => $this->format_price_text( $price_data['display_value'] ),
+			'wholesale_value' => (float) $price_data['wholesale_value'],
+			'retail_value'    => (float) $price_data['retail_value'],
+			'wholesale_text'  => $price_data['wholesale_value'] > 0 ? $this->format_price_text( $price_data['wholesale_value'] ) : '',
+			'retail_text'     => ! empty( $price_data['show_wholesale'] ) && $price_data['retail_value'] > 0 ? $this->format_price_text( $price_data['retail_value'] ) : '',
 		);
 	}
 

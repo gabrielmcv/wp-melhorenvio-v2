@@ -27,14 +27,17 @@ class USEUP_ME_Loader {
 
 		if ( $this->has_woocommerce() ) {
 			( new USEUP_ME_Settings() )->init();
+			( new USEUP_ME_Product_Wholesale_Visibility() )->init();
 			( new USEUP_ME_Admin() )->init();
 			( new USEUP_ME_Checkout_Polish() )->init();
 			( new USEUP_ME_Checkout_Form_Design() )->init();
 			( new USEUP_ME_Product_Page_Polish() )->init();
+			( new USEUP_ME_Product_Gallery_Media() )->init();
 			( new USEUP_ME_Complementary_Products() )->init();
 			( new USEUP_ME_Ajax_Shop_Filter() )->init();
 			( new USEUP_ME_Premium_Category_Pages() )->init();
 			( new USEUP_ME_Quantity_Price_Control() )->init();
+			( new USEUP_ME_TikTok_Pricing_Sync() )->init();
 			( new USEUP_ME_Melhor_Envio_Hooks() )->init();
 			( new USEUP_ME_Shipping_Quantity_Discount() )->init();
 			( new USEUP_ME_Product_Shipping_Calculator() )->init();

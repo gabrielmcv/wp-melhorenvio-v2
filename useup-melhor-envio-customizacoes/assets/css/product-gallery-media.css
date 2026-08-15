@@ -1,0 +1,80 @@
+.useup-product-gallery__image--video {
+	position: relative;
+	background: #000;
+}
+
+.useup-product-gallery__video-shell {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: var(--useup-gallery-video-height, auto);
+	max-height: var(--useup-gallery-video-height, none);
+	overflow: hidden;
+	background: #000;
+}
+
+.useup-product-gallery__video {
+	display: block;
+	width: auto;
+	height: 100%;
+	max-width: 100%;
+	max-height: var(--useup-gallery-video-height, 100%);
+	background: #000;
+	object-fit: contain;
+}
+
+.useup-product-gallery__video-play {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 62px;
+	height: 62px;
+	border-radius: 50%;
+	transform: translate(-50%, -50%);
+	background: rgba(17, 17, 17, 0.72);
+	box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+	pointer-events: none;
+}
+
+.useup-product-gallery__video-play::before {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 0;
+	height: 0;
+	border-top: 10px solid transparent;
+	border-bottom: 10px solid transparent;
+	border-left: 16px solid #fff;
+	transform: translate(-34%, -50%);
+}
+
+.useup-product-gallery__video-shell:hover .useup-product-gallery__video-play,
+.useup-product-gallery__video-shell:focus .useup-product-gallery__video-play {
+	background: rgba(17, 17, 17, 0.82);
+}
+
+.useup-product-gallery--has-video .flex-control-thumbs,
+.useup-product-gallery--has-video .flex-control-nav,
+.useup-product-gallery--has-video .woocommerce-product-gallery__thumbnails,
+.useup-product-gallery--has-video .flickity-page-dots {
+	display: none !important;
+}
+
+.useup-product-gallery--has-video .flickity-button,
+.useup-product-gallery--has-video .flickity-prev-next-button,
+.useup-product-gallery--has-video .flex-direction-nav a,
+.useup-product-gallery--has-video .flex-direction-nav .flex-prev,
+.useup-product-gallery--has-video .flex-direction-nav .flex-next {
+	display: inline-flex !important;
+	opacity: 1 !important;
+	visibility: visible !important;
+	pointer-events: auto !important;
+}
+
+.useup-product-gallery--has-video .flickity-button:disabled,
+.useup-product-gallery--has-video .flickity-prev-next-button:disabled {
+	opacity: 0.42 !important;
+}

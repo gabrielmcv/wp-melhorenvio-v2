@@ -5,7 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class USEUP_ME_Premium_Category_Pages {
-
 	public function init() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 		add_action( 'woocommerce_before_main_content', array( $this, 'render_header' ), 15 );
@@ -27,25 +26,23 @@ class USEUP_ME_Premium_Category_Pages {
 	}
 
 	public function render_header() {
-		$term        = $this->get_current_term();
-		$description = '';
-		$raw_description = '';
+		$context = $this->get_header_context();
 
-		if ( ! $term ) {
+		if ( empty( $context ) || 'taxonomy' !== $context['type'] ) {
 			return;
 		}
 
-		if ( $this->should_render_description() ) {
-			$raw_description = term_description( $term->term_id, $term->taxonomy );
+		$this->render_header_markup( $context['title'], $context['description'] );
+	}
 
-			if ( '' !== trim( wp_strip_all_tags( $raw_description ) ) ) {
-				$description = wp_kses_post( $raw_description );
-			}
+	private function render_header_markup( $title, $description ) {
+		if ( '' === trim( (string) $title ) ) {
+			return;
 		}
 
 		?>
 		<header class="useup-premium-category-header">
-			<h1 class="useup-premium-category-header__title"><?php echo esc_html( $term->name ); ?></h1>
+			<h1 class="useup-premium-category-header__title"><?php echo esc_html( $title ); ?></h1>
 
 			<?php if ( $this->should_render_ornament() ) : ?>
 				<div class="useup-premium-category-header__ornament" aria-hidden="true">
@@ -77,7 +74,13 @@ class USEUP_ME_Premium_Category_Pages {
 			return;
 		}
 
-		remove_action( 'woocommerce_archive_description', 'woocommerce_taxonomy_archive_description', 10 );
+		if (
+			( function_exists( 'is_product_category' ) && is_product_category() ) ||
+			( function_exists( 'is_product_tag' ) && is_product_tag() ) ||
+			( function_exists( 'is_tax' ) && is_tax( 'colecao' ) )
+		) {
+			remove_action( 'woocommerce_archive_description', 'woocommerce_taxonomy_archive_description', 10 );
+		}
 	}
 
 	private function should_render() {
@@ -89,7 +92,11 @@ class USEUP_ME_Premium_Category_Pages {
 			return true;
 		}
 
-		return function_exists( 'is_product_tag' ) && is_product_tag();
+		if ( function_exists( 'is_product_tag' ) && is_product_tag() ) {
+			return true;
+		}
+
+		return function_exists( 'is_tax' ) && is_tax( 'colecao' );
 	}
 
 	private function should_render_description() {
@@ -103,10 +110,40 @@ class USEUP_ME_Premium_Category_Pages {
 	private function get_current_term() {
 		$term = get_queried_object();
 
-		if ( ! $term instanceof WP_Term || ! in_array( $term->taxonomy, array( 'product_cat', 'product_tag' ), true ) ) {
+		if ( ! $term instanceof WP_Term || ! in_array( $term->taxonomy, array( 'product_cat', 'product_tag', 'colecao' ), true ) ) {
 			return null;
 		}
 
 		return $term;
+	}
+
+	private function get_header_context() {
+		$term = $this->get_current_term();
+
+		if ( $term ) {
+			return array(
+				'type'        => 'taxonomy',
+				'title'       => $term->name,
+				'description' => $this->get_taxonomy_description( $term ),
+				);
+		}
+
+		return null;
+	}
+
+	private function get_taxonomy_description( WP_Term $term ) {
+		$description = '';
+
+		if ( ! $this->should_render_description() ) {
+			return $description;
+		}
+
+		$raw_description = term_description( $term->term_id, $term->taxonomy );
+
+		if ( '' !== trim( wp_strip_all_tags( $raw_description ) ) ) {
+			$description = wp_kses_post( $raw_description );
+		}
+
+		return $description;
 	}
 }

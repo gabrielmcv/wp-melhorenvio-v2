@@ -23,6 +23,7 @@ define( 'USEUP_ME_URL', plugin_dir_url( __FILE__ ) );
 require_once USEUP_ME_PATH . 'includes/class-useup-me-loader.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-settings.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-pricing.php';
+require_once USEUP_ME_PATH . 'includes/class-useup-me-product-wholesale-visibility.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-admin.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-checkout-polish.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-checkout-form-design.php';
@@ -31,6 +32,9 @@ require_once USEUP_ME_PATH . 'includes/class-useup-me-complementary-products.php
 require_once USEUP_ME_PATH . 'includes/class-useup-me-ajax-shop-filter.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-premium-category-pages.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-quantity-price-control.php';
+require_once USEUP_ME_PATH . 'includes/class-useup-me-product-gallery-media.php';
+require_once USEUP_ME_PATH . 'includes/class-useup-me-tiktok-pricing-sync.php';
+require_once USEUP_ME_PATH . 'includes/class-useup-me-tiktok-resync-preparer.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-melhor-envio-hooks.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-rules.php';
 require_once USEUP_ME_PATH . 'includes/class-useup-me-delivery-label.php';

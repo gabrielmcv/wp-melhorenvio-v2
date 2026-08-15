@@ -121,17 +121,21 @@ class USEUP_ME_Complementary_Products {
 			<div class="useup-complementary-products__list">
 				<?php foreach ( $items as $item ) : ?>
 					<?php
-					$is_variable      = 'variable' === $item['type'];
-					$selected_option  = ! empty( $item['selected_option'] ) ? $item['selected_option'] : null;
-					$current_wholesale = $selected_option ? $selected_option['wholesale_text'] : $item['wholesale_text'];
-					$current_retail    = $selected_option ? $selected_option['retail_text'] : $item['retail_text'];
+					$is_variable            = 'variable' === $item['type'];
+					$selected_option        = ! empty( $item['selected_option'] ) ? $item['selected_option'] : null;
+					$current_show_wholesale = $selected_option ? ! empty( $selected_option['show_wholesale'] ) : ! empty( $item['show_wholesale'] );
+					$current_wholesale      = $selected_option ? $selected_option['wholesale_text'] : $item['wholesale_text'];
+					$current_retail         = $selected_option ? $selected_option['retail_text'] : $item['retail_text'];
+					$current_display        = $selected_option ? $selected_option['display_text'] : $item['display_text'];
 					?>
 					<div
 						class="useup-complementary-product"
 						data-product-id="<?php echo esc_attr( $item['product_id'] ); ?>"
 						data-is-variable="<?php echo $is_variable ? '1' : '0'; ?>"
+						data-default-show-wholesale="<?php echo ! empty( $item['show_wholesale'] ) ? '1' : '0'; ?>"
 						data-default-wholesale-text="<?php echo esc_attr( $item['wholesale_text'] ); ?>"
 						data-default-retail-text="<?php echo esc_attr( $item['retail_text'] ); ?>"
+						data-default-display-text="<?php echo esc_attr( $item['display_text'] ); ?>"
 					>
 						<div class="useup-complementary-product__checkbox">
 							<input
@@ -161,39 +165,43 @@ class USEUP_ME_Complementary_Products {
 								<p class="useup-complementary-product__description"><?php echo esc_html( $item['description'] ); ?></p>
 							<?php endif; ?>
 
-							<?php if ( $is_variable && ! empty( $item['variation_options'] ) ) : ?>
-								<div class="useup-complementary-product__variations">
-									<?php foreach ( $item['variation_options'] as $option ) : ?>
-										<button
-											type="button"
-											class="useup-complementary-product__variation-option<?php echo ! empty( $option['selected'] ) ? ' is-selected' : ''; ?>"
-											data-variation-id="<?php echo esc_attr( $option['variation_id'] ); ?>"
-											data-wholesale-text="<?php echo esc_attr( $option['wholesale_text'] ); ?>"
-											data-retail-text="<?php echo esc_attr( $option['retail_text'] ); ?>"
-											aria-pressed="<?php echo ! empty( $option['selected'] ) ? 'true' : 'false'; ?>"
-										>
-											<?php echo esc_html( $option['label'] ); ?>
-										</button>
-									<?php endforeach; ?>
+								<?php if ( $is_variable && ! empty( $item['variation_options'] ) ) : ?>
+									<div class="useup-complementary-product__variations">
+										<?php foreach ( $item['variation_options'] as $option ) : ?>
+											<button
+												type="button"
+												class="useup-complementary-product__variation-option<?php echo ! empty( $option['selected'] ) ? ' is-selected' : ''; ?>"
+												data-variation-id="<?php echo esc_attr( $option['variation_id'] ); ?>"
+												data-show-wholesale="<?php echo ! empty( $option['show_wholesale'] ) ? '1' : '0'; ?>"
+												data-wholesale-text="<?php echo esc_attr( $option['wholesale_text'] ); ?>"
+												data-retail-text="<?php echo esc_attr( $option['retail_text'] ); ?>"
+												data-display-text="<?php echo esc_attr( $option['display_text'] ); ?>"
+												aria-pressed="<?php echo ! empty( $option['selected'] ) ? 'true' : 'false'; ?>"
+											>
+												<?php echo esc_html( $option['label'] ); ?>
+											</button>
+										<?php endforeach; ?>
 								</div>
 							<?php endif; ?>
 
-							<p class="useup-complementary-product__message" hidden></p>
-						</div>
+								<p class="useup-complementary-product__message" hidden></p>
+							</div>
 
-						<div class="useup-complementary-product__price">
-							<div class="useup-complementary-product__wholesale">
-								+ <span class="useup-complementary-product__wholesale-amount"><?php echo esc_html( $current_wholesale ); ?></span>
-								<span class="useup-price-mode">no atacado</span>
-							</div>
-							<div class="useup-complementary-product__retail">
-								ou <span class="useup-complementary-product__retail-amount"><?php echo esc_html( $current_retail ); ?></span> no varejo
+							<div class="useup-complementary-product__price">
+								<div class="useup-complementary-product__wholesale" <?php echo $current_show_wholesale ? '' : 'hidden'; ?>>
+									+ <span class="useup-complementary-product__wholesale-amount"><?php echo esc_html( $current_wholesale ); ?></span>
+									<span class="useup-price-mode">no atacado</span>
+								</div>
+								<div class="useup-complementary-product__retail<?php echo $current_show_wholesale ? '' : ' useup-complementary-product__retail--primary'; ?>">
+									<span class="useup-complementary-product__retail-prefix"><?php echo $current_show_wholesale ? 'ou' : '+'; ?></span>
+									<span class="useup-complementary-product__retail-amount"><?php echo esc_html( $current_show_wholesale ? $current_retail : $current_display ); ?></span>
+									<span class="useup-complementary-product__retail-suffix"><?php echo $current_show_wholesale ? 'no varejo' : ''; ?></span>
+								</div>
 							</div>
 						</div>
-					</div>
-				<?php endforeach; ?>
+					<?php endforeach; ?>
+				</div>
 			</div>
-		</div>
 		<?php
 	}
 
@@ -405,8 +413,10 @@ class USEUP_ME_Complementary_Products {
 				'name'              => $product->get_name(),
 				'description'       => $description,
 				'image_html'        => $image_html,
-				'wholesale_text'    => $this->format_price_text( $price_data['wholesale_value'] ),
-				'retail_text'       => $this->format_price_text( $price_data['retail_value'] ),
+				'show_wholesale'    => ! empty( $price_data['show_wholesale'] ),
+				'display_text'      => $this->format_price_text( $price_data['display_value'] ),
+				'wholesale_text'    => $price_data['wholesale_value'] > 0 ? $this->format_price_text( $price_data['wholesale_value'] ) : '',
+				'retail_text'       => $this->format_price_text( ! empty( $price_data['show_wholesale'] ) ? $price_data['retail_value'] : $price_data['display_value'] ),
 				'variation_options' => $variation_options,
 				'selected_option'   => $selected_option,
 			);
@@ -416,13 +426,11 @@ class USEUP_ME_Complementary_Products {
 			return array();
 		}
 
-		$wholesale_price = (float) $product->get_price( 'edit' );
+		$price_data = USEUP_ME_Pricing::get_product_price_data( $product );
 
-		if ( $wholesale_price <= 0 ) {
+		if ( $price_data['display_value'] <= 0 ) {
 			return array();
 		}
-
-		$retail_price = USEUP_ME_Pricing::get_retail_price_from_wholesale( $wholesale_price );
 
 		return array(
 			'product_id'        => $product->get_id(),
@@ -430,8 +438,10 @@ class USEUP_ME_Complementary_Products {
 			'name'              => $product->get_name(),
 			'description'       => $description,
 			'image_html'        => $image_html,
-			'wholesale_text'    => $this->format_price_text( $wholesale_price ),
-			'retail_text'       => $this->format_price_text( $retail_price ),
+			'show_wholesale'    => ! empty( $price_data['show_wholesale'] ),
+			'display_text'      => $this->format_price_text( $price_data['display_value'] ),
+			'wholesale_text'    => $price_data['wholesale_value'] > 0 ? $this->format_price_text( $price_data['wholesale_value'] ) : '',
+			'retail_text'       => $this->format_price_text( ! empty( $price_data['show_wholesale'] ) ? $price_data['retail_value'] : $price_data['display_value'] ),
 			'variation_options' => array(),
 			'selected_option'   => null,
 		);
@@ -451,20 +461,21 @@ class USEUP_ME_Complementary_Products {
 				continue;
 			}
 
-			$wholesale_price = (float) $variation->get_price( 'edit' );
+			$price_data = USEUP_ME_Pricing::get_product_price_data( $variation );
 
-			if ( $wholesale_price <= 0 ) {
+			if ( $price_data['display_value'] <= 0 ) {
 				continue;
 			}
 
-			$retail_price = USEUP_ME_Pricing::get_retail_price_from_wholesale( $wholesale_price );
-			$label        = $this->get_variation_label( $variation );
+			$label = $this->get_variation_label( $variation );
 
 			$options[] = array(
 				'variation_id'   => $variation->get_id(),
-				'label'          => '' !== $label ? $label : 'Opcao',
-				'wholesale_text' => $this->format_price_text( $wholesale_price ),
-				'retail_text'    => $this->format_price_text( $retail_price ),
+				'label'          => '' !== $label ? $label : 'Opção',
+				'show_wholesale' => ! empty( $price_data['show_wholesale'] ),
+				'display_text'   => $this->format_price_text( $price_data['display_value'] ),
+				'wholesale_text' => $price_data['wholesale_value'] > 0 ? $this->format_price_text( $price_data['wholesale_value'] ) : '',
+				'retail_text'    => $this->format_price_text( ! empty( $price_data['show_wholesale'] ) ? $price_data['retail_value'] : $price_data['display_value'] ),
 				'attributes'     => $variation->get_variation_attributes(),
 				'selected'       => false,
 			);
@@ -539,7 +550,7 @@ class USEUP_ME_Complementary_Products {
 				$variation = wc_get_product( $variation_id );
 
 				if ( ! $variation instanceof WC_Product_Variation || $variation->get_parent_id() !== $product_id || ! $variation->is_purchasable() || ! $variation->is_in_stock() ) {
-					return new WP_Error( 'useup_me_complementary_variation_invalid', 'A variacao selecionada para o produto complementar nao esta disponivel.' );
+					return new WP_Error( 'useup_me_complementary_variation_invalid', 'A variação selecionada para o produto complementar não está disponível.' );
 				}
 
 				$selected_items[ $product_id ] = array(

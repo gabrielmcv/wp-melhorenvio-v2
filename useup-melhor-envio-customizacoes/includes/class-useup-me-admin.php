@@ -12,6 +12,7 @@ class USEUP_ME_Admin {
 	public function init() {
 		add_action( 'admin_menu', array( $this, 'register_menu' ), 60 );
 		add_action( 'admin_post_useup_me_save_settings', array( $this, 'save_settings' ) );
+		add_action( 'admin_post_useup_me_trigger_tiktok_full_sync', array( $this, 'trigger_tiktok_full_sync' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 	}
 
@@ -75,6 +76,27 @@ class USEUP_ME_Admin {
 		exit;
 	}
 
+	public function trigger_tiktok_full_sync() {
+		if ( ! current_user_can( self::CAPABILITY ) ) {
+			wp_die( esc_html__( 'Você não tem permissão para executar esta ação.', 'useup-melhor-envio-customizacoes' ) );
+		}
+
+		check_admin_referer( 'useup_me_trigger_tiktok_full_sync', 'useup_me_tiktok_nonce' );
+
+		$tiktok_resync = new USEUP_ME_TikTok_Resync_Preparer();
+		$action_id     = $tiktok_resync->trigger_full_sync();
+		$redirect_url  = add_query_arg(
+			array(
+				'page'                      => self::PAGE_SLUG,
+				'useup_me_tiktok_full_sync' => $action_id > 0 ? 'queued' : 'unavailable',
+			),
+			admin_url( 'admin.php' )
+		);
+
+		wp_safe_redirect( $redirect_url );
+		exit;
+	}
+
 	public function render_page() {
 		if ( ! current_user_can( self::CAPABILITY ) ) {
 			wp_die( esc_html__( 'Você não tem permissão para acessar esta página.', 'useup-melhor-envio-customizacoes' ) );
@@ -85,6 +107,8 @@ class USEUP_ME_Admin {
 		$tags             = $this->get_terms_for_taxonomy( 'product_tag' );
 		$shipping_classes = $this->get_shipping_classes();
 		$shipping_methods = $this->get_shipping_methods();
+		$tiktok_resync    = new USEUP_ME_TikTok_Resync_Preparer();
+		$tiktok_last_sync = $tiktok_resync->get_last_triggered_at();
 		$shop_filter_items = ! empty( $settings['ajax_shop_filter_items'] ) && is_array( $settings['ajax_shop_filter_items'] )
 			? array_values( $settings['ajax_shop_filter_items'] )
 			: array( $this->get_empty_ajax_shop_filter_item() );
@@ -107,6 +131,43 @@ class USEUP_ME_Admin {
 					<p>Verificação dos hooks do Melhor Envio executada novamente.</p>
 				</div>
 			<?php endif; ?>
+
+			<?php if ( isset( $_GET['useup_me_tiktok_full_sync'] ) && 'queued' === $_GET['useup_me_tiktok_full_sync'] ) : ?>
+				<div class="notice notice-success is-dismissible">
+					<p>Sincronização completa da TikTok enfileirada com sucesso.</p>
+				</div>
+			<?php endif; ?>
+
+			<?php if ( isset( $_GET['useup_me_tiktok_full_sync'] ) && 'unavailable' === $_GET['useup_me_tiktok_full_sync'] ) : ?>
+				<div class="notice notice-warning is-dismissible">
+					<p>Não foi possível enfileirar a sincronização da TikTok. Verifique se a integração está conectada e com catálogo selecionado.</p>
+				</div>
+			<?php endif; ?>
+
+			<div class="useup-me-card">
+				<h2>TikTok</h2>
+				<p>Enfileire manualmente uma sincronização completa do catálogo da TikTok para republicar os produtos com o preço de varejo calculado pelo plugin.</p>
+
+				<?php if ( $tiktok_resync->is_available() ) : ?>
+					<?php if ( '' !== $tiktok_last_sync ) : ?>
+						<p class="description">
+							Último disparo manual:
+							<strong><?php echo esc_html( wp_date( 'd/m/Y H:i:s', strtotime( $tiktok_last_sync ) ) ); ?></strong>
+							<?php if ( $tiktok_resync->get_last_action_id() > 0 ) : ?>
+								(ação #<?php echo esc_html( $tiktok_resync->get_last_action_id() ); ?>)
+							<?php endif; ?>
+						</p>
+					<?php endif; ?>
+
+					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin-top: 12px;">
+						<input type="hidden" name="action" value="useup_me_trigger_tiktok_full_sync" />
+						<?php wp_nonce_field( 'useup_me_trigger_tiktok_full_sync', 'useup_me_tiktok_nonce' ); ?>
+						<?php submit_button( 'Enfileirar sincronização completa da TikTok', 'secondary', 'submit', false ); ?>
+					</form>
+				<?php else : ?>
+					<p class="description">Conecte a integração da TikTok, selecione um catálogo e mantenha o token ativo para habilitar este gatilho manual.</p>
+				<?php endif; ?>
+			</div>
 
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="useup_me_save_settings" />

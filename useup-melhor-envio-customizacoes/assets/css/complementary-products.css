@@ -138,10 +138,25 @@
 }
 
 .useup-complementary-product__retail {
-	margin-top: 3px;
-	font-size: 12px;
-	line-height: 1.3;
-	color: #777;
+    margin-top: 3px;
+    font-size: 12px;
+    line-height: 1.3;
+    color: #777;
+}
+
+.useup-complementary-product__retail--primary {
+    margin-top: 0;
+    font-size: 13px;
+    line-height: 1.3;
+    font-weight: 600;
+    color: #111;
+}
+
+.useup-complementary-product__retail--primary .useup-complementary-product__retail-prefix,
+.useup-complementary-product__retail--primary .useup-complementary-product__retail-amount,
+.useup-complementary-product__retail--primary .useup-complementary-product__retail-suffix {
+    color: inherit;
+    font-weight: inherit;
 }
 
 .useup-complementary-product__message {

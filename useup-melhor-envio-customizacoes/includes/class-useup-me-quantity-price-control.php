@@ -288,6 +288,10 @@ class USEUP_ME_Quantity_Price_Control {
 	}
 
 	private function is_product_eligible( WC_Product $product, $cart_item ) {
+		if ( ! USEUP_ME_Pricing::uses_wholesale_pricing( $product ) ) {
+			return false;
+		}
+
 		$is_eligible = (bool) apply_filters( 'useup_me_quantity_price_control_product_is_eligible', true, $product, $cart_item );
 
 		if ( $is_eligible || ! $product instanceof WC_Product_Variation ) {

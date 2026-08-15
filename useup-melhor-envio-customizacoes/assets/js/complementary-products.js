@@ -15,17 +15,39 @@
   }
 
   function updatePrice(product, option) {
+    var wholesaleWrap = product.querySelector('.useup-complementary-product__wholesale');
+    var retailWrap = product.querySelector('.useup-complementary-product__retail');
+    var retailPrefixNode = product.querySelector('.useup-complementary-product__retail-prefix');
     var wholesaleNode = product.querySelector('.useup-complementary-product__wholesale-amount');
     var retailNode = product.querySelector('.useup-complementary-product__retail-amount');
+    var retailSuffixNode = product.querySelector('.useup-complementary-product__retail-suffix');
+    var showWholesale = option ? option.getAttribute('data-show-wholesale') !== '0' : product.getAttribute('data-default-show-wholesale') !== '0';
     var wholesaleText = option ? option.getAttribute('data-wholesale-text') : product.getAttribute('data-default-wholesale-text');
     var retailText = option ? option.getAttribute('data-retail-text') : product.getAttribute('data-default-retail-text');
+    var displayText = option ? option.getAttribute('data-display-text') : product.getAttribute('data-default-display-text');
+
+    if (wholesaleWrap) {
+      wholesaleWrap.hidden = !showWholesale;
+    }
+
+    if (retailWrap) {
+      retailWrap.classList.toggle('useup-complementary-product__retail--primary', !showWholesale);
+    }
+
+    if (retailPrefixNode) {
+      retailPrefixNode.textContent = showWholesale ? 'ou' : '+';
+    }
+
+    if (retailSuffixNode) {
+      retailSuffixNode.textContent = showWholesale ? 'no varejo' : '';
+    }
 
     if (wholesaleNode && wholesaleText) {
       wholesaleNode.textContent = wholesaleText;
     }
 
-    if (retailNode && retailText) {
-      retailNode.textContent = retailText;
+    if (retailNode) {
+      retailNode.textContent = showWholesale ? (retailText || '') : (displayText || retailText || '');
     }
   }
 

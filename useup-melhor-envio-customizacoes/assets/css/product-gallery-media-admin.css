@@ -1,0 +1,42 @@
+.useup-me-product-gallery-media__list {
+	margin: 0;
+	padding: 0;
+}
+
+.useup-me-product-gallery-media__list li.image.useup-me-gallery-item--video {
+	position: relative;
+}
+
+.useup-me-product-gallery-media__list li.image.useup-me-gallery-item--video .useup-me-gallery-item__preview {
+	display: block;
+	width: 100%;
+	height: 100%;
+	background: #111;
+	overflow: hidden;
+}
+
+.useup-me-product-gallery-media__list li.image.useup-me-gallery-item--video video {
+	display: block;
+	width: 100%;
+	height: auto;
+	object-fit: cover;
+	background: #111;
+}
+
+.useup-me-product-gallery-media__list li.image.useup-me-gallery-item--video .useup-me-gallery-item__badge {
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	z-index: 2;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 2px 6px;
+	border-radius: 999px;
+	background: rgba(17, 17, 17, 0.76);
+	color: #fff;
+	font-size: 10px;
+	line-height: 1;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+}
